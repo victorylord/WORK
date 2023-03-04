@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsOddsConvertMappingMapper">
+
+	<select id="queryOddsMappingList" resultType="com.panda.sport.rcs.pojo.RcsOddsConvertMapping">
+			SELECT * FROM rcs_odds_convert_mapping ORDER BY CONVERT(europe,DOUBLE)
+	</select>
+	<select id="queryMaxOdds" resultType="string">
+		SELECT max(t.europe+0) FROM rcs_odds_convert_mapping t WHERE t.malaysia = #{myOdds}
+	</select>
+	<select id="queryMinOdds" resultType="string">
+		SELECT min(t.europe+0) FROM rcs_odds_convert_mapping t WHERE t.malaysia = #{myOdds}
+	</select>
+</mapper>

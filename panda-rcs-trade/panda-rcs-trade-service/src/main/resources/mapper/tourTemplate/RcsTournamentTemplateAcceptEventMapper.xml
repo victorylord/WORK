@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.tourTemplate.RcsTournamentTemplateAcceptEventMapper">
+
+    <select id="queryMatchEventConfig" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplateAcceptEvent">
+        SELECT e.id as id,
+                e.accept_config_id as acceptConfigId,
+                e.event_type as eventType,
+                e.event_id as eventId,
+                e.event_code as eventCode,
+                e.event_name as eventName,
+                e.`status` as status
+        FROM rcs_tournament_template_accept_event e
+        JOIN rcs_tournament_template_accept_config c ON e.accept_config_id = c.id
+        WHERE c.template_id = #{config.templateId,jdbcType=BIGINT}
+        AND c.category_set_id = #{config.categorySetId,jdbcType=INTEGER}
+        <if test="config.eventType != null">
+            AND e.event_type = #{config.eventType,jdbcType=VARCHAR}
+        </if>
+        <if test="config.eventType == null or config.eventType == ''">
+            AND e.event_type is NOT null
+        </if>
+        AND e.`status` = 1
+    </select>
+<!--    <select id="queryMatchEventConfig" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplateAcceptEvent">-->
+<!--        SELECT e.id as id,-->
+<!--        e.accept_config_id as acceptConfigId,-->
+<!--        e.event_type as eventType,-->
+<!--        e.event_id as eventId,-->
+<!--        e.event_code as eventCode,-->
+<!--        e.event_name as eventName,-->
+<!--        e.`status` as status-->
+<!--        FROM rcs_tournament_template_accept_event e-->
+<!--        JOIN rcs_tournament_template_accept_config c ON e.accept_config_id = c.id-->
+<!--        JOIN  rcs_tournament_template t ON c.template_id = t.id AND t.type = 3 AND t.match_type = 0-->
+<!--        WHERE t.type_val = #{config.matchId,jdbcType=BIGINT}-->
+<!--        AND t.sport_id = #{config.sportId,jdbcType=INTEGER}-->
+<!--        AND c.category_set_id = #{config.categorySetId,jdbcType=INTEGER}-->
+<!--        <if test="config.eventType != null">-->
+<!--            AND e.event_type = #{config.eventType,jdbcType=VARCHAR}-->
+<!--        </if>-->
+<!--        <if test="config.eventType == null">-->
+<!--            AND e.event_type is NOT null-->
+<!--        </if>-->
+<!--        AND e.`status` = 1-->
+<!--    </select>-->
+
+    <update id="updateMatchEventConfig">
+        <foreach collection="list" index="index" item="item" separator=";">
+            INSERT INTO rcs_tournament_template_accept_event (
+            accept_config_id,
+            event_type,
+            event_code,
+            event_name,
+            create_time,
+            update_time,
+            status)
+            VALUES
+            (
+            #{item.acceptConfigId,jdbcType=BIGINT},
+            #{item.eventType,jdbcType=VARCHAR},
+            #{item.eventCode,jdbcType=VARCHAR},
+            #{item.eventName,jdbcType=VARCHAR},
+            now(),
+            now(),
+            #{item.status,jdbcType=INTEGER})
+            ON DUPLICATE KEY UPDATE event_type = #{item.eventType,jdbcType=VARCHAR},status=#{item.status,jdbcType=INTEGER}
+        </foreach>
+    </update>
+
+    <select id="queryEventByMatchId" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplateAcceptEvent">
+        SELECT
+            e.*
+        FROM
+            rcs_tournament_template t,
+            rcs_tournament_template_accept_config c,
+            rcs_tournament_template_accept_event e
+        WHERE
+            t.id = c.template_id
+            AND c.id = e.accept_config_id
+            AND t.sport_id = 1
+            AND t.match_type = 0
+            AND t.type = 3
+            AND e.`status` = 1
+            AND t.type_val = #{matchId}
+    </select>
+
+    <select id="queryMatchEventConfigSettle" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplateAcceptEventSettle">
+        SELECT e.id as id,
+        e.accept_config_settle_id as acceptConfigSettleId,
+        e.event_type as eventType,
+        e.event_id as eventId,
+        e.event_code as eventCode,
+        e.event_name as eventName,
+        e.`status` as status
+        FROM rcs_tournament_template_accept_event_settle e
+        JOIN rcs_tournament_template_accept_config_settle c ON e.accept_config_settle_id = c.id
+        WHERE c.template_id = #{config.templateId,jdbcType=BIGINT}
+        AND c.category_set_id = #{config.categorySetId,jdbcType=INTEGER}
+        <if test="config.eventType != null">
+            AND e.event_type = #{config.eventType,jdbcType=VARCHAR}
+        </if>
+        <if test="config.eventType == null or config.eventType == ''">
+            AND e.event_type is NOT null
+        </if>
+        AND e.`status` = 1
+    </select>
+    <select id="selectOrderAcceptConfig"
+            resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplateAcceptConfigNew">
+        SELECT
+        c.data_source as dataSource,
+        t.type_val as  matchId,
+        c.category_set_id as  categorySetId
+        FROM  rcs_tournament_template_accept_config c
+        JOIN  rcs_tournament_template t ON c.template_id = t.id AND t.type = 3 AND t.match_type = 0
+        WHERE t.type_val = #{matchId}
+        AND t.sport_id = 1
+    </select>
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.MerchantsSinglePercentageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.MerchantsSinglePercentage">
+        <id column="id" property="id" />
+        <result column="sport_id" property="sportId" />
+        <result column="match_id" property="matchId" />
+        <result column="merchants_id" property="merchantsId" />
+        <result column="merchants_name" property="merchantsName" />
+        <result column="match_type" property="matchType" />
+        <result column="home_name" property="homeName" />
+        <result column="away_name" property="awayName" />
+        <result column="matchLimit" property="matchLimit" />
+        <result column="percentage" property="percentage" />
+    </resultMap>
+
+
+    <select id="list"  resultType="java.lang.Long">
+        SELECT p.match_id FROM  merchants_single_percentage p inner JOIN  standard_match_info m ON  p.match_id = m.id
+            AND ((m.match_status=3 and p.status=1) or ( m.match_status=1 and p.status=1 and m.sport_id in (1,2,4,6,8,9,10) and m.begin_time &lt;= UNIX_TIMESTAMP() * 1000 - 4 * 60 * 60 * 1000 ))
+    </select>
+
+</mapper>

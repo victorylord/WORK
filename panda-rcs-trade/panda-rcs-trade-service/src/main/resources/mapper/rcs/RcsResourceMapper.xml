@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsResourceMapper">
+    <select id="getResourceList" resultType="com.panda.sport.rcs.pojo.RcsResource">
+      SELECT * FROM rcs_resource INNER JOIN  rcs_role_res ON rcs_resource.res_id=rcs_role_res.res_id  WHERE rcs_role_res.role_id = #{id} AND  rcs_resource.`status`=1 and rcs_role_res.`status` =1
+    </select>
+</mapper>

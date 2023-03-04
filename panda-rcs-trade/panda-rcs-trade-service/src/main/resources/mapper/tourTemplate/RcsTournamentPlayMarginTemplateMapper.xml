@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.tourTemplate.RcsTournamentPlayMarginTemplateMapper">
+
+
+    <select id="queryPlayTemplateInitData"
+            resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentPlayMarginTemplate">
+        SELECT
+        *
+        FROM
+        rcs_tournament_play_margin_template t
+        WHERE
+        t.sport_id = #{sportId}
+        AND t.match_type = #{matchType}
+        AND ( t.`level` = #{level} OR t.`level` IS NULL )
+        order by t.play_id
+    </select>
+</mapper>

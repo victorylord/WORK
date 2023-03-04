@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.TOrderDetailMapper">
+
+	<select id="queryOrderDetail" parameterType="Map" resultType="com.panda.sport.data.rcs.dto.ExtendBean">
+		SELECT d.rec_type recType,d.rec_val recVal ,d.bet_amount orderMoney,d.match_id matchId,d.play_id playId,d.market_value handicap, o.tenant_id busId,
+		d.sport_id sportId ,case when  d.match_type = 1 OR d.match_type = 3  then 0 ELSE 1 END isScroll,d.match_process_id playType,d.play_options_id selectId,
+		d.tournament_id tournamentLevel,d.score_benchmark currentScore,d.uid userId,d.odds_value odds,d.bet_no itemId,d.order_no orderId,d.market_id,
+		case when d.is_relation_score = 1 then true else false end isRelationScore,d.risk_channel riskChannel
+		FROM t_order_detail d
+		LEFT JOIN t_order o ON o.order_no = d.order_no
+		WHERE d.bet_no = #{betNo}
+	</select>
+
+</mapper>

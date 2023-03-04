@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMatchOrderAcceptEventConfigMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsMatchOrderAcceptEventConfig">
+    <!--@mbg.generated-->
+    <!--@Table rcs_match_order_accept_event_config-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="match_id" jdbcType="BIGINT" property="matchId" />
+    <result column="event_code" jdbcType="VARCHAR" property="eventCode" />
+    <result column="max_wait" jdbcType="SMALLINT" property="maxWait" />
+    <result column="valid" jdbcType="TINYINT" property="valid" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, match_id, event_code, max_wait, `valid`
+  </sql>
+
+  <select id="queryMatchOrderConfig" resultType="com.panda.sport.rcs.pojo.RcsMatchOrderAcceptConfig">
+    select match_id,min_wait,max_wait,data_source,mode,half_time from  rcs_match_order_accept_config  where   match_id=#{matchId,jdbcType=BIGINT}
+    union all
+    select tournament_id match_id,tournament_id,min_wait,max_wait,data_source,mode,half_time from  rcs_tournament_order_accept_config where   tournament_id=#{tournamentId,jdbcType=BIGINT}
+
+  </select>
+
+  <select id="queryOrderConfigList" resultType="com.panda.sport.rcs.pojo.RcsMatchOrderAcceptConfig">
+    SELECT
+        match_id,
+        min_wait,
+        max_wait,
+        data_source,
+        MODE,
+        half_time,
+        '1' AS flag
+    FROM
+        rcs_match_order_accept_config
+    WHERE
+        MODE = 1
+        AND half_time = 1
+    UNION ALL
+    SELECT
+        tournament_id as match_id,
+        min_wait,
+        max_wait,
+        data_source,
+        MODE,
+        half_time,
+        '0' AS flag
+    FROM
+        rcs_tournament_order_accept_config
+  </select>
+
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update rcs_match_order_accept_event_config
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="match_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.matchId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="event_code = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.eventCode,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="max_wait = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.maxWait,jdbcType=SMALLINT}
+        </foreach>
+      </trim>
+      <trim prefix="`valid` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.valid,jdbcType=OTHER}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into rcs_match_order_accept_event_config
+    (id, match_id, event_code, max_wait, `valid`)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=INTEGER}, #{item.matchId,jdbcType=BIGINT}, #{item.eventCode,jdbcType=VARCHAR}, 
+        #{item.maxWait,jdbcType=SMALLINT}, #{item.valid,jdbcType=OTHER})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="com.panda.sport.rcs.pojo.RcsMatchOrderAcceptEventConfig">
+    <!--@mbg.generated-->
+    insert into rcs_match_order_accept_event_config
+    (id, match_id, event_code, max_wait, `valid`)
+    values
+    (#{id,jdbcType=INTEGER}, #{matchId,jdbcType=BIGINT}, #{eventCode,jdbcType=VARCHAR}, 
+      #{maxWait,jdbcType=SMALLINT}, #{valid,jdbcType=OTHER})
+    on duplicate key update 
+    id = #{id,jdbcType=INTEGER}, 
+    match_id = #{matchId,jdbcType=BIGINT}, 
+    event_code = #{eventCode,jdbcType=VARCHAR}, 
+    max_wait = #{maxWait,jdbcType=SMALLINT}, 
+    `valid` = #{valid,jdbcType=OTHER}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="com.panda.sport.rcs.pojo.RcsMatchOrderAcceptEventConfig">
+    <!--@mbg.generated-->
+    insert into rcs_match_order_accept_event_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="matchId != null">
+        match_id,
+      </if>
+      <if test="eventCode != null">
+        event_code,
+      </if>
+      <if test="maxWait != null">
+        max_wait,
+      </if>
+      <if test="valid != null">
+        `valid`,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="matchId != null">
+        #{matchId,jdbcType=BIGINT},
+      </if>
+      <if test="eventCode != null">
+        #{eventCode,jdbcType=VARCHAR},
+      </if>
+      <if test="maxWait != null">
+        #{maxWait,jdbcType=SMALLINT},
+      </if>
+      <if test="valid != null">
+        #{valid,jdbcType=OTHER},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=INTEGER},
+      </if>
+      <if test="matchId != null">
+        match_id = #{matchId,jdbcType=BIGINT},
+      </if>
+      <if test="eventCode != null">
+        event_code = #{eventCode,jdbcType=VARCHAR},
+      </if>
+      <if test="maxWait != null">
+        max_wait = #{maxWait,jdbcType=SMALLINT},
+      </if>
+      <if test="valid != null">
+        `valid` = #{valid,jdbcType=OTHER},
+      </if>
+    </trim>
+  </insert>
+
+    <select id="queryMatchOrderDangerousExist" resultType="java.lang.Long">
+       select standard_match_id from  match_event_info  WHERE standard_match_id  in
+      <foreach collection="matchIds" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+      <foreach collection="set" item="item" open="AND (" close=")" separator="or" >
+        <![CDATA[ event_code  =  #{item.eventCode,jdbcType=VARCHAR} and  event_time >=  #{item.beginTime,jdbcType=BIGINT} and  event_time <=  #{item.endTime,jdbcType=BIGINT}  and  standard_match_id = #{item.matchId,jdbcType=BIGINT} ]]>
+      </foreach>
+    </select>
+</mapper>

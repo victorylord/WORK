@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsCategorySetTraderWeightMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsCategorySetTraderWeight">
+    <!--@mbg.generated-->
+    <!--@Table rcs_category_set_trader_weight-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="sport_id" jdbcType="BIGINT" property="sportId" />
+    <result column="match_id" jdbcType="BIGINT" property="matchId" />
+    <result column="market_type" jdbcType="INTEGER" property="marketType" />
+    <result column="trader_id" jdbcType="BIGINT" property="traderId" />
+    <result column="trader_code" jdbcType="VARCHAR" property="traderCode" />
+    <result column="weight" jdbcType="INTEGER" property="weight" />
+    <result column="type_id" jdbcType="BIGINT" property="typeId" />
+    <result column="set_no" jdbcType="BIGINT" property="setNo" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, set_no,sport_id, match_id, market_type, trader_id, trader_code, weight, type_id, set_name,
+    create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from rcs_category_set_trader_weight
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from rcs_category_set_trader_weight
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.RcsCategorySetTraderWeight" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into rcs_category_set_trader_weight
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sportId != null">
+        sport_id,
+      </if>
+      <if test="matchId != null">
+        match_id,
+      </if>
+      <if test="marketType != null">
+        market_type,
+      </if>
+      <if test="traderId != null">
+        trader_id,
+      </if>
+      <if test="traderCode != null">
+        trader_code,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+      <if test="setId != null">
+        set_id,
+      </if>
+      <if test="setName != null">
+        set_name,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sportId != null">
+        #{sportId,jdbcType=BIGINT},
+      </if>
+      <if test="matchId != null">
+        #{matchId,jdbcType=BIGINT},
+      </if>
+      <if test="marketType != null">
+        #{marketType,jdbcType=INTEGER},
+      </if>
+      <if test="traderId != null">
+        #{traderId,jdbcType=BIGINT},
+      </if>
+      <if test="traderCode != null">
+        #{traderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="setId != null">
+        #{setId,jdbcType=BIGINT},
+      </if>
+      <if test="setName != null">
+        #{setName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.panda.sport.rcs.pojo.RcsCategorySetTraderWeight">
+    <!--@mbg.generated-->
+    update rcs_category_set_trader_weight
+    <set>
+      <if test="sportId != null">
+        sport_id = #{sportId,jdbcType=BIGINT},
+      </if>
+      <if test="matchId != null">
+        match_id = #{matchId,jdbcType=BIGINT},
+      </if>
+      <if test="marketType != null">
+        market_type = #{marketType,jdbcType=INTEGER},
+      </if>
+      <if test="traderId != null">
+        trader_id = #{traderId,jdbcType=BIGINT},
+      </if>
+      <if test="traderCode != null">
+        trader_code = #{traderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="setId != null">
+        set_id = #{setId,jdbcType=BIGINT},
+      </if>
+      <if test="setName != null">
+        set_name = #{setName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.panda.sport.rcs.pojo.RcsCategorySetTraderWeight">
+    <!--@mbg.generated-->
+    update rcs_category_set_trader_weight
+    set sport_id = #{sportId,jdbcType=BIGINT},
+      match_id = #{matchId,jdbcType=BIGINT},
+      market_type = #{marketType,jdbcType=INTEGER},
+      trader_id = #{traderId,jdbcType=BIGINT},
+      trader_code = #{traderCode,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=INTEGER},
+      set_id = #{setId,jdbcType=BIGINT},
+      set_name = #{setName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.RcsCategorySetTraderWeight" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into rcs_category_set_trader_weight
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      sport_id,
+      match_id,
+      market_type,
+      trader_id,
+      trader_code,
+      weight,
+      set_id,
+      set_name,
+      create_time,
+      update_time,
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      #{sportId,jdbcType=BIGINT},
+      #{matchId,jdbcType=BIGINT},
+      #{marketType,jdbcType=INTEGER},
+      #{traderId,jdbcType=BIGINT},
+      #{traderCode,jdbcType=VARCHAR},
+      #{weight,jdbcType=INTEGER},
+      #{setId,jdbcType=BIGINT},
+      #{setName,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP},
+      #{updateTime,jdbcType=TIMESTAMP},
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      sport_id = #{sportId,jdbcType=BIGINT},
+      match_id = #{matchId,jdbcType=BIGINT},
+      market_type = #{marketType,jdbcType=INTEGER},
+      trader_id = #{traderId,jdbcType=BIGINT},
+      trader_code = #{traderCode,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=INTEGER},
+      set_id = #{setId,jdbcType=BIGINT},
+      set_name = #{setName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+    </trim>
+  </insert>
+  <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.RcsCategorySetTraderWeight" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into rcs_category_set_trader_weight
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="sportId != null">
+        sport_id,
+      </if>
+      <if test="matchId != null">
+        match_id,
+      </if>
+      <if test="marketType != null">
+        market_type,
+      </if>
+      <if test="traderId != null">
+        trader_id,
+      </if>
+      <if test="traderCode != null">
+        trader_code,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+      <if test="setId != null">
+        set_id,
+      </if>
+      <if test="setName != null">
+        set_name,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="sportId != null">
+        #{sportId,jdbcType=BIGINT},
+      </if>
+      <if test="matchId != null">
+        #{matchId,jdbcType=BIGINT},
+      </if>
+      <if test="marketType != null">
+        #{marketType,jdbcType=INTEGER},
+      </if>
+      <if test="traderId != null">
+        #{traderId,jdbcType=BIGINT},
+      </if>
+      <if test="traderCode != null">
+        #{traderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="setId != null">
+        #{setId,jdbcType=BIGINT},
+      </if>
+      <if test="setName != null">
+        #{setName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="sportId != null">
+        sport_id = #{sportId,jdbcType=BIGINT},
+      </if>
+      <if test="matchId != null">
+        match_id = #{matchId,jdbcType=BIGINT},
+      </if>
+      <if test="marketType != null">
+        market_type = #{marketType,jdbcType=INTEGER},
+      </if>
+      <if test="traderId != null">
+        trader_id = #{traderId,jdbcType=BIGINT},
+      </if>
+      <if test="traderCode != null">
+        trader_code = #{traderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="setId != null">
+        set_id = #{setId,jdbcType=BIGINT},
+      </if>
+      <if test="setName != null">
+        set_name = #{setName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <insert id="batchInsertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.RcsCategorySetTraderWeight" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into rcs_category_set_trader_weight
+    (sport_id, match_id, market_type, trader_id, trader_code, weight, set_no,type_id,version)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.sportId,jdbcType=BIGINT}, #{item.matchId,jdbcType=BIGINT}, #{item.marketType,jdbcType=INTEGER},
+        #{item.traderId,jdbcType=BIGINT}, #{item.traderCode,jdbcType=VARCHAR}, #{item.weight,jdbcType=INTEGER},
+        #{item.setNo,jdbcType=BIGINT},#{item.typeId},#{item.version})
+    </foreach>
+    on duplicate key update
+    <trim suffixOverrides=",">
+      sport_id =  VALUES(sport_id) ,
+      match_id = VALUES(match_id) ,
+      market_type = VALUES(market_type) ,
+      trader_id =VALUES(trader_id) ,
+      trader_code = VALUES(trader_code) ,
+      weight = VALUES(weight) ,
+      set_no = VALUES(set_no) ,
+      type_id = VALUES(type_id) ,
+      version = VALUES(version) ,
+    </trim>
+  </insert>
+  <select id="selectPlayIdBySetId" resultType="integer">
+    select (
+      (SELECT COUNT(1)
+      FROM rcs_category_set_trader_weight t
+      JOIN rcs_market_category_set c ON c.id = t.type_id and t.version =0 AND c.sport_id = #{config.sportId,jdbcType=INTEGER} AND c.type = 2 AND c.status = 2
+      JOIN rcs_market_category_set_relation r ON r.market_category_set_id = c.id
+      WHERE t.match_id = #{config.matchId,jdbcType=BIGINT}
+      AND t.market_type = #{config.matchType,jdbcType=VARCHAR}
+      AND t.sport_id = #{config.sportId,jdbcType=INTEGER}
+      AND  t.type_id = #{config.playId,jdbcType=BIGINT}
+      and t.trader_id = #{userId,jdbcType=BIGINT})
+    +
+      (SELECT COUNT(1)
+      FROM rcs_category_set_trader_weight t
+      JOIN rcs_market_category_set c ON c.id = t.set_no and t.version =1 AND c.sport_id = #{config.sportId,jdbcType=INTEGER} AND c.type = 2 AND c.status = 2
+      JOIN rcs_market_category_set_relation r ON r.market_category_set_id = c.id
+      WHERE t.match_id = #{config.matchId,jdbcType=BIGINT}
+      AND t.market_type = #{config.matchType,jdbcType=VARCHAR}
+      AND t.sport_id = #{config.sportId,jdbcType=INTEGER}
+      AND t.type_id = #{config.playId,jdbcType=BIGINT}
+      and t.trader_id = #{userId,jdbcType=BIGINT})
+    )
+  </select>
+</mapper>

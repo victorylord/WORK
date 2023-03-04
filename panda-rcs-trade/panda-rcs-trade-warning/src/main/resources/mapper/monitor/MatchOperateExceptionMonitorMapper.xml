@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.rcs.warning.mapper.MatchOperateExceptionMonitorMapper">
+
+    <select id="queryRollBallMatchInfo" resultType="com.panda.rcs.warning.vo.RollBallMatchInfo">
+        SELECT
+        t.begin_time AS timer,
+        t2.play_id AS playId,
+        t.id as matchId,
+        t.match_manage_id as matchManageId,
+        t1.match_type AS matchType,
+        st.tournament_level as tournamentLevel,
+        t.standard_tournament_id as standardTournamentId,
+        t.sport_id as sportId
+        FROM
+        standard_match_info t
+        INNER JOIN standard_sport_tournament st on t.standard_tournament_id=st.id
+        INNER JOIN rcs_tournament_template t1 ON t.id = t1.type_val
+        INNER JOIN rcs_standard_sport_market_sell rssm on t.id=rssm.match_info_id
+        LEFT JOIN rcs_tournament_template_play_margain t2 ON t1.id = t2.template_id
+        WHERE
+        t2.is_sell =1 and
+        t.sport_id =1 and t2.play_id in(1, 2, 4, 17,18,19)
+        AND t1.match_type=#{type}
+
+        <if test="type!=null and type==0">
+            and rssm.live_match_sell_status='Sold'
+            and t.match_status=1
+        </if>
+        <if test="type!=null and type==1">
+            and rssm.pre_match_sell_status='Sold'
+            and t.match_status=0
+        </if>
+
+        <if test="level!=null and level==1">
+            AND t.begin_time/1000-unix_timestamp()>18*60*60
+        </if>
+        <if test="level!=null and level==2">
+            AND t.begin_time/1000-unix_timestamp() &lt;18*60*60
+            and t.begin_time/1000-unix_timestamp()>2*60*60
+        </if>
+        <if test="level!=null and level==3">
+            AND t.begin_time/1000-unix_timestamp() &lt; 2*60*60
+        </if>
+        <if test="type!=null and type==0">
+            and t.pre_match_business=1
+            and t.pre_risk_manager_code is not null
+        </if>
+        union all
+        SELECT
+        t.begin_time AS timer,
+        t2.play_id AS playId,
+        t.id as matchId,
+        t.match_manage_id as matchManageId,
+        t1.match_type AS matchType,
+        st.tournament_level as tournamentLevel,
+        t.standard_tournament_id as standardTournamentId,
+        t.sport_id as sportId
+        FROM
+        standard_match_info t
+        INNER JOIN standard_sport_tournament st on t.standard_tournament_id=st.id
+        INNER JOIN rcs_tournament_template t1 ON t.id = t1.type_val
+        INNER JOIN rcs_standard_sport_market_sell rssm on t.id=rssm.match_info_id
+        LEFT JOIN rcs_tournament_template_play_margain t2 ON t1.id = t2.template_id
+        WHERE
+        t2.is_sell =1 and
+        t.sport_id =2 and t2.play_id in(19, 18, 37, 38, 39, 40, 42,43)
+
+        <if test="type!=null and type==0">
+            and rssm.live_match_sell_status='Sold'
+            and t.match_status=1
+        </if>
+        <if test="type!=null and type==1">
+            and rssm.pre_match_sell_status='Sold'
+            and t.match_status=0
+        </if>
+        AND t1.match_type=#{type}
+        <if test="level!=null and level==1">
+            AND t.begin_time/1000-unix_timestamp()>18*60*60
+        </if>
+        <if test="level!=null and level==2">
+            AND t.begin_time/1000-unix_timestamp() &lt;18*60*60
+            and t.begin_time/1000-unix_timestamp()>2*60*60
+        </if>
+        <if test="level!=null and level==3">
+            AND t.begin_time/1000-unix_timestamp() &lt; 2*60*60
+        </if>
+        <if test="type!=null and type==0">
+            and t.pre_match_business=1
+            and t.pre_risk_manager_code is not null
+        </if>
+    </select>
+    <select id="queryMatchByTimerAndMatchStatus" resultType="com.panda.rcs.warning.vo.MatchOperateExListVo">
+		SELECT
+		t.id as matchId,
+		t.event_time as eventTime,
+		t.begin_time as beginTime,
+		t.sport_id as sportId,
+		t1.tournament_level as tournamentLevel,
+		t1.name_code as tourNameCode,
+		group_concat( t3.name_code ) as teamNameCode,
+		t1.id as standardTournamentId,
+		t.match_status as matchStatus
+		FROM
+		standard_match_info t
+		LEFT JOIN standard_sport_tournament t1 ON t.standard_tournament_id = t1.id
+		LEFT JOIN standard_match_team_relation t2 ON t.id = t2.standard_match_id
+		LEFT JOIN standard_sport_team t3 ON t2.standard_team_id = t3.id
+		where t.id = #{matchId}
+	</select>
+    <select id="queryCollectMatch" resultType="java.lang.Long">
+		SELECT rmc.match_id
+		FROM rcs_match_collection rmc
+		LEFT JOIN standard_match_info smi ON smi.id = rmc.match_id
+		WHERE rmc.type = 1
+		AND smi.match_status in (0, 1)
+		and rmc.user_id = #{userId}
+		and rmc.status=1
+		and smi.active=1
+		group by rmc.match_id
+	</select>
+    <select id="queryTraderMatch" resultType="java.lang.Long">
+		SELECT * from (SELECT match_info_id from rcs_standard_sport_market_sell t
+		INNER JOIN standard_match_info t1 on t.match_info_id=t1.id
+		where pre_trader_id =#{userId} and t1.match_status in(0,1)
+		group by match_info_id
+		union all
+		SELECT match_info_id from rcs_standard_sport_market_sell t
+		INNER JOIN standard_match_info t1 on t.match_info_id=t1.id
+		where live_trader_id =#{userId} and t1.match_status in(0,1)) t3
+		group by t3.match_info_id
+	</select>
+    <select id="queryMatchList" resultType="java.lang.Long">
+		SELECT match_id from rcs_match_monitor_list  GROUP BY match_id;
+	</select>
+
+</mapper>

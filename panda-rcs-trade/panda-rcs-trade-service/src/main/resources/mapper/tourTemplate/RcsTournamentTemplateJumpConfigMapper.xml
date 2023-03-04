@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.tourTemplate.RcsTournamentTemplateJumpConfigMapper">
+
+    <update id="insertBatch">
+        INSERT INTO rcs_tournament_template_jump_config (sport_id,tournament_id,match_type,max_single_bet_amount,spread_balance_option,spread_max_odds,spread_min_odds,odd_change_rule,home_multi_max_amount,home_single_max_amount,
+        home_multi_odds_rate,home_single_odds_rate,away_multi_odds_rate,away_single_odds_rate,home_level_first_max_amount,home_level_second_max_amount,home_level_first_odds_rate,home_level_second_odds_rate,away_level_first_odds_rate,
+        away_level_second_odds_rate,margin_balance_option,margin_max_odds,margin_min_odds,multi_diff_val,multi_odds_rate,create_time,update_time,is_multiple_jump_odds)
+        VALUES
+        (#{sportId,jdbcType=BIGINT},#{tournamentId,jdbcType=BIGINT},#{matchType,jdbcType=BIGINT},#{maxSingleBetAmount,jdbcType=BIGINT},#{spreadBalanceOption,jdbcType=INTEGER},#{spreadMaxOdds,jdbcType=DECIMAL},#{spreadMinOdds,jdbcType=DECIMAL},
+         #{oddChangeRule,jdbcType=INTEGER},#{homeMultiMaxAmount,jdbcType=BIGINT},#{homeSingleMaxAmount,jdbcType=BIGINT},#{homeMultiOddsRate,jdbcType=DECIMAL},#{homeSingleOddsRate,jdbcType=DECIMAL},#{awayMultiOddsRate,jdbcType=DECIMAL},
+         #{awaySingleOddsRate,jdbcType=DECIMAL},#{homeLevelFirstMaxAmount,jdbcType=BIGINT},#{homeLevelSecondMaxAmount,jdbcType=BIGINT},#{homeLevelFirstOddsRate,jdbcType=DECIMAL},#{homeLevelSecondOddsRate,jdbcType=DECIMAL},#{awayLevelFirstOddsRate,jdbcType=DECIMAL},
+         #{awayLevelSecondOddsRate,jdbcType=DECIMAL},#{marginBalanceOption,jdbcType=INTEGER},#{marginMaxOdds,jdbcType=DECIMAL},#{marginMinOdds,jdbcType=DECIMAL},#{multiDiffVal,jdbcType=BIGINT},#{multiOddsRate,jdbcType=DECIMAL},now(),now(),#{isMultipleJumpOdds,jdbcType=INTEGER})
+         ON DUPLICATE KEY UPDATE
+         max_single_bet_amount = #{maxSingleBetAmount,jdbcType=BIGINT},
+         spread_balance_option = #{spreadBalanceOption,jdbcType=INTEGER},
+         spread_max_odds = #{spreadMaxOdds,jdbcType=DECIMAL},
+         spread_min_odds = #{spreadMinOdds,jdbcType=DECIMAL},
+         odd_change_rule = #{oddChangeRule,jdbcType=INTEGER},
+         is_multiple_jump_odds = #{isMultipleJumpOdds,jdbcType=INTEGER},
+         home_multi_max_amount = #{homeMultiMaxAmount,jdbcType=BIGINT},
+         home_single_max_amount = #{homeSingleMaxAmount,jdbcType=BIGINT},
+         home_multi_odds_rate = #{homeMultiOddsRate,jdbcType=DECIMAL},
+         home_single_odds_rate = #{homeSingleOddsRate,jdbcType=DECIMAL},
+         away_multi_odds_rate = #{awayMultiOddsRate,jdbcType=DECIMAL},
+         away_single_odds_rate = #{awaySingleOddsRate,jdbcType=DECIMAL},
+         home_level_first_max_amount =  #{homeLevelFirstMaxAmount,jdbcType=BIGINT},
+         home_level_second_max_amount =  #{homeLevelSecondMaxAmount,jdbcType=BIGINT},
+         home_level_first_odds_rate = #{homeLevelFirstOddsRate,jdbcType=DECIMAL},
+         home_level_second_odds_rate = #{homeLevelSecondOddsRate,jdbcType=DECIMAL},
+         away_level_first_odds_rate = #{awayLevelFirstOddsRate,jdbcType=DECIMAL},
+         away_level_second_odds_rate = #{awayLevelSecondOddsRate,jdbcType=DECIMAL},
+         margin_balance_option = #{marginBalanceOption,jdbcType=INTEGER},
+         margin_max_odds = #{marginMaxOdds,jdbcType=DECIMAL},
+         margin_min_odds = #{marginMinOdds,jdbcType=DECIMAL},
+         multi_diff_val = #{multiDiffVal,jdbcType=BIGINT},
+         multi_odds_rate = #{multiOddsRate,jdbcType=DECIMAL},
+         update_time = now()
+    </update>
+
+    <select id="selectTournamentSpecialOddsIntervalInitData" resultType="com.panda.sport.rcs.pojo.tourTemplate.TournamentTemplatePlayMargainResVo">
+        select m.*,
+            (SELECT order_single_pay_val
+            from rcs_tournament_template_play_margain_ref r
+            where r.margain_id = m.id
+            and case when m.match_type = 1 then r.time_val = 2592000 else r.time_val = 0 end) as orderSinglePayVal
+        from rcs_tournament_template_play_margain m
+        where template_id
+        in (SELECT id FROM `rcs_tournament_template` where sport_id = 1 and type in (1,2)) and play_id
+        in (2,4,10,11,12,15,18,19,24,26,33,34,42,75,76,77,78,79,80,81,82,83,84,86,87,88,89,90,91,92,93,94,96,97,98,99,100,109,110,113,114,115,116,118,121,122,123,124,127,128,130,131,132,133,134,135,136,138,139,140,143,144,229,232,233,234,240,306,307,308,309,312,313,314,315,316,317,324,325,327,328,330,331,332,334,335,336)
+    </select>
+
+    <select id="selectMTSOddsChangeValue" resultType="com.panda.sport.rcs.pojo.StandardSportTournament">
+        SELECT id FROM `standard_sport_tournament` WHERE sport_id in (16,15,14,13,12,11,10,6,4,3)
+    </select>
+
+    <select id="selectTournamentOddsChangeValue" resultType="com.panda.sport.rcs.pojo.tourTemplate.TournamentTemplatePlayMargainOddsResVo">
+        select m.*,
+        (select type_val from rcs_tournament_template where id = m.template_id) as typeVal
+        from rcs_tournament_template_play_margain m
+        where m.template_id
+        in (SELECT id FROM rcs_tournament_template t where t.type in (1,2))
+    </select>
+</mapper>

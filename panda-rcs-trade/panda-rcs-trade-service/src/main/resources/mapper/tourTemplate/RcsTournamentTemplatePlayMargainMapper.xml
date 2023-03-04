@@ -1,0 +1,644 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.tourTemplate.RcsTournamentTemplatePlayMargainMapper">
+
+    <select id="listClosePlayIdBySportId" resultType="java.lang.Integer">
+        SELECT
+        ref.category_id
+        FROM
+        standard_sport_market_category_ref ref
+        WHERE
+        ref.sport_id = #{sportId}
+        AND ref.STATUS !=1
+    </select>
+
+    <select id="listPlayIdBySportId"
+            resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargain">
+        SELECT
+        c.id AS play_id,
+        '3' AS market_count,
+        '1' AS is_sell,
+        '1' AS is_series
+        FROM
+        standard_sport_market_category c,
+        standard_sport_market_category_ref r
+        WHERE
+        r.category_id = c.id
+        AND r.STATUS = 1
+        AND r.sport_id = #{sportId}
+        ORDER BY
+        c.id
+    </select>
+
+    <insert id="insertBatch" parameterType="list" useGeneratedKeys="true" keyProperty="id">
+        insert into rcs_tournament_template_play_margain (template_id,play_id,
+        match_type,market_type,is_sell,market_count,auto_close_market,match_progress_time,injury_time,market_warn,is_series,vice_market_ratio,market_near_diff,market_near_odds_diff,odds_adjust_range,market_adjust_range,create_time,update_time,
+        head_market_near_odds_diff,data_source,odds_max_value,market_max_value,manual_market_near_diff,manual_market_near_odds_diff,is_special_pumping,special_odds_interval,reject_market_diff,reject_odds_diff,
+        min_ball_head,max_ball_head,competition_win_value,odds_change_value,odds_change_status,special_odds_interval_high,special_odds_interval_low,special_odds_interval_status,if_warn_suspended,special_betting_interval_high,pending_order_status)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.templateId,jdbcType=INTEGER},#{item.playId,jdbcType=INTEGER},#{item.matchType,jdbcType=INTEGER},#{item.marketType,jdbcType=INTEGER},#{item.isSell,jdbcType=INTEGER},
+            #{item.marketCount,jdbcType=INTEGER},#{item.autoCloseMarket,jdbcType=INTEGER},#{item.matchProgressTime,jdbcType=INTEGER},
+            #{item.injuryTime,jdbcType=INTEGER},#{item.marketWarn,jdbcType=INTEGER},#{item.isSeries,jdbcType=INTEGER},#{item.viceMarketRatio,jdbcType=VARCHAR},
+            #{item.marketNearDiff,jdbcType=DECIMAL},#{item.marketNearOddsDiff,jdbcType=DECIMAL},#{item.oddsAdjustRange,jdbcType=DECIMAL},#{item.marketAdjustRange,jdbcType=DECIMAL},now(),now(),
+            #{item.headMarketNearOddsDiff,jdbcType=DECIMAL},#{item.dataSource,jdbcType=VARCHAR},#{item.oddsMaxValue,jdbcType=DECIMAL},#{item.marketMaxValue,jdbcType=DECIMAL},#{item.manualMarketNearDiff,jdbcType=DECIMAL},
+            #{item.manualMarketNearOddsDiff,jdbcType=DECIMAL},#{item.isSpecialPumping,jdbcType=INTEGER},#{item.specialOddsInterval,jdbcType=VARCHAR},#{item.rejectMarketDiff,jdbcType=DECIMAL},#{item.rejectOddsDiff,jdbcType=DECIMAL},
+            #{item.minBallHead,jdbcType=DECIMAL},#{item.maxBallHead,jdbcType=DECIMAL},#{item.competitionWinValue,jdbcType=INTEGER},#{item.oddsChangeValue,jdbcType=DECIMAL},#{item.oddsChangeStatus,jdbcType=INTEGER},
+            #{item.specialOddsIntervalHigh,jdbcType=VARCHAR},#{item.specialOddsIntervalLow,jdbcType=VARCHAR},#{item.specialOddsIntervalStatus,jdbcType=VARCHAR},#{item.ifWarnSuspended,jdbcType=INTEGER},#{item.specialBettingIntervalHigh,jdbcType=VARCHAR},#{item.pendingOrderStatus})
+        </foreach>
+    </insert>
+
+    <select id="searchSellPlay" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargain">
+        SELECT
+        m.*,
+        li.text ->> #{lang} AS play_name,
+        (select GROUP_CONCAT(ref.time_val SEPARATOR ',') from rcs_tournament_template_play_margain_ref ref where
+        ref.margain_id = m.id and ref.`status`!=2) timeVal
+        FROM
+        rcs_market_category_set_relation rel,
+        rcs_tournament_template_play_margain m,
+        standard_sport_market_category_ref c,
+        rcs_language_internation li
+        WHERE
+        rel.market_category_set_id = #{categorySetId}
+        AND rel.market_category_id = m.play_id
+        AND m.play_id = c.category_id
+        AND li.name_code = c.name_code
+        AND li.text ->> #{lang} is not null
+        AND m.template_id = #{templateId}
+        AND m.match_type = #{matchType}
+        AND c.sport_id = #{sportId}
+        <if test="playName !=null">
+            AND li.text like concat('%' , #{playName} , '%')
+        </if>
+        <if test="type == 3">
+            AND m.is_sell = 1
+        </if>
+        order by rel.order_no
+    </select>
+    <select id="queryMarginByPlayId"
+            resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargainRef">
+        SELECT r.margain margain,
+                r.order_single_pay_val as orderSinglePayVal,
+                m.vice_market_ratio as viceMarketRatio,
+                m.market_adjust_range as marketAdjustRange,
+                m.odds_adjust_range as oddsAdjustRange
+        FROM rcs_tournament_template_play_margain_ref r
+        JOIN rcs_tournament_template_play_margain m ON r.margain_id = m.id
+        JOIN rcs_tournament_template t ON t.id = m.template_id AND t.type = 3 AND m.valid_margin_id = r.id
+        WHERE t.type_val = #{config.matchId,jdbcType=BIGINT}
+        AND t.match_type = #{config.matchType,jdbcType=INTEGER}
+        AND m.play_id = #{config.playId,jdbcType=BIGINT}
+        LIMIT 1
+    </select>
+    <select id="queryTournamentAdjustRangeByPlayId"
+            resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargain">
+        SELECT   IFNULL(m.market_adjust_range,1) as marketAdjustRange,
+                IFNULL(m.odds_adjust_range,0.01) as oddsAdjustRange,
+				IFNULL(m.market_near_diff,1) as marketNearDiff,
+				IFNULL(m.market_count,3) as marketCount,
+				IFNULL(m.market_near_odds_diff,0.15) as marketNearOddsDiff,
+				ifnull(m.odds_max_value,0.3) as oddsMaxValue,
+                ifnull(m.market_max_value,3) as marketMaxValue,
+                ifnull(m.is_special_pumping,0) as isSpecialPumping,
+                m.special_odds_interval as specialOddsInterval,
+                m.manual_market_near_diff as manualMarketNearDiff,
+                m.min_ball_head as minBallHead,
+                m.max_ball_head as maxBallHead,
+                m.manual_market_near_odds_diff as manualMarketNearOddsDiff
+        FROM  rcs_tournament_template_play_margain m
+        JOIN rcs_tournament_template t ON t.id = m.template_id AND t.type = 3
+        WHERE t.type_val = #{config.matchId,jdbcType=BIGINT}
+        AND t.match_type = #{config.matchType,jdbcType=INTEGER}
+        AND m.play_id = #{config.playId,jdbcType=BIGINT}
+        AND m.is_sell = 1
+        LIMIT 1
+    </select>
+
+    <select id="searchOtherSellPlay"
+            resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargain">
+        SELECT
+        m.*,
+        li.text ->> #{lang} AS play_name,
+        (select GROUP_CONCAT(ref.time_val SEPARATOR ',') from rcs_tournament_template_play_margain_ref ref where
+        ref.margain_id = m.id and ref.`status`!=2) timeVal
+        FROM
+        rcs_tournament_template_play_margain m,
+        standard_sport_market_category_ref c,
+        rcs_language_internation li
+        WHERE
+        m.play_id = c.category_id
+        AND li.name_code = c.name_code
+        AND li.text ->> #{lang} is not null
+        AND m.template_id = #{templateId}
+        AND m.match_type = #{matchType}
+        AND c.sport_id = #{sportId}
+        <if test="playIds !=null and playIds.size()!=0">
+            AND m.play_id NOT IN
+            <foreach collection="playIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="playName !=null">
+            AND li.text like concat('%' , #{playName} , '%')
+        </if>
+        <if test="type == 3">
+            AND m.is_sell = 1
+        </if>
+    </select>
+
+    <update id="updatePlayMargainById"
+            parameterType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargain">
+        update rcs_tournament_template_play_margain
+        <trim prefix="set" suffixOverrides=",">
+            <if test="isSell != null">
+                is_sell = #{isSell,jdbcType=INTEGER},
+            </if>
+            <if test="pendingOrderStatus != null">
+                pending_order_status = #{pendingOrderStatus,jdbcType=INTEGER},
+            </if>
+            <if test="marketCount != null">
+                market_count = #{marketCount,jdbcType=INTEGER},
+            </if>
+            <if test="autoCloseMarket != null">
+                auto_close_market = #{autoCloseMarket,jdbcType=INTEGER},
+            </if>
+            <if test="matchProgressTime != null">
+                match_progress_time = #{matchProgressTime,jdbcType=INTEGER},
+            </if>
+            <if test="injuryTime != null">
+                injury_time = #{injuryTime,jdbcType=INTEGER},
+            </if>
+            <if test="marketWarn != null">
+                market_warn = #{marketWarn,jdbcType=INTEGER},
+            </if>
+            <if test="isSeries != null">
+                is_series = #{isSeries,jdbcType=INTEGER},
+            </if>
+            <if test="marketNearDiff != null">
+                market_near_diff = #{marketNearDiff,jdbcType=DECIMAL},
+            </if>
+            <if test="marketNearOddsDiff != null">
+                market_near_odds_diff = #{marketNearOddsDiff,jdbcType=DECIMAL},
+            </if>
+            <if test="oddsAdjustRange != null">
+                odds_adjust_range = #{oddsAdjustRange,jdbcType=DECIMAL},
+            </if>
+            <if test="marketAdjustRange != null">
+                market_adjust_range = #{marketAdjustRange,jdbcType=DECIMAL},
+            </if>
+            <if test="viceMarketRatio != null">
+                vice_market_ratio = #{viceMarketRatio,jdbcType=VARCHAR},
+            </if>
+            <if test="oddsMaxValue != null">
+                odds_max_value = #{oddsMaxValue,jdbcType=DECIMAL},
+            </if>
+            <if test="marketMaxValue != null">
+                market_max_value = #{marketMaxValue,jdbcType=DECIMAL},
+            </if>
+            <if test="manualMarketNearDiff != null">
+                manual_market_near_diff = #{manualMarketNearDiff,jdbcType=DECIMAL},
+            </if>
+            <if test="manualMarketNearOddsDiff != null">
+                manual_market_near_odds_diff = #{manualMarketNearOddsDiff,jdbcType=DECIMAL},
+            </if>
+            <if test="isSpecialPumping != null">
+                is_special_pumping = #{isSpecialPumping,jdbcType=INTEGER},
+            </if>
+            <if test="specialOddsInterval != null">
+                special_odds_interval = #{specialOddsInterval,jdbcType=VARCHAR},
+            </if>
+            <if test="specialOddsIntervalHigh != null">
+                special_odds_interval_high = #{specialOddsIntervalHigh,jdbcType=VARCHAR},
+            </if>
+            <if test="specialOddsIntervalLow != null">
+                special_odds_interval_low = #{specialOddsIntervalLow,jdbcType=VARCHAR},
+            </if>
+            <if test="specialOddsIntervalStatus != null">
+                special_odds_interval_status = #{specialOddsIntervalStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="specialBettingIntervalHigh != null">
+                special_betting_interval_high = #{specialBettingIntervalHigh,jdbcType=VARCHAR},
+            </if>
+            <if test="rejectMarketDiff != null">
+                reject_market_diff = #{rejectMarketDiff,jdbcType=DECIMAL},
+            </if>
+            <if test="rejectOddsDiff != null">
+                reject_odds_diff = #{rejectOddsDiff,jdbcType=DECIMAL},
+            </if>
+            <if test="competitionWinValue != null">
+                competition_win_value = #{competitionWinValue,jdbcType=INTEGER},
+            </if>
+            <if test="oddsChangeStatus != null">
+                odds_change_status = #{oddsChangeStatus,jdbcType=INTEGER},
+            </if>
+            <if test="oddsChangeValue != null">
+                odds_change_value = #{oddsChangeValue,jdbcType=DECIMAL},
+            </if>
+            <if test="timeValRef != null">
+                time_val_ref = #{timeValRef,jdbcType=VARCHAR},
+            </if>
+            <if test="ifWarnSuspended != null">
+                if_warn_suspended = #{ifWarnSuspended,jdbcType=INTEGER},
+            </if>
+            min_ball_head = #{minBallHead,jdbcType=DECIMAL},
+            max_ball_head = #{maxBallHead,jdbcType=DECIMAL},
+            update_time = now(),
+        </trim>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+<!--    <update id="updatePlayMargainIsSellByPlayId"-->
+<!--            parameterType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplate">-->
+<!--        UPDATE rcs_tournament_template_play_margain margain-->
+<!--        SET margain.is_sell = 1,update_time = NOW()-->
+<!--        WHERE-->
+<!--        margain.id IN (-->
+<!--        SELECT-->
+<!--        a.id-->
+<!--        FROM-->
+<!--        (-->
+<!--        SELECT-->
+<!--        m.id-->
+<!--        FROM-->
+<!--        rcs_tournament_template t,-->
+<!--        rcs_tournament_template_play_margain m-->
+<!--        WHERE-->
+<!--        t.id = m.template_id-->
+<!--        AND t.sport_id = #{param.sportId,jdbcType=INTEGER}-->
+<!--        AND t.type = 3-->
+<!--        AND t.type_val = #{param.typeVal,jdbcType=BIGINT}-->
+<!--        AND t.match_type = #{param.matchType,jdbcType=INTEGER}-->
+<!--        <if test="playIds != null and playIds.size()!=0">-->
+<!--            AND m.play_id IN-->
+<!--            <foreach collection="playIds" index="index" item="item" open="(" separator="," close=")">-->
+<!--                #{item}-->
+<!--            </foreach>-->
+<!--        </if>-->
+<!--        ) a-->
+<!--        )-->
+<!--    </update>-->
+
+    <update id="closeAllPlaysSell"
+            parameterType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplate">
+        UPDATE rcs_tournament_template_play_margain m INNER JOIN rcs_tournament_template t
+        ON m.template_id = t.id
+        SET m.is_sell = 0,m.update_time = NOW()
+        WHERE
+        t.sport_id = #{param.sportId,jdbcType=INTEGER} AND
+        t.type = 3 AND
+        t.type_val = #{param.typeVal,jdbcType=BIGINT} AND
+        t.match_type = #{param.matchType,jdbcType=INTEGER}
+    </update>
+
+    <update id="updatePlayMargainIsSellByPlayId"
+            parameterType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplate">
+        UPDATE rcs_tournament_template_play_margain m INNER JOIN rcs_tournament_template t
+        ON m.template_id = t.id
+        SET m.is_sell = 1,m.update_time = NOW()
+        WHERE
+              t.sport_id = #{param.sportId,jdbcType=INTEGER} AND
+              t.type = 3 AND
+              t.type_val = #{param.typeVal,jdbcType=BIGINT} AND
+              t.match_type = #{param.matchType,jdbcType=INTEGER}
+            <if test="playIds != null and playIds.size()!=0">
+                AND m.play_id IN
+                <foreach collection="playIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+    </update>
+
+    <select id="queryMatchConfig"
+            resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargainRef">
+        SELECT IFNULL(a1.vice_market_ratio,r.vice_market_ratio) vice_market_ratio,r.* FROM (
+        SELECT id,t_id,m_id,t.match_type,t.market_count,t.pause_wait_time,t.pause_margain,t.normal_wait_time,t.vice_market_ratio,t.play_id,case when match_type = 0 then MAX(time_val) else MIN(time_val) end time_val FROM (
+        SELECT i.id , t.id t_id ,m.id m_id,m.play_id,r.id m_r_id,r.time_val ,t.match_type,m.market_count,m.vice_market_ratio,r.pause_wait_time,r.pause_margain,r.normal_wait_time
+        FROM standard_match_info i
+        LEFT JOIN rcs_tournament_template t ON t.`type` = 3 AND t.type_val = i.id
+        LEFT JOIN rcs_tournament_template_play_margain m ON m.template_id = t.id
+        LEFT JOIN rcs_tournament_template_play_margain_ref r ON r.margain_id = m.id
+        LEFT JOIN standard_sport_market_category_ref cr ON cr.category_id = m.play_id AND cr.sport_id = i.sport_id
+        WHERE i.begin_time > unix_timestamp(NOW()) * 1000 - 1000 * 60 * 60 * 12
+        AND i.sport_id = #{sportId,jdbcType=BIGINT}
+        AND i.match_status NOT IN (3,4)
+        AND r.`status` NOT IN (2)
+        AND i.id = #{config.matchId,jdbcType=BIGINT} AND m.play_id = #{config.playId,jdbcType=BIGINT}
+        AND case when i.match_status IN (1,2,10) then m.match_type = 0 ELSE m.match_type = 1 END
+        AND case when i.match_status IN  (1,2,10) AND cr.scope_id IN (6,7,8,9,13,14,15,17)
+        then r.time_val  &lt; case when i.event_code IS not NULL
+        then IFNULL(case when i.match_length = 0 then 10
+        when i.match_length = 7 then 12
+        when i.match_length = 17 then 20
+        when i.match_length = 64 then 6
+        when i.match_length = 68 then 5
+        when i.match_length = 70 then 4
+        ELSE null END ,20) * 60
+        - (i.seconds_match_start - (unix_timestamp(NOW()) * 1000 - i.event_time) /1000)
+        ELSE (unix_timestamp(NOW()) * 1000 - i.begin_time)/1000 END
+        when i.match_status IN  (1,2,10) AND cr.scope_id not IN (6,7,8,9,13,14,15,17)
+        then r.time_val  &lt; IFNULL(case when i.match_length = 0 then 10
+        when i.match_length = 7 then 12
+        when i.match_length = 17 then 20
+        when i.match_length = 64 then 6
+        when i.match_length = 68 then 5
+        when i.match_length = 70 then 4
+        ELSE null END ,20) * 60
+        * case when i.match_period_id IN (0,13,1,301) then 0
+        when i.match_period_id IN (14,302,2) then 1
+        when i.match_period_id IN (15,303,31) then 2
+        when i.match_period_id IN (16,100,999,32,110) then 3
+        when i.match_period_id IN (40) then 4
+        ELSE 0 END
+        + case when i.event_code IS not NULL
+        then IFNULL(case when i.match_length = 0 then 10
+        when i.match_length = 7 then 12
+        when i.match_length = 17 then 20
+        when i.match_length = 64 then 6
+        when i.match_length = 68 then 5
+        when i.match_length = 70 then 4
+        ELSE null END ,20) * 60
+        - (i.seconds_match_start - (unix_timestamp(NOW()) * 1000 - i.event_time) /1000)
+        ELSE (unix_timestamp(NOW()) * 1000 - i.begin_time)/1000 END
+        ELSE r.time_val  &gt; (i.begin_time - unix_timestamp(NOW()) * 1000)/1000 or (i.sport_id = 2 and r.time_val = '2592000')
+        END
+        ) t
+        GROUP BY id,t_id,m_id,t.play_id,match_type
+        ) a1
+        LEFT JOIN rcs_tournament_template_play_margain m ON a1.m_id = m.id
+        LEFT JOIN rcs_tournament_template_play_margain_ref r ON r.time_val = a1.time_val AND r.margain_id = a1.m_id
+    </select>
+
+    <select id="getMatchPlayTemplateConfig" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargain">
+        SELECT
+            m.*,
+            f.margain
+        FROM
+            rcs_tournament_template t
+            LEFT JOIN rcs_tournament_template_play_margain m ON t.id = m.template_id
+            LEFT JOIN rcs_tournament_template_play_margain_ref f ON ( m.id = f.margain_id AND m.valid_margin_id = f.id )
+            LEFT JOIN standard_match_info i ON i.id = t.type_val
+        WHERE
+            t.type_val = #{matchId, jdbcType=BIGINT}
+            AND t.type = 3
+            AND ( CASE WHEN i.match_status IN ( 1, 2, 10 ) THEN t.match_type = 0 ELSE t.match_type = 1 END )
+            AND m.play_id = #{playId, jdbcType=INTEGER}
+    </select>
+
+    <select id="queryFootballMatchConfig"
+            resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargainRef">
+        SELECT t1.vice_market_ratio,r3.* FROM (
+        SELECT id,t_id,m_id,t.match_type,t.market_count,t.pause_wait_time,t.pause_margain,t.normal_wait_time,t.vice_market_ratio,t.play_id,case when match_type = 0 then MAX(time_val) else MIN(time_val) end time_val FROM (
+        SELECT i.id , t.id t_id ,m.id m_id,m.play_id,r.id m_r_id,r.time_val ,t.match_type,m.market_count,m.vice_market_ratio,r.pause_wait_time,r.pause_margain,r.normal_wait_time
+        FROM standard_match_info i
+        LEFT JOIN rcs_tournament_template t ON t.`type` = 3 AND t.type_val = i.id
+        LEFT JOIN rcs_tournament_template_play_margain m ON m.template_id = t.id
+        LEFT JOIN rcs_tournament_template_play_margain_ref r ON r.margain_id = m.id
+        WHERE i.begin_time > unix_timestamp(NOW()) * 1000 - 1000 * 60 * 60 * 12
+        AND i.sport_id = 1 AND i.match_status NOT IN (3,4)
+        AND r.`status` NOT IN (2)
+        AND i.id = #{config.matchId,jdbcType=BIGINT} AND m.play_id = #{config.playId,jdbcType=BIGINT}
+        AND case when i.match_status IN (1,2,10) then m.match_type = 0 ELSE m.match_type = 1 END
+        AND case when i.match_status IN  (1,2,10)
+        then r.time_val  &lt; (unix_timestamp(NOW()) * 1000 - IFNULL(i.event_time , unix_timestamp(NOW()) * 1000))/1000 + IFNULL(i.seconds_match_start , (unix_timestamp(NOW()) * 1000 - i.begin_time)/1000)
+        ELSE r.time_val  > (case when (i.begin_time - unix_timestamp(NOW()) * 1000)/1000 > 2592000 then 2592000 - 1 ELSE (i.begin_time - unix_timestamp(NOW()) * 1000)/1000 end )
+        END
+        ) t
+        GROUP BY id,t_id,m_id,t.play_id,match_type
+        ) t1
+        LEFT JOIN rcs_tournament_template_play_margain_ref r3 ON r3.margain_id = t1.m_id AND r3.time_val = t1.time_val
+        LEFT JOIN rcs_tournament_template_play_margain m1 ON m1.id = t1.m_id
+    </select>
+
+    <select id="queryDataSource" resultType="com.panda.sport.rcs.pojo.vo.TournamentTemplatePlayMargainVo">
+        SELECT
+            m.*,t.type_val matchId
+        FROM
+            rcs_tournament_template t
+            LEFT JOIN rcs_tournament_template_play_margain m ON t.id = m.template_id
+            LEFT JOIN rcs_tournament_template_play_margain_ref f ON ( m.id = f.margain_id AND m.valid_margin_id = f.id )
+            LEFT JOIN standard_match_info i ON i.id = t.type_val
+        WHERE
+            t.type_val in
+            <foreach collection="matchIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            AND t.type = 3 and m.is_sell = 1
+            AND ( CASE WHEN i.match_status IN ( 1, 2, 10 ) THEN t.match_type = 0 ELSE t.match_type = 1 END )
+    </select>
+
+    <select id="selectAllTemplatesByTennis" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargainRef">
+    	SELECT t1.vice_market_ratio,r3.*  FROM (
+        SELECT id,t_id,m_id,t.match_type,t.market_count,t.pause_wait_time,t.pause_margain,t.normal_wait_time,t.vice_market_ratio,t.play_id,case when match_type = 0 then MAX(time_val) else MIN(time_val) end time_val FROM (
+        SELECT i.id , t.id t_id ,m.id m_id,m.play_id,r.id m_r_id,r.time_val ,t.match_type,m.market_count,m.vice_market_ratio,r.pause_wait_time,r.pause_margain,r.normal_wait_time
+        FROM standard_match_info i
+        LEFT JOIN rcs_tournament_template t ON t.`type` = 3 AND t.type_val = i.id
+        LEFT JOIN rcs_tournament_template_play_margain m ON m.template_id = t.id
+        LEFT JOIN rcs_tournament_template_play_margain_ref r ON r.margain_id = m.id
+        WHERE i.begin_time > unix_timestamp(NOW()) * 1000 - 1000 * 60 * 60 * 12
+        AND i.sport_id = #{config.sportId,jdbcType=INTEGER} AND i.match_status NOT IN (3,4)
+		AND r.`status` NOT IN (2)
+		AND i.id = #{config.matchId,jdbcType=BIGINT} AND m.play_id = #{config.playId,jdbcType=BIGINT}
+        AND case when i.odds_live = 1 then m.match_type = 0 ELSE m.match_type = 1 END
+        AND case when i.odds_live = 1
+        then (r.time_val = i.match_period_id or r.time_val = 0 )
+        ELSE r.time_val  &gt; (i.begin_time - unix_timestamp(NOW()) * 1000)/1000
+        END
+        <if test="config.matchType==0 or config.matchType==2">
+            ORDER BY r.time_val DESC
+        </if>
+        <if test="config.matchType == 1">
+            ORDER BY r.time_val ASC
+        </if>
+
+        LIMIT 1
+        ) t
+        GROUP BY id,t_id,m_id,t.play_id,match_type
+        ) t1
+        LEFT JOIN rcs_tournament_template_play_margain_ref r3 ON r3.margain_id = t1.m_id AND r3.time_val = t1.time_val
+        LEFT JOIN rcs_tournament_template_play_margain m1 ON m1.id = t1.m_id
+        limit 1
+    </select>
+    <select id="selectAllTemplatesByIce" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargainRef">
+        SELECT t1.vice_market_ratio,r3.*  FROM (
+        SELECT id,t_id,m_id,t.match_type,t.market_count,t.pause_wait_time,t.pause_margain,t.normal_wait_time,t.vice_market_ratio,t.play_id,case when match_type = 0 then MAX(time_val) else MIN(time_val) end time_val FROM (
+        SELECT i.id , t.id t_id ,m.id m_id,m.play_id,r.id m_r_id,r.time_val ,t.match_type,m.market_count,m.vice_market_ratio,r.pause_wait_time,r.pause_margain,r.normal_wait_time
+        FROM standard_match_info i
+        LEFT JOIN rcs_tournament_template t ON t.`type` = 3 AND t.type_val = i.id
+        LEFT JOIN rcs_tournament_template_play_margain m ON m.template_id = t.id
+        LEFT JOIN rcs_tournament_template_play_margain_ref r ON r.margain_id = m.id
+        WHERE i.begin_time > unix_timestamp(NOW()) * 1000 - 1000 * 60 * 60 * 12
+        AND i.sport_id = #{config.sportId,jdbcType=INTEGER} AND i.match_status NOT IN (3,4)
+        AND r.`status` NOT IN (2)
+        AND i.id = #{config.matchId,jdbcType=BIGINT} AND m.play_id = #{config.playId,jdbcType=BIGINT}
+        AND case when i.odds_live = 1 then m.match_type = 0 ELSE m.match_type = 1 END
+        AND case when i.odds_live = 1 then (r.time_val = i.match_period_id or r.time_val = 0 or (i.match_period_id = 0 and r.time_val = 1)) ELSE r.time_val  &gt; (i.begin_time - unix_timestamp(NOW()) * 1000)/1000 END
+        <if test="config.matchType==0 or config.matchType==2">
+            ORDER BY r.time_val DESC
+        </if>
+        <if test="config.matchType == 1">
+            ORDER BY r.time_val ASC
+        </if>
+
+        LIMIT 1
+        ) t
+        GROUP BY id,t_id,m_id,t.play_id,match_type
+        ) t1
+        LEFT JOIN rcs_tournament_template_play_margain_ref r3 ON r3.margain_id = t1.m_id AND r3.time_val = t1.time_val
+        LEFT JOIN rcs_tournament_template_play_margain m1 ON m1.id = t1.m_id
+        limit 1
+    </select>
+    <select id="selectAllTemplatesBySnooker" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargainRef">
+    	SELECT t1.vice_market_ratio,r3.*  FROM (
+        SELECT id,t_id,m_id,t.match_type,t.market_count,t.pause_wait_time,t.pause_margain,t.normal_wait_time,t.vice_market_ratio,t.play_id,case when match_type = 0 then MAX(time_val) else MIN(time_val) end time_val FROM (
+        SELECT i.id , t.id t_id ,m.id m_id,m.play_id,r.id m_r_id,r.time_val ,t.match_type,m.market_count,m.vice_market_ratio,r.pause_wait_time,r.pause_margain,r.normal_wait_time
+        FROM standard_match_info i
+        LEFT JOIN rcs_tournament_template t ON t.`type` = 3 AND t.type_val = i.id
+        LEFT JOIN rcs_tournament_template_play_margain m ON m.template_id = t.id
+        LEFT JOIN rcs_tournament_template_play_margain_ref r ON r.margain_id = m.id
+        WHERE i.begin_time > unix_timestamp(NOW()) * 1000 - 1000 * 60 * 60 * 168
+        AND i.sport_id = #{config.sportId,jdbcType=INTEGER} AND i.match_status NOT IN (3,4)
+		AND r.`status` NOT IN (2)
+		AND i.id = #{config.matchId,jdbcType=BIGINT} AND m.play_id = #{config.playId,jdbcType=BIGINT}
+        AND case when i.odds_live = 1 then m.match_type = 0 ELSE m.match_type = 1 END
+        AND case when i.odds_live = 1
+        then ( case when i.set_num = 0 then r.time_val &lt;= 1
+                ELSE i.set_num &gt;= r.time_val END)
+        ELSE r.time_val  &gt; (i.begin_time - unix_timestamp(NOW()) * 1000)/1000
+        END
+        <if test="config.matchType==0 or config.matchType==2">
+            ORDER BY r.time_val DESC
+        </if>
+        <if test="config.matchType == 1">
+            ORDER BY r.time_val ASC
+        </if>
+
+        LIMIT 1
+        ) t
+        GROUP BY id,t_id,m_id,t.play_id,match_type
+        ) t1
+        LEFT JOIN rcs_tournament_template_play_margain_ref r3 ON r3.margain_id = t1.m_id AND r3.time_val = t1.time_val
+        LEFT JOIN rcs_tournament_template_play_margain m1 ON m1.id = t1.m_id
+        limit 1
+    </select>
+    <select id="selectAllTemplatesByBadminton" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargainRef">
+    	SELECT t1.vice_market_ratio,r3.*  FROM (
+        SELECT id,t_id,m_id,t.match_type,t.market_count,t.pause_wait_time,t.pause_margain,t.normal_wait_time,t.vice_market_ratio,t.play_id,case when match_type = 0 then MAX(time_val) else MIN(time_val) end time_val FROM (
+        SELECT i.id , t.id t_id ,m.id m_id,m.play_id,r.id m_r_id,r.time_val ,t.match_type,m.market_count,m.vice_market_ratio,r.pause_wait_time,r.pause_margain,r.normal_wait_time
+        FROM standard_match_info i
+        LEFT JOIN rcs_tournament_template t ON t.`type` = 3 AND t.type_val = i.id
+        LEFT JOIN rcs_tournament_template_play_margain m ON m.template_id = t.id
+        LEFT JOIN rcs_tournament_template_play_margain_ref r ON r.margain_id = m.id
+        WHERE i.begin_time > unix_timestamp(NOW()) * 1000 - 1000 * 60 * 60 * 12
+        AND i.sport_id = #{config.sportId,jdbcType=INTEGER} AND i.match_status NOT IN (3,4)
+		AND r.`status` NOT IN (2)
+		AND i.id = #{config.matchId,jdbcType=BIGINT} AND m.play_id = #{config.playId,jdbcType=BIGINT}
+        AND case when i.odds_live = 1 then m.match_type = 0 ELSE m.match_type = 1 END
+        AND case when i.odds_live = 1
+        then (                       case when i.match_period_id = 301 then r.time_val &lt;= 8
+                when i.match_period_id = 302 then r.time_val &lt;= 9
+                when i.match_period_id = 303 then r.time_val &lt;= 10
+                when i.match_period_id = 304 then r.time_val &lt;= 11
+                ELSE r.time_val &lt;= i.match_period_id END)
+        ELSE r.time_val  &gt; (i.begin_time - unix_timestamp(NOW()) * 1000)/1000
+        END
+        <if test="config.matchType==0 or config.matchType==2">
+            ORDER BY r.time_val DESC
+        </if>
+        <if test="config.matchType == 1">
+            ORDER BY r.time_val ASC
+        </if>
+
+        LIMIT 1
+        ) t
+        GROUP BY id,t_id,m_id,t.play_id,match_type
+        ) t1
+        LEFT JOIN rcs_tournament_template_play_margain_ref r3 ON r3.margain_id = t1.m_id AND r3.time_val = t1.time_val
+        LEFT JOIN rcs_tournament_template_play_margain m1 ON m1.id = t1.m_id
+        limit 1
+    </select>
+    <select id="selectAllTemplatesByBaseBall" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargainRef">
+    	SELECT t1.vice_market_ratio,r3.*  FROM (
+        SELECT id,t_id,m_id,t.match_type,t.market_count,t.pause_wait_time,t.pause_margain,t.normal_wait_time,t.vice_market_ratio,t.play_id,case when match_type = 0 then MAX(time_val) else MIN(time_val) end time_val FROM (
+        SELECT i.id , t.id t_id ,m.id m_id,m.play_id,r.id m_r_id,r.time_val ,t.match_type,m.market_count,m.vice_market_ratio,r.pause_wait_time,r.pause_margain,r.normal_wait_time
+        FROM standard_match_info i
+        LEFT JOIN rcs_tournament_template t ON t.`type` = 3 AND t.type_val = i.id
+        LEFT JOIN rcs_tournament_template_play_margain m ON m.template_id = t.id
+        LEFT JOIN rcs_tournament_template_play_margain_ref r ON r.margain_id = m.id
+        WHERE i.begin_time > unix_timestamp(NOW()) * 1000 - 1000 * 60 * 60 * 12
+        AND i.sport_id = #{config.sportId,jdbcType=INTEGER} AND i.match_status NOT IN (3,4)
+		AND r.`status` NOT IN (2)
+		AND i.id = #{config.matchId,jdbcType=BIGINT} AND m.play_id = #{config.playId,jdbcType=BIGINT}
+        AND case when i.odds_live = 1 then m.match_type = 0 ELSE m.match_type = 1 END
+        AND case when i.odds_live = 1
+        then (
+        case when i.match_period_id = 421 then r.time_val &lt;= 401
+        when i.match_period_id = 402 then r.time_val &lt;= 401
+        when i.match_period_id = 422 then r.time_val &lt;= 401
+        when i.match_period_id = 423 then r.time_val &lt;= 403
+        when i.match_period_id = 404 then r.time_val &lt;= 403
+        when i.match_period_id = 424 then r.time_val &lt;= 403
+        when i.match_period_id = 425 then r.time_val &lt;= 405
+        when i.match_period_id = 406 then r.time_val &lt;= 405
+        when i.match_period_id = 426 then r.time_val &lt;= 405
+        when i.match_period_id = 427 then r.time_val &lt;= 407
+        when i.match_period_id = 408 then r.time_val &lt;= 407
+        when i.match_period_id = 428 then r.time_val &lt;= 407
+        when i.match_period_id = 429 then r.time_val &lt;= 409
+        when i.match_period_id = 410 then r.time_val &lt;= 409
+        when i.match_period_id = 430 then r.time_val &lt;= 409
+        when i.match_period_id = 431 then r.time_val &lt;= 411
+        when i.match_period_id = 412 then r.time_val &lt;= 411
+        when i.match_period_id = 432 then r.time_val &lt;= 411
+        when i.match_period_id = 433 then r.time_val &lt;= 413
+        when i.match_period_id = 414 then r.time_val &lt;= 413
+        when i.match_period_id = 434 then r.time_val &lt;= 413
+        when i.match_period_id = 435 then r.time_val &lt;= 415
+        when i.match_period_id = 416 then r.time_val &lt;= 415
+        when i.match_period_id = 436 then r.time_val &lt;= 415
+        when i.match_period_id = 437 then r.time_val &lt;= 417
+        when i.match_period_id = 418 then r.time_val &lt;= 417
+        when i.match_period_id = 438 then r.time_val &lt;= 417
+        ELSE r.time_val &lt;= i.match_period_id END
+        )
+        ELSE r.time_val  &gt; (i.begin_time - unix_timestamp(NOW()) * 1000)/1000
+        END
+        <if test="config.matchType==0 or config.matchType==2">
+            ORDER BY r.time_val DESC
+        </if>
+        <if test="config.matchType == 1">
+            ORDER BY r.time_val ASC
+        </if>
+        LIMIT 1
+        ) t
+        GROUP BY id,t_id,m_id,t.play_id,match_type
+        ) t1
+        LEFT JOIN rcs_tournament_template_play_margain_ref r3 ON r3.margain_id = t1.m_id AND r3.time_val = t1.time_val
+        LEFT JOIN rcs_tournament_template_play_margain m1 ON m1.id = t1.m_id
+        limit 1
+    </select>
+
+    <update id="updatePlayMarginByTemplateId"
+            parameterType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargain">
+        update rcs_tournament_template_play_margain
+        <trim prefix="set" suffixOverrides=",">
+            <if test="marketWarn != null">
+                market_warn = #{marketWarn,jdbcType=INTEGER},
+            </if>
+            <if test="marketNearOddsDiff != null">
+                market_near_odds_diff = #{marketNearOddsDiff,jdbcType=DECIMAL},
+            </if>
+            <if test="oddsAdjustRange != null">
+                odds_adjust_range = #{oddsAdjustRange,jdbcType=DECIMAL},
+            </if>
+            <if test="oddsMaxValue != null">
+                odds_max_value = #{oddsMaxValue,jdbcType=DECIMAL},
+            </if>
+            <if test="marketMaxValue != null">
+                market_max_value = #{marketMaxValue,jdbcType=DECIMAL},
+            </if>
+            update_time = now(),
+        </trim>
+        where template_id = #{templateId,jdbcType=INTEGER}
+    </update>
+</mapper>

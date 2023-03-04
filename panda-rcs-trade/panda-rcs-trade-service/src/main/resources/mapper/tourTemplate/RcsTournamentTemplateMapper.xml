@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.tourTemplate.RcsTournamentTemplateMapper">
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplate">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="sport_id" jdbcType="INTEGER" property="sportId"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="type_val" jdbcType="BIGINT" property="typeVal"/>
+        <result column="match_type" jdbcType="INTEGER" property="matchType"/>
+        <result column="data_source_code" jdbcType="VARCHAR" property="dataSourceCode"/>
+        <result column="busines_match_pay_val" jdbcType="BIGINT" property="businesMatchPayVal"/>
+        <result column="user_match_pay_val" jdbcType="BIGINT" property="userMatchPayVal"/>
+        <result column="score_source" jdbcType="INTEGER" property="scoreSource"/>
+        <result column="template_name" jdbcType="VARCHAR" property="templateName"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <insert id="insertBatch" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+        insert into rcs_tournament_template
+        (sport_id,type,type_val,match_type,data_source_code,busines_match_pay_val,user_match_pay_val,score_source,template_name,copy_template_id,normal_wait_time,pause_wait_time,match_pre_status,create_time,update_time,odds_change_status,caution_value,baijia_config_value,if_warn_suspended,ao_config_value,mts_config_value,distance_switch,pending_order_status
+        ,busines_pending_order_pay_val,user_pending_order_pay_val,user_pending_order_count,pending_order_rate,early_sett_str)
+        values
+        (#{sportId,jdbcType=INTEGER},#{type,jdbcType=INTEGER},#{typeVal,jdbcType=BIGINT},#{matchType,jdbcType=INTEGER},#{dataSourceCode,jdbcType=VARCHAR},
+         #{businesMatchPayVal,jdbcType=BIGINT},#{userMatchPayVal,jdbcType=BIGINT},#{scoreSource,jdbcType=INTEGER},#{templateName,jdbcType=VARCHAR},
+         #{copyTemplateId,jdbcType=BIGINT},#{normalWaitTime,jdbcType=INTEGER},#{pauseWaitTime,jdbcType=INTEGER},#{matchPreStatus,jdbcType=INTEGER},now(),now(),#{oddsChangeStatus,jdbcType=INTEGER},
+         #{cautionValue,jdbcType=DECIMAL},#{baijiaConfigValue,jdbcType=VARCHAR},#{ifWarnSuspended,jdbcType=INTEGER},#{aoConfigValue,jdbcType=VARCHAR},#{mtsConfigValue,jdbcType=VARCHAR},#{distanceSwitch,jdbcType=INTEGER},#{pendingOrderStatus,jdbcType=INTEGER},
+         #{businesPendingOrderPayVal,jdbcType=BIGINT},#{userPendingOrderPayVal,jdbcType=BIGINT},#{userPendingOrderCount,jdbcType=INTEGER},#{pendingOrderRate,jdbcType=INTEGER},#{earlySettStr,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateTemplateWeight" parameterType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplate">
+        update rcs_tournament_template
+        <trim prefix="set" suffixOverrides=",">
+            <if test="dataSourceCode != null">
+                data_source_code = #{dataSourceCode,jdbcType=VARCHAR},
+            </if>
+            update_time = NOW()
+        </trim>
+        where sport_id=#{sportId,jdbcType=INTEGER} and type=3 and type_val=#{typeVal,jdbcType=BIGINT} and
+        match_type=#{matchType,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateTemplateById" parameterType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplate">
+        update rcs_tournament_template
+        <trim prefix="set" suffixOverrides=",">
+            <if test="businesPendingOrderPayVal != null">
+                busines_pending_order_pay_val = #{businesPendingOrderPayVal,jdbcType=BIGINT},
+            </if>
+            <if test="userPendingOrderPayVal != null">
+                user_pending_order_pay_val = #{userPendingOrderPayVal,jdbcType=BIGINT},
+            </if>
+            <if test="userPendingOrderCount != null">
+                user_pending_order_count = #{userPendingOrderCount,jdbcType=INTEGER},
+            </if>
+            <if test="pendingOrderRate != null">
+                pending_order_rate = #{pendingOrderRate,jdbcType=INTEGER},
+            </if>
+            <if test="dataSourceCode != null">
+                data_source_code = #{dataSourceCode,jdbcType=VARCHAR},
+            </if>
+            <if test="pendingOrderStatus != null">
+                pending_order_status = #{pendingOrderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="businesMatchPayVal != null">
+                busines_match_pay_val = #{businesMatchPayVal,jdbcType=BIGINT},
+            </if>
+            <if test="userMatchPayVal != null">
+                user_match_pay_val = #{userMatchPayVal,jdbcType=BIGINT},
+            </if>
+            <if test="copyTemplateId != null">
+                copy_template_id = #{copyTemplateId,jdbcType=BIGINT},
+            </if>
+            <if test="templateName != null">
+                template_name = #{templateName,jdbcType=VARCHAR},
+            </if>
+            <if test="normalWaitTime != null">
+                normal_wait_time = #{normalWaitTime,jdbcType=INTEGER},
+            </if>
+            <if test="pauseWaitTime != null">
+                pause_wait_time = #{pauseWaitTime,jdbcType=INTEGER},
+            </if>
+            <if test="matchPreStatus != null">
+                match_pre_status = #{matchPreStatus,jdbcType=INTEGER},
+            </if>
+            <if test="oddsChangeStatus != null">
+                odds_change_status = #{oddsChangeStatus,jdbcType=INTEGER},
+            </if>
+            <if test="baijiaConfigValue != null">
+                baijia_config_value = #{baijiaConfigValue,jdbcType=VARCHAR},
+            </if>
+            <if test="aoConfigValue != null">
+                ao_config_value=#{aoConfigValue,jdbcType=VARCHAR},
+            </if>
+            <if test="cautionValue != null">
+                caution_value = #{cautionValue,jdbcType=DECIMAL},
+            </if>
+
+            <if test="ifWarnSuspended != null">
+                if_warn_suspended = #{ifWarnSuspended,jdbcType=INTEGER},
+            </if>
+            <if test="mtsConfigValue!=null">
+                mts_config_value=#{mtsConfigValue,jdbcType=VARCHAR},
+            </if>
+            <if test="distanceSwitch!=null">
+                distance_switch=#{distanceSwitch,jdbcType=INTEGER},
+            </if>
+            <if test="earlySettStr!=null and earlySettStr!=''">
+                early_sett_str=#{earlySettStr,jdbcType=VARCHAR},
+            </if>
+            <if test="scoreSource!=null">
+                score_source = #{scoreSource,jdbcType=INTEGER}
+            </if>
+        </trim>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <resultMap id="MenuListResultMap" type="com.panda.sport.rcs.pojo.dto.tourTemplate.TemplateMenuListDto">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="type_val" jdbcType="BIGINT" property="typeVal"/>
+    </resultMap>
+
+    <select id="menuList" resultMap="MenuListResultMap">
+        select e.*,t.name_code from `rcs_tournament_template` e
+        left join standard_sport_tournament t on e.type_val = t.id and e.type=2
+        where e.sport_id = #{sportId} and e.match_type=#{matchType} and ((e.type=1 and
+        e.type_val=#{tournamentLevel,jdbcType=BIGINT}) or (e.type=2 and e.type_val=#{tournamentId,jdbcType=BIGINT}))
+        or
+        <choose>
+            <when test="matchType == 1">
+                e.id IN ( SELECT template_id FROM rcs_tournament_template_ref WHERE tournament_id =
+                #{tournamentId,jdbcType=BIGINT} )
+            </when>
+            <when test="matchType == 0">
+                e.id IN ( SELECT live_template_id FROM rcs_tournament_template_ref WHERE tournament_id =
+                #{tournamentId,jdbcType=BIGINT} )
+            </when>
+        </choose>
+        order by e.type asc,e.id desc
+    </select>
+
+    <resultMap id="SearchResultMap" type="com.panda.sport.rcs.pojo.dto.tourTemplate.TournamentTemplateDto">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="data_source_code" jdbcType="VARCHAR" property="dataSourceCode"/>
+        <result column="order_accept_event_code" jdbcType="VARCHAR" property="orderAcceptEventCode"/>
+        <result column="accept_min_time" jdbcType="INTEGER" property="acceptMinTime"/>
+        <result column="accept_max_time" jdbcType="INTEGER" property="acceptMaxTime"/>
+        <collection property="acceptEventList"
+                    ofType="com.panda.sport.rcs.pojo.dto.tourTemplate.TournamentTemplateAcceptEventDto">
+            <result column="event_code" jdbcType="VARCHAR" property="eventCode"/>
+            <result column="event_desc" jdbcType="VARCHAR" property="eventDesc"/>
+            <result column="delay_time" jdbcType="INTEGER" property="delayTime"/>
+            <result column="status" jdbcType="INTEGER" property="status"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="queryByTournamentLevel" resultMap="SearchResultMap">
+        SELECT
+        t.id,
+        t.data_source_code,
+        t.order_accept_event_code,
+        t.accept_min_time,
+        t.accept_max_time,
+        e.event_code,
+        e.event_desc,
+        e.delay_time,
+        e.status
+        FROM
+        rcs_tournament_template AS t
+        LEFT JOIN rcs_tournament_template_accept_event AS e ON t.id = e.template_id
+        where t.type=1 and t.type_val=#{tournamentLevel} and sport_id=#{sportId} and t.match_type=#{matchType}
+    </select>
+
+    <select id="queryByTournamentId" resultMap="SearchResultMap">
+        SELECT
+        t.id,
+        t.data_source_code,
+        t.order_accept_event_code,
+        t.accept_min_time,
+        t.accept_max_time,
+        e.event_code,
+        e.event_desc,
+        e.delay_time,
+        e.status
+        FROM
+        rcs_tournament_template AS t
+        LEFT JOIN rcs_tournament_template_accept_event AS e ON t.id = e.template_id
+        WHERE t.type=2 and t.type_val=#{tournamentId} and sport_id=#{sportId} and t.match_type=#{matchType}
+    </select>
+
+    <select id="queryTournamentLevelTemplate" parameterType="map" resultType="map">
+        SELECT
+	        e.id AS templateId,
+	        e.type,
+	        e.type_val typeVal,
+	        JSON_UNQUOTE(JSON_EXTRACT(li.text, '$.zs')) tournamentName
+        FROM
+	        rcs_tournament_template e
+	        LEFT JOIN standard_sport_tournament t ON e.type_val = t.id AND e.type = 2
+	        LEFT JOIN rcs_language_internation li ON li.name_code=t.name_code
+        WHERE
+	        e.type = 1
+	        AND e.sport_id = #{sportId}
+	        AND e.match_type = #{matchType}
+	        OR ( e.type = 2 AND e.type_val = #{tournamentId} AND e.match_type = #{matchType} )
+	        ORDER BY
+	        e.type DESC,e.type_val
+    </select>
+
+    <select id="queryTemplateId" resultType="long">
+        SELECT
+        e.id
+        FROM
+        rcs_tournament_template e
+        WHERE
+        e.sport_id = #{sportId}
+        AND e.match_type = #{matchType}
+        AND ( e.type = 1 AND e.type_val = #{tournamentLevel,jdbcType=BIGINT} )
+        <choose>
+            <when test="matchType == 1">
+                OR e.id IN ( SELECT template_id FROM rcs_tournament_template_ref WHERE tournament_id =
+                #{tournamentId,jdbcType=BIGINT} )
+            </when>
+            <when test="matchType == 0">
+                OR e.id IN ( SELECT live_template_id FROM rcs_tournament_template_ref WHERE tournament_id =
+                #{tournamentId,jdbcType=BIGINT} )
+            </when>
+        </choose>
+        ORDER BY e.type desc
+        LIMIT 1
+    </select>
+
+
+    <select id="queryTemplateById" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplate">
+        SELECT
+	        e.*,
+	        JSON_UNQUOTE(JSON_EXTRACT(li.text, '$.zs')) templateName
+        FROM
+        rcs_tournament_template e
+        LEFT JOIN standard_sport_tournament t ON e.type_val = t.id
+        LEFT JOIN rcs_language_internation li ON li.name_code = t.name_code
+        WHERE
+        e.id = #{id}
+    </select>
+
+    <select id="querySoldMatch" resultType="com.panda.sport.rcs.pojo.RcsStandardSportMarketSell">
+        SELECT
+        sell.*
+        FROM
+        rcs_standard_sport_market_sell sell,
+        standard_match_info info
+        WHERE
+        sell.match_info_id = info.id
+        AND info.sport_id=#{sportId}
+        AND (sell.pre_trader_id != '' OR sell.live_trader_id != '')
+        <if test="matchId != null">
+            AND info.id=#{matchId}
+        </if>
+        <if test="matchId == null">
+            AND info.begin_time &gt; unix_timestamp(now())* 1000 AND info.begin_time &lt; 1609430400000
+        </if>
+    </select>
+
+    <select id="queryLevelTempByMatchTemp" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplate">
+        SELECT
+        temp.*
+        FROM
+        rcs_tournament_template temp,
+        ( SELECT t.copy_template_id FROM rcs_tournament_template t WHERE t.id = #{id} ) a
+        WHERE
+        temp.id = a.copy_template_id
+    </select>
+
+    <select id="queryTemplateSourceByMatchId" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplate">
+        SELECT
+        a.type_val,
+        ( SELECT b.type_val FROM rcs_tournament_template b WHERE b.sport_id=#{param.sportId} and type=1 AND a.match_type
+        = #{param.matchType} and b.id = a.copy_template_id ) templateName
+        FROM
+        rcs_tournament_template a
+        WHERE
+        a.sport_id = #{param.sportId}
+        AND a.type = 3
+        AND a.match_type = #{param.matchType}
+        AND a.type_val IN
+        <foreach collection="matchIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="queryBasketballMatchTemplate" resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplate">
+        SELECT
+        t.*
+        FROM
+        rcs_tournament_template t,
+        standard_match_info s
+        WHERE
+        t.type_val = s.id
+        AND t.sport_id = 2
+        AND type = 3
+        AND s.begin_time &gt; unix_timestamp(NOW()) * 1000 - 1000 * 60 * 60 * 2
+        <if test="matchId != null">
+            AND s.id = #{matchId}
+        </if>
+    </select>
+    <select id="queryGamePlay" resultType="java.lang.String">
+    SELECT
+        t.market_category_id
+    FROM
+        rcs_market_category_set_relation t
+        INNER JOIN rcs_market_category_set t1 ON t1.id = t.market_category_set_id
+    WHERE
+      t1.sport_id=#{sportId} and t.market_category_set_id=#{categorySetId};
+    </select>
+    
+    <select id="getTemplateNameForMatch" resultType="com.panda.sport.rcs.pojo.dto.TemplateNameForMatchDto">
+	  	SELECT 
+	  		IF(type1.type = 1,type1.type_val,null) levelNum,type1.type,type1.Template_name templateName, type3.type_val matchId 
+	  	FROM  Rcs_Tournament_Template type1 
+		LEFT JOIN Rcs_Tournament_Template type3 ON type3.copy_template_id = type1.id 
+			WHERE type3.type = 3 AND type3.Match_Type = #{matchTypeTemplate}
+			AND type1.Match_Type = #{matchTypeTemplate} and type3.sport_id = #{sportId}
+			AND type3.Type_Val IN
+			<foreach collection="matchIds" item="item" index="index" open="(" close=")" separator=",">
+            	#{item}
+        	</foreach>
+    </select>
+</mapper>

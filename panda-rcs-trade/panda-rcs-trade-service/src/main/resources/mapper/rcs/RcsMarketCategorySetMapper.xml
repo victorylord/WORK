@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.MarketCategorySetMapper">
+    <!--start-->
+    <select id="findCategorySetList" resultType="com.panda.sport.rcs.pojo.RcsMarketCategorySet">
+        <![CDATA[
+            SELECT
+                rmcs.id,
+                rmcs.sport_id as sportId,
+                rmcs.type,
+                rmcs.name,
+                rmcs.tournament_level as tournamentLevel,
+                rmcs.order_no as orderNo        ,
+                IFNULL(rmcs.return_rate,0) as returnRate,
+                rmcs.status          ,
+                rmcs.remark          ,
+                IFNULL(t.marketCategoryCount,0)  marketCategoryCount,
+                rmcs.create_time as createTime     ,
+                rmcs.modify_time as modifyTime,
+                rmcs.display_sort as displaySort,
+                rmcs.name_code as nameCode,
+                rmcs.period as period
+        FROM rcs_market_category_set rmcs
+        LEFT JOIN (
+        select
+
+                rcs.id,
+                t.marketCategoryCount,
+                rcs.sport_id
+                from rcs_market_category_set rcs,
+                (SELECT id,market_category_set_id,count(1) as marketCategoryCount
+                FROM rcs_market_category_set_relation rel
+                GROUP BY rel.market_category_set_id) t
+                where rcs.id=t.market_category_set_id
+                )  t on t.id=rmcs.id
+         ]]>
+        where 1=1
+        <if test="set.id != null">
+            and rmcs.id=#{set.id}
+        </if>
+        <if test="set.sportId != null">
+            and rmcs.sport_id=#{set.sportId}
+        </if>
+        <if test="set.name != null">
+            and rmcs.name=#{set.name}
+        </if>
+        <if test="set.status != null">
+            and rmcs.status=#{set.status}
+        </if>
+        <if test="set.type != null">
+            and rmcs.type=#{set.type}
+        </if>
+        order by rmcs.type desc,rmcs.order_no asc,rmcs.return_rate desc
+    </select>
+    <!--end-->
+    <select id="findPageCategorySetList" resultType="com.panda.sport.rcs.pojo.RcsMarketCategorySet">
+        <![CDATA[
+            SELECT
+            rmcs.id,
+            rmcs.sport_id as sportId,
+            rmcs.type,
+            rmcs.name,
+            rmcs.tournament_level as tournamentLevel,
+            rmcs.order_no as orderNo        ,
+            IFNULL(rmcs.return_rate,0) as returnRate,
+            rmcs.status          ,
+            rmcs.remark          ,
+            IFNULL(t.marketCategoryCount,0)  marketCategoryCount,
+            rmcs.create_time as createTime     ,
+            rmcs.modify_time as modifyTime,
+            rmcs.display_sort,
+            rmcs.name_code,
+            rmcs.period
+        FROM rcs_market_category_set rmcs
+        LEFT JOIN (
+        select
+            rcs.id,
+            t.marketCategoryCount
+            from rcs_market_category_set rcs,
+            (SELECT group_concat(id)as id,market_category_set_id,count(1) as marketCategoryCount
+            FROM rcs_market_category_set_relation rel
+            GROUP BY rel.market_category_set_id) t
+            where rcs.id=t.market_category_set_id
+            )  t on t.id=rmcs.id
+         ]]>
+        where 1=1
+        <if test="set.id != null">
+            and rmcs.id=#{set.id}
+        </if>
+        <if test="set.sportId != null">
+            and rmcs.sport_id=#{set.sportId}
+        </if>
+        <if test="set.name != null">
+            and rmcs.name=#{set.name}
+        </if>
+        <if test="set.status != null">
+            and rmcs.status=#{set.status}
+        </if>
+        <if test="set.type != null">
+            and rmcs.type=#{set.type}
+        </if>
+        order by rmcs.type desc,rmcs.order_no asc,rmcs.return_rate desc
+    </select>
+
+
+    <update id="updateCategorySet" parameterType="com.panda.sport.rcs.pojo.RcsMarketCategorySet">
+        UPDATE rcs_market_category_set SET
+        sport_id=#{sportId},
+        type=#{type},
+        `name`=#{name},
+        tournament_level=#{tournamentLevel},
+        order_no=#{orderNo},
+        return_rate=#{returnRate},
+        `status`=#{status},
+        remark=#{remark},
+        modify_time=#{modifyTime},
+        display_sort=#{displaySort},
+        name_code=#{nameCode},
+        period=#{period}
+        WHERE id=#{id}
+    </update>
+
+    <insert id="addMarketCategorySet" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="com.panda.sport.rcs.pojo.RcsMarketCategorySet">
+        INSERT INTO
+        rcs_market_category_set(sport_id,`type`,`name`,tournament_level,order_no,return_rate,`status`,remark,create_time,modify_time,display_sort,name_code,period)
+        VALUES(
+        #{sportId},
+        #{type},
+        #{name},
+        #{tournamentLevel},
+        <choose>
+            <when test="type == 0 or type == ''">
+                (select maxNumber from (select IFNULL((select max(order_no) from rcs_market_category_set WHERE
+                type=0),0)+1 as maxNumber ) a),
+            </when>
+            <otherwise>
+                #{orderNo},
+            </otherwise>
+        </choose>
+        #{returnRate},
+        #{status},
+        #{remark},
+        #{createTime},
+        #{modifyTime},
+        #{displaySort},
+        #{nameCode},
+        #{period}
+        )
+    </insert>
+
+
+    <select id="findStandardSportMarketCategoryList"
+            parameterType="com.panda.sport.rcs.pojo.StandardSportMarketCategory"
+            resultType="com.panda.sport.rcs.pojo.StandardSportMarketCategory">
+        select
+        `id` ,
+        `sport_id` ,
+        `type` ,
+        `type_identify` ,
+        `name_code` ,
+        `status` ,
+        `multi_market` ,
+        `order_no` ,
+        `data_formate` ,
+        `description` ,
+        `remark` ,
+        `create_time` ,
+        `modify_time`
+        from standard_sport_market_category
+        where 1=1
+        <if test="id != null">
+            and id=#{id}
+        </if>
+        <if test="sportId != null">
+            and sport_id=#{sportId}
+        </if>
+        <if test="type != null">
+            and type=#{type}
+        </if>
+        <if test="nameCode != null">
+            and name_code=#{nameCode}
+        </if>
+        <if test="status != null">
+            and status=#{status}
+        </if>
+        <if test="multiMarket != null">
+            and multi_market=#{multiMarket}
+        </if>
+        ORDER BY order_no asc
+    </select>
+
+    <select id="findMarketCategoryContent" parameterType="Integer"
+            resultType="com.panda.sport.rcs.pojo.StandardSportMarketCategory">
+        select
+        `id` ,
+        `sport_id` ,
+        `type` ,
+        `type_identify` ,
+        `name_code` ,
+        `status` ,
+        `multi_market` ,
+        `order_no` ,
+        `data_formate` ,
+        `description` ,
+        `remark` ,
+        `create_time` ,
+        `modify_time`
+        from standard_sport_market_category cat
+        where cat.id in(
+        SELECT rel.market_category_id from rcs_market_category_set mcs
+        LEFT JOIN rcs_market_category_set_relation rel
+        on mcs.id=rel.market_category_set_id
+        where mcs.id=#{id})
+        ORDER BY cat.order_no asc
+    </select>
+
+    <select id="findPandaMarketCategoryId" parameterType="Long" resultType="Map">
+        SELECT rmcs.sport_id,rel.id as relId,rel.market_category_set_id as marketCategorySetId,rel.market_category_id as
+        marketCategoryId ,rel.order_no as orderNo from rcs_market_category_set rmcs
+        RIGHT JOIN rcs_market_category_set_relation rel on rel.market_category_set_id=rmcs.id
+        WHERE 1=1
+        <if test="id != null and id > 0">
+            and rmcs.id=#{id}
+        </if>
+        ORDER BY rel.order_no asc
+    </select>
+
+    <select id="findMarketCategoryList" parameterType="List" resultType="Map">
+        select
+        category.id,
+        rel.market_category_set_id,
+        category.sport_id,
+        category.type,
+        category.type_identify,
+        category.name_code,
+        category.status,
+        category.multi_market,
+        category.order_no,
+        category.data_formate,
+        category.description,
+        category.remark,
+        category.create_time,
+        category.modify_time
+        from rcs_market_category_set_relation rel
+        LEFT JOIN standard_sport_market_category category ON category.id=rel.market_category_id
+        where rel.market_category_set_id in
+        <foreach item="idList" index="index" collection="list" open="(" separator="," close=")">
+            #{idList}
+        </foreach>
+    </select>
+
+    <select id="findMarketCategoryListAndNames" parameterType="List" resultType="com.panda.sport.rcs.pojo.bo.FindMarketCategoryListAndNamesBO">
+        SELECT
+        *
+        FROM
+        (
+        select
+        rel.market_category_set_id marketCategorySetId,
+        category.category_id id,
+        category.sport_id sportId,
+        category.name_code nameCode,
+        li.text,
+        row_number() over ( PARTITION BY category.name_code ORDER BY category.crt_time DESC ) AS plus_aux
+        from standard_sport_market_category_ref category
+        LEFT JOIN rcs_market_category_set_relation rel  on category.category_id=rel.market_category_id
+        left join rcs_language_internation li on category.name_code = li.name_code
+       where category.sport_id=#{sportId}
+        <if test="list != null and list.size() != 0">
+            and rel.market_category_set_id in
+            <foreach item="idList" index="index" collection="list" open="(" separator="," close=")">
+                #{idList}
+            </foreach>
+        </if>
+        ) ot
+        WHERE
+        ot.plus_aux =1
+    </select>
+
+    <!-- 根据玩法id查询所在玩法集-->
+    <select id="findMarketCategoryListByPlayId" resultType="com.panda.sport.rcs.pojo.RcsMarketCategorySet">
+        select
+        category.id as id,category.name as name
+        from rcs_market_category_set_relation rel
+        JOIN rcs_market_category_set category ON category.id=rel.market_category_set_id
+        where category.`status` = 2
+        AND rel.market_category_id = #{id}
+        AND category.`type` = 1
+    </select>
+
+    <!--查询出所有风控类型的玩法id，所在的玩法集id-->
+    <select id="findWindControlTypeAll" resultType="Map">
+        SELECT
+            rcs.id as marketCategorySetId,
+            rcs.type,
+            t.market_category_id as marketCategoryId
+        FROM
+            rcs_market_category_set rcs,
+            ( SELECT id, market_category_set_id,market_category_id FROM rcs_market_category_set_relation rel ) t
+        WHERE
+            rcs.id = t.market_category_set_id
+            and rcs.type=1
+    </select>
+
+    <!--查询当前玩法集下的玩法 是否已经存在其它风控型玩法集下了-->
+    <select id="findIsExistWindControlSet" parameterType="Integer" resultType="Map">
+        select rmcset.id from rcs_market_category_set rmcset
+        RIGHT JOIN (
+        select rel.market_category_set_id from rcs_market_category_set_relation rel
+        RIGHT JOIN (
+        SELECT rel.market_category_id from rcs_market_category_set rmcs
+        LEFT JOIN rcs_market_category_set_relation rel on rel.market_category_set_id=rmcs.id
+        WHERE rmcs.id=#{id}
+        ) t on t.market_category_id =rel.market_category_id
+        ) t1 on rmcset.id=t1.market_category_set_id
+        where rmcset.type=1
+        and sport_id = #{sportId}
+        and rmcset.id!=#{id}
+    </select>
+
+    <!--根据玩法集ID 移除玩法-->
+    <delete id="deleteCategorySetRelation" parameterType="Long">
+        DELETE FROM rcs_market_category_set_relation
+        WHERE id in (SELECT id FROM(
+        SELECT id from rcs_market_category_set_relation WHERE market_category_set_id =#{id}
+        ) t)
+    </delete>
+    <!--根据玩法集id 获取玩法集下的所有玩法国际话；1：获取玩法，2：获取国际化-->
+    <select id="findLanguageByCategorySetId" parameterType="Long" resultType="Map">
+        SELECT play.category_id as playid,lang.text,"" remark,s.sport_id
+        from rcs_market_category_set_relation rel
+        LEFT JOIN rcs_market_category_set s ON s.id = rel.market_category_set_id
+        LEFT JOIN standard_sport_market_category_ref play on play.category_id = rel.market_category_id and play.sport_id
+        = s.sport_id
+        LEFT JOIN Rcs_language_internation lang on play.name_code= lang.name_code WHERE play.category_id > 0 and rel.market_category_set_id=#{id}
+    </select>
+
+    <!--根据玩法集id 获取玩法集下的所有玩法国际话；1：获取玩法，2：获取国际化-->
+    <select id="findLanguageByCategorySetId2" parameterType="Long" resultType="Map">
+        SELECT 
+        	play.category_id as playid, JSON_UNQUOTE(JSON_EXTRACT ( lang.text, '$.en' )) text,
+			"" remark,s.sport_id,'en' language_type
+        FROM rcs_market_category_set_relation rel
+             LEFT JOIN rcs_market_category_set s ON s.id = rel.market_category_set_id
+             LEFT JOIN standard_sport_market_category_ref play 
+             	ON play.category_id = rel.market_category_id and play.sport_id = s.sport_id
+             LEFT JOIN rcs_language_internation lang ON play.name_code = lang.name_code
+         WHERE play.category_id > 0 and lang.text IS NOT NULL AND lang.text != '' AND rel.market_category_set_id=#{id}
+
+	UNION ALL
+
+ 	 SELECT 
+        	play.category_id as playid,JSON_UNQUOTE(JSON_EXTRACT ( lang.text, '$.zs' )) text,
+			"" remark,s.sport_id,'zs' language_type
+        FROM rcs_market_category_set_relation rel
+             LEFT JOIN rcs_market_category_set s ON s.id = rel.market_category_set_id
+             LEFT JOIN standard_sport_market_category_ref play 
+             	ON play.category_id = rel.market_category_id and play.sport_id = s.sport_id
+             LEFT JOIN rcs_language_internation lang ON play.name_code = lang.name_code
+         WHERE play.category_id > 0 and lang.text IS NOT NULL AND lang.text != '' AND rel.market_category_set_id = #{id}
+    </select>
+
+    <!--根据玩法ID 查询抽水-->
+    <select id="findMarginByPlayId" parameterType="Long"
+            resultType="com.panda.sport.rcs.pojo.RcsMarketCategorySetMargin">
+        SELECT
+        margin.id,
+        margin.time_frame,
+        margin.margin,
+        margin.market_category_set_id,
+        margin.create_time,
+        margin.modify_time
+        FROM
+        rcs_market_category_set category,
+        rcs_market_category_set_margin margin,
+        rcs_market_category_set_relation relation
+        WHERE category.id = margin.market_category_set_id
+        AND category.id = relation.market_category_set_id
+        AND category.type = 1
+        AND category.sport_id = #{sportId}
+        AND relation.market_category_id = #{id}
+    </select>
+
+    <select id="queryAllCategorySetBySportId" parameterType="Map" resultType="Map">
+        SELECT * FROM rcs_market_category_set s
+        WHERE s.sport_id = #{sportId} AND s.status = 2 AND s.type = '0'
+        ORDER BY s.order_no
+    </select>
+
+    <select id="queryCategoryListBySetId" parameterType="Map" resultType="Map">
+		SELECT r.category_id,JSON_UNQUOTE(JSON_EXTRACT ( i.text, '$.zs' )) `text` FROM rcs_market_category_set s
+	        LEFT JOIN rcs_market_category_set_relation n ON n.market_category_set_id = s.id
+	        LEFT JOIN standard_sport_market_category_ref r ON r.sport_id = s.sport_id AND r.category_id = n.market_category_id
+	        LEFT JOIN standard_sport_market_category c ON c.id = r.category_id
+	        LEFT JOIN rcs_language_internation i ON i.name_code = r.name_code
+        WHERE s.id = #{id} AND r.`status` = 1 AND c.`status` = 1
+        	ORDER BY r.order_no
+    </select>
+
+    <select id="queryAllCategoryListBySportId" parameterType="Map" resultType="Map">
+        SELECT
+        DISTINCT play.id as playId
+        FROM
+        rcs_market_category_set category,
+        rcs_market_category_set_relation rel,
+        standard_sport_market_category play,
+        standard_sport_market_category_ref r,
+        standard_sport_market_category c
+        WHERE
+        category.id = rel.market_category_set_id
+        AND rel.market_category_id = play.id
+        AND r.category_id = rel.market_category_id
+        AND c.id = r.category_id
+        AND r.status = 1
+        AND c.status = 1
+        and category.sport_id=#{sportId}
+        AND category.type = #{type}
+        AND category.status =#{status}
+    </select>
+
+    <select id="queryAllCategorySetList" parameterType="Map" resultType="com.panda.sport.rcs.vo.categoryset.CategorySetVo">
+        SELECT
+            r.market_category_id category_id,
+            i.text,
+            (select g.text from rcs_language_internation g where g.name_code = s.name_code) name_code,
+            s.name
+        FROM
+            rcs_market_category_set_relation r
+                LEFT JOIN rcs_market_category_set s ON r.market_category_set_id = s.id AND s.type = '0'
+                LEFT JOIN standard_sport_market_category c ON r.market_category_id = c.id
+                LEFT JOIN standard_sport_market_category_ref f ON c.id = f.category_id and f.sport_id=#{sportId}
+                LEFT JOIN rcs_language_internation i ON i.name_code = f.name_code
+        WHERE
+            r.market_category_id IN (${plays})
+          AND s.sport_id = #{sportId}
+    </select>
+
+    <select id="selectCategoryCons" parameterType="Long" resultType="com.panda.sport.rcs.vo.CategoryConVo">
+        SELECT
+        rmcs.id,
+        rmcs.sport_id,
+        rmcs.type,
+        rmcs.`name`,
+        rmcs.display_sort,
+        CONCAT('[',GROUP_CONCAT(rmcsr.market_category_id),']') categoryIds
+        FROM
+        rcs_market_category_set rmcs
+        LEFT JOIN rcs_market_category_set_relation rmcsr ON rmcs.id = rmcsr.market_category_set_id
+        WHERE
+        rmcs.`status` = 2
+        AND rmcs.type = 1
+        <if test="sportId != null and sportId !=''">
+            AND rmcs.sport_id = #{sportId}
+        </if>
+        GROUP BY rmcs.id
+    </select>
+    <select id="selectRcsMarketCategorySet" resultType="com.panda.sport.rcs.vo.RcsMarketCategorySetVo">
+        SELECT id,name FROM rcs_market_category_set WHERE sport_id=#{sportId} AND type=1 AND status=2 ORDER BY display_sort
+    </select>
+
+    <select id="selectRcsMarketCategorySetByParam" resultType="com.panda.sport.rcs.vo.RcsMarketCategorySetVo">
+        SELECT rmcs.id,rmcs.name,rli.text `names` FROM rcs_market_category_set rmcs
+        LEFT JOIN rcs_language_internation rli on rmcs.name_code = rli.name_code
+        WHERE sport_id=#{sportId} AND type=#{type} AND status=2 ORDER BY display_sort
+    </select>
+
+    <select id="selectPlayIdList" resultType="java.lang.Long">
+        SELECT
+            DISTINCT r.market_category_id
+        FROM
+            rcs_trading_assignment a
+            LEFT JOIN rcs_market_category_set s ON a.play_collection_id=s.id
+            LEFT JOIN rcs_market_category_set_relation  r ON s.id=r.market_category_set_id
+        WHERE
+            a.`status` = 1
+            AND a.match_type =#{matchType}
+            AND a.user_id=#{userId}
+            AND a.match_id=#{matchId}
+            AND s.sport_id=#{sportId}
+            AND s.type=1
+            AND s.`status`=2
+    </select>
+
+    <select id="selectPlaySetList" resultType="java.lang.Long">
+        SELECT
+            DISTINCT a.play_collection_id
+        FROM
+            rcs_trading_assignment a
+            LEFT JOIN rcs_market_category_set s ON a.play_collection_id=s.id
+            LEFT JOIN rcs_market_category_set_relation  r ON s.id=r.market_category_set_id
+        WHERE
+            a.`status` = 1
+            AND a.match_type =#{matchType}
+            AND a.user_id=#{userId}
+            AND a.match_id=#{matchId}
+            AND s.sport_id=#{sportId}
+            AND s.type=1
+            AND s.`status`=2
+        </select>
+
+    <select id="selectPlayIdListByPlaySet" resultType="java.lang.Long">
+        SELECT DISTINCT
+        r.market_category_id
+        FROM
+            rcs_market_category_set s
+            LEFT JOIN rcs_market_category_set_relation r ON s.id = r.market_category_set_id
+        WHERE
+        s.sport_id = #{sportId}
+        AND s.type =1
+        AND `status`=2
+    </select>
+
+    <select id="selectPlaySetListByPlaySet" resultType="java.lang.Long">
+        SELECT DISTINCT
+        r.market_category_set_id
+        FROM
+            rcs_market_category_set s
+            LEFT JOIN rcs_market_category_set_relation r ON s.id = r.market_category_set_id
+        WHERE
+        s.sport_id = #{sportId}
+        AND s.type =1
+        AND `status`=2
+    </select>
+
+    <select id="findMarketCategoryListAndNamesPerformance"
+            resultType="com.panda.sport.rcs.pojo.bo.FindMarketCategoryListAndNamesBO">
+        SELECT
+        rmcs.id marketCategorySetId,
+        rmcsr.market_category_id id,
+        rmcs.sport_id sportId,
+        rli.text
+        FROM
+        rcs_market_category_set rmcs
+        LEFT JOIN rcs_market_category_set_relation rmcsr ON rmcsr.market_category_set_id = rmcs.id
+        LEFT JOIN standard_sport_market_category_ref ssmcr ON ssmcr.category_id = rmcsr.market_category_id and ssmcr.sport_id =#{sportId}
+        LEFT JOIN rcs_language_internation rli on rli.name_code = ssmcr.name_code
+        WHERE
+        rmcs.sport_id = #{sportId}
+        AND rmcs.type = 2
+        <if test="list != null and list.size() != 0">
+            and rmcs.market_category_set_id in
+            <foreach item="idList" index="index" collection="list" open="(" separator="," close=")">
+                #{idList}
+            </foreach>
+        </if>
+    </select>
+</mapper>

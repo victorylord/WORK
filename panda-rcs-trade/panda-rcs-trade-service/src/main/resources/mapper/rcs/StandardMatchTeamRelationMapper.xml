@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.StandardMatchTeamRelationMapper">
+    <select id="selectByMatchId" resultType="Map">
+        SELECT standard_match_info.id, standard_match_team_relation.standard_team_id,standard_match_team_relation.match_position,standard_sport_team.name_code,
+			JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')) text
+			FROM standard_match_info
+			LEFT JOIN standard_match_team_relation ON standard_match_info.id=standard_match_team_relation.standard_match_id
+			LEFT JOIN standard_sport_team ON standard_sport_team.id=standard_match_team_relation.standard_team_id
+			LEFT JOIN rcs_language_internation l ON l.name_code=standard_sport_team.name_code
+		WHERE standard_match_info.id=#{macthId}
+    </select>
+</mapper>

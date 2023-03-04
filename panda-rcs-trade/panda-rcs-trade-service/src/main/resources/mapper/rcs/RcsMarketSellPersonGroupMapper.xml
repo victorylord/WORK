@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMarketSellPersonGroupMapper">
+
+    <select id="selectHistoryPerson" resultType="com.panda.sport.rcs.bean.RcsMarketSellPersonGroup">
+        SELECT
+        *
+        FROM
+        rcs_market_sell_person_group r
+        WHERE
+        r.user_id = #{param.userId}
+        AND r.sport_id = #{param.sportId}
+        AND r.is_valid = 1
+        <if test="param.persons !=null and param.persons !=''">
+            AND r.person_id NOT IN (${param.persons})
+        </if>
+    </select>
+
+    <insert id="batchInsertOrUpdate" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        insert into rcs_market_sell_person_group(user_id, sport_id, person_id, is_valid,create_time,update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.userId}, #{item.sportId}, #{item.personId},#{item.isValid},#{item.createTime},#{item.updateTime})
+        </foreach>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            is_valid = VALUES (is_valid)
+        </trim>
+    </insert>
+</mapper>

@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsLogFomatMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsLogFomat">
+    <!--@mbg.generated-->
+    <!--@Table rcs_log_fomat-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="log_type" jdbcType="VARCHAR" property="logType" />
+    <result column="old_val" jdbcType="VARCHAR" property="oldVal" />
+    <result column="uid" jdbcType="VARCHAR" property="uid" />
+    <result column="log_desc" jdbcType="VARCHAR" property="logDesc" />
+    <result column="dynamic_bean" jdbcType="VARCHAR" property="dynamicBean" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="log_id" jdbcType="VARCHAR" property="logId" />
+    <result column="new_val" jdbcType="VARCHAR" property="newVal" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="ctr_time" jdbcType="TIMESTAMP" property="ctrTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, log_type, old_val, `uid`, log_desc, dynamic_bean, `name`, log_id, new_val, create_time, 
+    ctr_time
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update rcs_log_fomat
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="log_type = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.logType,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="old_val = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.oldVal,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`uid` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.uid,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="log_desc = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.logDesc,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="dynamic_bean = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.dynamicBean,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`name` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.name,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="log_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.logId,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="new_val = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.newVal,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="create_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.createTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="ctr_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.ctrTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into rcs_log_fomat
+    (log_type, old_val, `uid`, log_desc, dynamic_bean, `name`, log_id, new_val, create_time, 
+      ctr_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.logType,jdbcType=VARCHAR}, #{item.oldVal,jdbcType=VARCHAR}, #{item.uid,jdbcType=VARCHAR}, 
+        #{item.logDesc,jdbcType=VARCHAR}, #{item.dynamicBean,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, 
+        #{item.logId,jdbcType=VARCHAR}, #{item.newVal,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, 
+        now())
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.RcsLogFomat" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into rcs_log_fomat
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      log_type,
+      old_val,
+      `uid`,
+      log_desc,
+      dynamic_bean,
+      `name`,
+      log_id,
+      new_val,
+      create_time,
+      ctr_time,
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      #{logType,jdbcType=VARCHAR},
+      #{oldVal,jdbcType=VARCHAR},
+      #{uid,jdbcType=VARCHAR},
+      #{logDesc,jdbcType=VARCHAR},
+      #{dynamicBean,jdbcType=VARCHAR},
+      #{name,jdbcType=VARCHAR},
+      #{logId,jdbcType=VARCHAR},
+      #{newVal,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP},
+      #{ctrTime,jdbcType=TIMESTAMP},
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      log_type = #{logType,jdbcType=VARCHAR},
+      old_val = #{oldVal,jdbcType=VARCHAR},
+      `uid` = #{uid,jdbcType=VARCHAR},
+      log_desc = #{logDesc,jdbcType=VARCHAR},
+      dynamic_bean = #{dynamicBean,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      log_id = #{logId,jdbcType=VARCHAR},
+      new_val = #{newVal,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      ctr_time = #{ctrTime,jdbcType=TIMESTAMP},
+    </trim>
+  </insert>
+  <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.RcsLogFomat" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into rcs_log_fomat
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="logType != null">
+        log_type,
+      </if>
+      <if test="oldVal != null">
+        old_val,
+      </if>
+      <if test="uid != null">
+        `uid`,
+      </if>
+      <if test="logDesc != null">
+        log_desc,
+      </if>
+      <if test="dynamicBean != null">
+        dynamic_bean,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="logId != null">
+        log_id,
+      </if>
+      <if test="newVal != null">
+        new_val,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="ctrTime != null">
+        ctr_time,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="logType != null">
+        #{logType,jdbcType=VARCHAR},
+      </if>
+      <if test="oldVal != null">
+        #{oldVal,jdbcType=VARCHAR},
+      </if>
+      <if test="uid != null">
+        #{uid,jdbcType=VARCHAR},
+      </if>
+      <if test="logDesc != null">
+        #{logDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="dynamicBean != null">
+        #{dynamicBean,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="logId != null">
+        #{logId,jdbcType=VARCHAR},
+      </if>
+      <if test="newVal != null">
+        #{newVal,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ctrTime != null">
+        #{ctrTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="logType != null">
+        log_type = #{logType,jdbcType=VARCHAR},
+      </if>
+      <if test="oldVal != null">
+        old_val = #{oldVal,jdbcType=VARCHAR},
+      </if>
+      <if test="uid != null">
+        `uid` = #{uid,jdbcType=VARCHAR},
+      </if>
+      <if test="logDesc != null">
+        log_desc = #{logDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="dynamicBean != null">
+        dynamic_bean = #{dynamicBean,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="logId != null">
+        log_id = #{logId,jdbcType=VARCHAR},
+      </if>
+      <if test="newVal != null">
+        new_val = #{newVal,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ctrTime != null">
+        ctr_time = #{ctrTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="getChampionMatchOperateLogs" parameterType="java.lang.String" resultType="com.panda.sport.rcs.pojo.RcsLogFomat">
+  select
+    rlf.id,
+    rlf.log_type logType,
+    rlf.old_val oldVal,
+    rlf.`uid`,
+    rlf.log_desc logDesc,
+    rlf.dynamic_bean dynamicBean,
+    rlf.`name`,
+    rlf.log_id logId,
+    rlf.new_val newVal,
+    rlf.create_time createTime,
+    rlf.ctr_time ctrTime
+  from rcs_log_fomat rlf
+  where   rlf.obj_id_virtual =#{matchId}
+  ORDER BY rlf.ctr_time desc
+  </select>
+
+
+</mapper>

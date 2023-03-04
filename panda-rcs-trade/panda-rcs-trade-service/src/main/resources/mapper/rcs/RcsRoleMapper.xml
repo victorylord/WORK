@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsRoleMapper">
+    <select id="selectByUrl" resultType="com.panda.sport.rcs.pojo.RcsRole">
+SELECT rcs_role.role_code FROM rcs_resource JOIN rcs_role_res ON rcs_resource.res_id=rcs_role_res.res_id JOIN rcs_role ON rcs_role.role_id=rcs_role_res.role_id WHERE rcs_resource.res_val=#{url}
+    </select>
+    <select id="selectByUserId" resultType="com.panda.sport.rcs.pojo.RcsRole">
+SELECT * FROM rcs_role JOIN rcs_user_role ON rcs_role.role_id=rcs_user_role.role_id JOIN sys_user ON sys_user.id=rcs_user_role.user_id WHERE sys_user.id=#{id}
+    </select>
+</mapper>

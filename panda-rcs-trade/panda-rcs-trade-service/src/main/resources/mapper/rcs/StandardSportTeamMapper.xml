@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.StandardSportTeamMapper">
+    <select id="selectTeamsByMatchId" parameterType="Long" resultType="com.panda.sport.rcs.vo.SportTeam">
+SELECT
+	smtr.match_position,
+	sst.*
+FROM
+	standard_match_info smi
+	INNER JOIN standard_match_team_relation smtr ON smtr.standard_match_id = smi.id
+	INNER JOIN standard_sport_team sst ON sst.id = smtr.standard_team_id
+WHERE
+	smi.id = #{matchId}
+
+    </select>
+
+	<select id="queryTeamByMatchIds" resultType="com.panda.sport.rcs.vo.MatchTeamLinkVo">
+		SELECT
+		       standard_match_id matchId,
+			   standard_team_id teamId,
+		       match_position homeAway
+		FROM standard_match_team_relation  WHERE standard_match_id IN
+		<foreach item="matchId" index="index" collection="matchIds" open="(" separator="," close=")">
+			#{ matchId }
+		</foreach>
+	</select>
+
+	<select id="queryTeamListByMatchId" resultType="com.panda.sport.rcs.pojo.MatchTeamInfo">
+		SELECT
+			smtr.match_position,
+			sst.name_code,
+			JSON_UNQUOTE(JSON_EXTRACT(rli.text, '$.zs')) text
+		FROM
+			standard_match_info smi
+				INNER JOIN standard_match_team_relation smtr ON smtr.standard_match_id = smi.id
+				INNER JOIN standard_sport_team sst ON sst.id = smtr.standard_team_id
+				INNER JOIN rcs_language_internation rli on rli.name_code = sst.name_code
+		WHERE
+			smi.id = #{matchId}
+	</select>
+
+</mapper>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMatchUserMemoRefMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsMatchUserMemoRef">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="memo_id" jdbcType="VARCHAR" property="memoId" />
+    <result column="standard_match_id" jdbcType="BIGINT" property="standardMatchId" />
+    <result column="trader_id" jdbcType="VARCHAR" property="traderId" />
+    <result column="read_status" jdbcType="TINYINT" property="readStatus" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, memo_id, standard_match_id, trader_id, read_status, create_time, update_time
+  </sql>
+
+</mapper>

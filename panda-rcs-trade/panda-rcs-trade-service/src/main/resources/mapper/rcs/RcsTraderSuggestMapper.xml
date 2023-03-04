@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsTraderSuggestMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsTraderSuggest">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="business_id" property="businessId" />
+        <result column="user_name" property="userName" />
+        <result column="business_name" property="businessName" />
+        <result column="trader_suggest" property="traderSuggest" />
+        <result column="trader_suggest_replenish" property="traderSuggestReplenish" />
+        <result column="create_time" property="createTime" />
+        <result column="proposer" property="proposer" />
+        <result column="risk_proces_type" property="riskProcesType" />
+        <result column="risk_proces_status" property="riskProcesStatus" />
+        <result column="risk_handler" property="riskHandler" />
+        <result column="risk_proces_time" property="riskProcesTime" />
+        <result column="risk_remark" property="riskRemark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, user_name, business_id, business_name, trader_suggest, trader_suggest_replenish, create_time, proposer,risk_proces_type, risk_proces_status, risk_handler, risk_proces_time, risk_remark
+    </sql>
+
+	 <select id="selectPage" resultType="com.panda.sport.rcs.pojo.dto.RcsTraderSuggestDto">
+        SELECT
+	         * 
+         FROM rcs_trader_suggest
+         <where>
+	        <if test="dto.userName != null and dto.userName != ''">
+	             AND user_name = #{dto.userName} OR user_id = #{dto.userName}
+	        </if>
+	        <if test="dto.businessId != null">
+	             AND business_id = #{dto.businessId}
+	        </if>
+	        <if test="dto.riskProcesStatus != null">
+	             AND risk_proces_status = #{dto.riskProcesStatus}
+	        </if>
+	        <if test="dto.businessName != null and dto.businessName != ''">
+	             AND business_name = #{dto.businessName}
+	        </if>
+	        <if test="dto.proposer != null and dto.proposer != ''">
+	             AND proposer = #{dto.proposer}
+	        </if>
+	        <if test="dto.traderSuggest != null">
+	             AND trader_suggest LIKE CONCAT('%', #{dto.traderSuggest}, '%')
+	        </if>
+	        <if test="dto.startTime != null">
+	             AND create_time >= #{dto.startTime}
+	        </if>
+	        <if test="dto.endTime != null">
+	             AND create_time &lt; #{dto.endTime}
+	        </if>
+         </where>
+        ORDER BY create_time DESC
+    </select>
+</mapper>

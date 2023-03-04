@@ -1,0 +1,43 @@
+HELP.md
+<<<<<<< HEAD
+target/
+!.mvn/wrapper/maven-wrapper.jar
+=======
+/target/
+target/
+.mvn/
+>>>>>>> panda-rcs-prereleasev1.0
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### VS Code ###
+.vscode/
+/logs
+/panda-rcs-group
+*.log
+/panda-rcs-mgr-risk/src/main/resources/bootstrap.yml
+/panda-rcs-websocket/src/main/resources/bootstrap.yml
+*.1

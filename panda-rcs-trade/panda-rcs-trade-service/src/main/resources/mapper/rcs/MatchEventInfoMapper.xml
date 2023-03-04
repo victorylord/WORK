@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.MatchEventInfoMapper">
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.MatchEventInfo">
+        <!--@mbg.generated-->
+        <!--@Table match_event_info-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="sport_id" jdbcType="BIGINT" property="sportId"/>
+        <result column="canceled" jdbcType="TINYINT" property="canceled"/>
+        <result column="data_source_code" jdbcType="VARCHAR" property="dataSourceCode"/>
+        <result column="event_code" jdbcType="VARCHAR" property="eventCode"/>
+        <result column="event_time" jdbcType="BIGINT" property="eventTime"/>
+        <result column="extra_info" jdbcType="VARCHAR" property="extraInfo"/>
+        <result column="home_away" jdbcType="VARCHAR" property="homeAway"/>
+        <result column="match_period_id" jdbcType="BIGINT" property="matchPeriodId"/>
+        <result column="player1_id" jdbcType="BIGINT" property="player1Id"/>
+        <result column="player1_name" jdbcType="VARCHAR" property="player1Name"/>
+        <result column="player2_id" jdbcType="BIGINT" property="player2Id"/>
+        <result column="player2_name" jdbcType="VARCHAR" property="player2Name"/>
+        <result column="seconds_from_start" jdbcType="INTEGER" property="secondsFromStart"/>
+        <result column="standard_match_id" jdbcType="BIGINT" property="standardMatchId"/>
+        <result column="standard_team_id" jdbcType="BIGINT" property="standardTeamId"/>
+        <result column="t1" jdbcType="TINYINT" property="t1"/>
+        <result column="t2" jdbcType="TINYINT" property="t2"/>
+        <result column="third_event_id" jdbcType="VARCHAR" property="thirdEventId"/>
+        <result column="third_match_id" jdbcType="VARCHAR" property="thirdMatchId"/>
+        <result column="third_match_source_id" jdbcType="VARCHAR" property="thirdMatchSourceId"/>
+        <result column="third_team_id" jdbcType="VARCHAR" property="thirdTeamId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="modify_time" jdbcType="BIGINT" property="modifyTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, sport_id, canceled, data_source_code, event_code, event_time, extra_info, home_away,
+        match_period_id, player1_id, player1_name, player2_id, player2_name, seconds_from_start,
+        standard_match_id, standard_team_id, t1, t2, third_event_id, third_match_id, third_match_source_id,
+        third_team_id, remark, create_time, modify_time
+    </sql>
+    <update id="updateBatch" parameterType="java.util.List">
+        <!--@mbg.generated-->
+        update match_event_info
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="sport_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.sportId,jdbcType=BIGINT}
+                </foreach>
+            </trim>
+            <trim prefix="canceled = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.canceled,jdbcType=TINYINT}
+                </foreach>
+            </trim>
+            <trim prefix="data_source_code = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.dataSourceCode,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="event_code = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.eventCode,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="event_time = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.eventTime,jdbcType=BIGINT}
+                </foreach>
+            </trim>
+            <trim prefix="extra_info = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.extraInfo,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="home_away = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.homeAway,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="match_period_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.matchPeriodId,jdbcType=BIGINT}
+                </foreach>
+            </trim>
+            <trim prefix="player1_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.player1Id,jdbcType=BIGINT}
+                </foreach>
+            </trim>
+            <trim prefix="player1_name = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.player1Name,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="player2_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.player2Id,jdbcType=BIGINT}
+                </foreach>
+            </trim>
+            <trim prefix="player2_name = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.player2Name,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="seconds_from_start = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.secondsFromStart,jdbcType=INTEGER}
+                </foreach>
+            </trim>
+            <trim prefix="standard_match_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.standardMatchId,jdbcType=BIGINT}
+                </foreach>
+            </trim>
+            <trim prefix="standard_team_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.standardTeamId,jdbcType=BIGINT}
+                </foreach>
+            </trim>
+            <trim prefix="t1 = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.t1,jdbcType=TINYINT}
+                </foreach>
+            </trim>
+            <trim prefix="t2 = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.t2,jdbcType=TINYINT}
+                </foreach>
+            </trim>
+            <trim prefix="third_event_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.thirdEventId,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="third_match_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.thirdMatchId,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="third_match_source_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.thirdMatchSourceId,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="third_team_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.thirdTeamId,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="remark = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.remark,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="create_time = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.createTime,jdbcType=BIGINT}
+                </foreach>
+            </trim>
+            <trim prefix="modify_time = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.modifyTime,jdbcType=BIGINT}
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach close=")" collection="list" item="item" open="(" separator=", ">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into match_event_info
+        (id,sport_id, canceled, data_source_code, event_code, event_time, extra_info, home_away,
+        match_period_id, player1_id, player1_name, player2_id, player2_name, seconds_from_start,
+        standard_match_id, standard_team_id, t1, t2, third_event_id, third_match_id, third_match_source_id,
+        third_team_id, remark, create_time, modify_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id,jdbcType=BIGINT}, #{item.sportId,jdbcType=BIGINT}, #{item.canceled,jdbcType=TINYINT},
+            #{item.dataSourceCode,jdbcType=VARCHAR},
+            #{item.eventCode,jdbcType=VARCHAR}, #{item.eventTime,jdbcType=BIGINT}, #{item.extraInfo,jdbcType=VARCHAR},
+            #{item.homeAway,jdbcType=VARCHAR}, #{item.matchPeriodId,jdbcType=BIGINT}, #{item.player1Id,jdbcType=BIGINT},
+            #{item.player1Name,jdbcType=VARCHAR}, #{item.player2Id,jdbcType=BIGINT},
+            #{item.player2Name,jdbcType=VARCHAR},
+            #{item.secondsFromStart,jdbcType=INTEGER}, #{item.standardMatchId,jdbcType=BIGINT},
+            #{item.standardTeamId,jdbcType=BIGINT}, #{item.t1,jdbcType=TINYINT}, #{item.t2,jdbcType=TINYINT},
+            #{item.thirdEventId,jdbcType=VARCHAR}, #{item.thirdMatchId,jdbcType=VARCHAR},
+            #{item.thirdMatchSourceId,jdbcType=VARCHAR},
+            #{item.thirdTeamId,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR}, #{item.createTime,jdbcType=BIGINT},
+            #{item.modifyTime,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.MatchEventInfo"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into match_event_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            sport_id,
+            canceled,
+            data_source_code,
+            event_code,
+            event_time,
+            extra_info,
+            home_away,
+            match_period_id,
+            player1_id,
+            player1_name,
+            player2_id,
+            player2_name,
+            seconds_from_start,
+            standard_match_id,
+            standard_team_id,
+            t1,
+            t2,
+            third_event_id,
+            third_match_id,
+            third_match_source_id,
+            third_team_id,
+            remark,
+            create_time,
+            modify_time,
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            #{sportId,jdbcType=INTEGER},
+            #{canceled,jdbcType=TINYINT},
+            #{dataSourceCode,jdbcType=VARCHAR},
+            #{eventCode,jdbcType=VARCHAR},
+            #{eventTime,jdbcType=BIGINT},
+            #{extraInfo,jdbcType=VARCHAR},
+            #{homeAway,jdbcType=VARCHAR},
+            #{matchPeriodId,jdbcType=BIGINT},
+            #{player1Id,jdbcType=BIGINT},
+            #{player1Name,jdbcType=VARCHAR},
+            #{player2Id,jdbcType=BIGINT},
+            #{player2Name,jdbcType=VARCHAR},
+            #{secondsFromStart,jdbcType=INTEGER},
+            #{standardMatchId,jdbcType=BIGINT},
+            #{standardTeamId,jdbcType=BIGINT},
+            #{t1,jdbcType=TINYINT},
+            #{t2,jdbcType=TINYINT},
+            #{thirdEventId,jdbcType=VARCHAR},
+            #{thirdMatchId,jdbcType=VARCHAR},
+            #{thirdMatchSourceId,jdbcType=VARCHAR},
+            #{thirdTeamId,jdbcType=VARCHAR},
+            #{remark,jdbcType=VARCHAR},
+            #{createTime,jdbcType=BIGINT},
+            #{modifyTime,jdbcType=BIGINT},
+        </trim>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            <if test="id != null">
+                id = #{id,jdbcType=BIGINT},
+            </if>
+            sport_id = #{sportId,jdbcType=INTEGER},
+            canceled = #{canceled,jdbcType=TINYINT},
+            data_source_code = #{dataSourceCode,jdbcType=VARCHAR},
+            event_code = #{eventCode,jdbcType=VARCHAR},
+            event_time = #{eventTime,jdbcType=BIGINT},
+            extra_info = #{extraInfo,jdbcType=VARCHAR},
+            home_away = #{homeAway,jdbcType=VARCHAR},
+            match_period_id = #{matchPeriodId,jdbcType=BIGINT},
+            player1_id = #{player1Id,jdbcType=BIGINT},
+            player1_name = #{player1Name,jdbcType=VARCHAR},
+            player2_id = #{player2Id,jdbcType=BIGINT},
+            player2_name = #{player2Name,jdbcType=VARCHAR},
+            seconds_from_start = #{secondsFromStart,jdbcType=INTEGER},
+            standard_match_id = #{standardMatchId,jdbcType=BIGINT},
+            standard_team_id = #{standardTeamId,jdbcType=BIGINT},
+            t1 = #{t1,jdbcType=TINYINT},
+            t2 = #{t2,jdbcType=TINYINT},
+            third_event_id = #{thirdEventId,jdbcType=VARCHAR},
+            third_match_id = #{thirdMatchId,jdbcType=VARCHAR},
+            third_match_source_id = #{thirdMatchSourceId,jdbcType=VARCHAR},
+            third_team_id = #{thirdTeamId,jdbcType=VARCHAR},
+            remark = #{remark,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=BIGINT},
+            modify_time = #{modifyTime,jdbcType=BIGINT},
+        </trim>
+    </insert>
+
+    <select id="selectMatchEventInfoByMatchIdByFootball" resultType="com.panda.sport.rcs.vo.CustomizedEventBeanVo">
+        SELECT
+        i.event_code,
+        i.data_source_code,
+        i.source_type,
+        i.home_away,
+        i.sport_id,
+        i.event_time,
+        i.seconds_from_start currentTime,
+        t.event_name,
+        t.event_en_name,
+        t.event_type,
+        d.description,
+        i.t1,
+        i.t2,
+        i.canceled,
+        i.remark,
+        i.extra_info,
+        i.match_period_id
+        FROM
+        match_event_info i
+        LEFT JOIN rcs_match_event_type_info t ON i.event_code = t.event_code AND i.sport_id = t.sport_id
+        LEFT JOIN (SELECT * FROM system_item_dict WHERE parent_type_id=8) d ON i.extra_info=d.`value` AND i.sport_id=d.addition1
+        WHERE
+        i.standard_match_id = #{matchId}
+        <if test="unFilterEvents != null and unFilterEvents.size() > 0">
+            AND (i.event_code in
+            <foreach collection="unFilterEvents" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            or (i.event_code = 'match_status' and i.extra_info in ('7','31','100')))
+        </if>
+        <if test="eventTime != null">
+            <if test="sort == null or sort == 1">
+                AND i.event_time &lt;#{eventTime}
+            </if>
+            <if test="sort ==2">
+                AND i.event_time &gt;#{eventTime}
+            </if>
+        </if>
+        <if test="dataSource != null">
+            AND i.data_source_code = #{dataSource}
+        </if>
+        <if test="list != null and list.size()>0">
+            AND t.event_type IN
+            <foreach item="item" index="index" collection="list" open="("  close=")" separator=",">
+              #{item}
+            </foreach>
+        </if>
+        <if test="sort == null or sort == 1">
+            ORDER BY i.event_time DESC
+        </if>
+        <if test="sort ==2">
+            ORDER BY i.event_time ASC
+        </if>
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+        <if test="limit == null">
+            LIMIT 300
+        </if>
+    </select>
+
+    <select id="selectMatchEventInfoByMatchId" resultType="com.panda.sport.rcs.vo.CustomizedEventBeanVo">
+        SELECT
+        i.event_code,
+        i.data_source_code,
+        i.source_type,
+        i.home_away,
+        i.sport_id,
+        i.event_time,
+        i.seconds_from_start currentTime,
+        t.event_name,
+        t.event_en_name,
+        d.description,
+        i.t1,
+        i.t2,
+        i.canceled,
+        i.remark,
+        i.extra_info,
+        i.match_period_id
+        FROM
+        match_event_info i
+        LEFT JOIN match_event_type t ON i.event_code = t.event_code AND i.sport_id = t.sport_id
+        LEFT JOIN (SELECT * FROM system_item_dict WHERE parent_type_id=8) d ON i.extra_info=d.`value` AND i.sport_id=d.addition1
+        WHERE
+        i.standard_match_id = #{matchId}
+        <if test="eventTime != null">
+            <if test="sort == null or sort == 1">
+                AND i.event_time &lt;#{eventTime}
+            </if>
+            <if test="sort ==2">
+                AND i.event_time &gt;#{eventTime}
+            </if>
+        </if>
+        <if test="dataSource != null">
+            AND i.data_source_code = #{dataSource}
+        </if>
+        <if test="list != null and list.size()>0">
+            AND t.event_type IN
+            <foreach item="item" index="index" collection="list" open="("  close=")" separator=",">
+              #{item}
+            </foreach>
+        </if>
+        <if test="sort == null or sort == 1">
+            ORDER BY i.event_time DESC
+        </if>
+        <if test="sort ==2">
+            ORDER BY i.event_time ASC
+        </if>
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+        <if test="limit == null">
+            LIMIT 300
+        </if>
+    </select>
+
+
+    <select id="selectMatchEventInfoSocre" resultType="com.panda.sport.rcs.pojo.MatchEventInfo">
+    SELECT * FROM match_event_info WHERE standard_match_id=#{matchId} AND
+    <if test="sportId==1">
+        event_code="goal"
+    </if>
+    <if test="sportId==2">
+        (event_code="score_correction" or  event_code="score_change")
+    </if>
+    <if test="sportId==3">
+        (event_code="run_scored" or event_code="batter_advances_to_base_x" or event_code="runner_advances_to_base_x")
+    </if>
+    <if test="sportId==4">
+        event_code="goal"
+    </if>
+    <if test="sportId==5">
+        (event_code="tennis_score_change")
+    </if>
+    <if test="sportId==7">
+        (event_code="ball_pot" or event_code="snooker_foul" or event_code="free_ball")
+    </if>
+    <if test="sportId==8">
+        (event_code="table_tennis_score_change")
+    </if>
+    <if test="sportId==9">
+        (event_code="volleyball_score_change")
+    </if>
+    <if test="sportId==10">
+        (event_code="badminton_score_change")
+    </if>
+    <if test="dataSource != null">
+        AND data_source_code = #{dataSource}
+    </if>
+     ORDER BY event_time DESC
+    </select>
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="20 seconds">
+
+    <property name="app.name" value="panda-rcs-mgr-trade"/>
+    <springProperty scope="context" name="elk.address" source="log.elk.address"/>
+    
+    <springProperty scope="context" name="log.path" source="log.path"/>
+
+    <property name="charset" value="utf-8"/>
+    <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+    <!--<property name="pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"/>-->
+    <property name="pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} -%5p ${PID} --- traceId:[%X{X-B3-TraceId:-},%X{reqId:-}] [%X{linkId}] [%15.15t] %-40.40logger{39} : %m%n"/>
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter" >
+            <level>INFO</level>
+        </filter>
+        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <jsonFactoryDecorator class="net.logstash.logback.decorate.CharacterEscapesJsonFactoryDecorator">
+                <escape>
+                    <targetCharacterCode>10</targetCharacterCode>
+                    <escapeSequence>\u2028</escapeSequence>
+                </escape>
+            </jsonFactoryDecorator>
+            <providers>
+                <pattern>
+                    <pattern>
+                        {
+                        "serviceName": "panda-rcs-mgr-trade",
+                        "date":"%d{yyyy-MM-dd HH:mm:ss.SSS}",
+                        "logLevel": "%level",
+                        "pid": "${PID:-}",
+                        "traceId":"%X{TRACE_ID:-}",
+                        "thread": "%thread",
+                        "class": "%logger{40}",
+                        "msg":"%msg",
+                        "stackTrace" : "%exception"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+    <!-- 按照每天生成日志文件 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<filter class="ch.qos.logback.classic.filter.ThresholdFilter" >
+            <level>DEBUG</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--日志文件输出的文件名 -->
+            <FileNamePattern>${log.path}/panda-rcs-trade/%d{yyyy-MM-dd}/panda-rcs-trade-%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
+            <!--日志文件保留天数 -->
+            <MaxHistory>3</MaxHistory>
+            <MaxFileSize>1GB</MaxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${pattern}</pattern>
+            <charset>${charset}</charset>
+        </encoder>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%tid] [%X{linkId}] [%thread] %-5level %logger{36} #-# %msg%n</Pattern>
+            </layout>
+        </encoder>
+    </appender>
+    
+    <appender name="ERROR" class="com.panda.sport.rcs.monitor.task.log.LogbackMonitorAppender">
+    	<filter class="ch.qos.logback.classic.filter.ThresholdFilter" >
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名 -->
+            <FileNamePattern>${log.path}/panda-rcs-trade/%d{yyyy-MM-dd}/panda-rcs-trade-error-%d{yyyy-MM-dd}.log.gz
+            </FileNamePattern>
+            <!--日志文件保留天数 -->
+            <MaxHistory>3</MaxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${pattern}</pattern>
+            <charset>${charset}</charset>
+        </encoder>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%tid] [%X{linkId}] [%thread] %-5level %logger{36} #-# %msg%n</Pattern>
+            </layout>
+        </encoder>
+    </appender>
+
+    <logger name="org.mybatis.spring" level="ERROR"/>
+    <logger name="org.springframework" level="ERROR"/>
+    <logger name="RocketmqClient" level="ERROR"/>
+
+    <logger name="com.panda.sport.rcs.log.LogFilter" level="OFF"/>
+    <logger name="com.panda.sport.rcs.log.LogAspect" level="OFF"/>
+    <logger name="com.panda.sport.rcs.log.DubboLogFilter" level="OFF"/>
+
+    <!-- 日志输出级别 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE"/>  
+        <appender-ref ref="ERROR"/>
+    </root>
+</configuration>

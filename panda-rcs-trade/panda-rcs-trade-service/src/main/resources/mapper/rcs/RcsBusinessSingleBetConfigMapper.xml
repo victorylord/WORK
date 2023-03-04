@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsBusinessSingleBetConfigMapper">
+
+    <select id="selectListTournamentLevels" resultType="java.lang.Integer">
+        SELECT DISTINCT
+        ( CASE tournament_level WHEN 0 THEN 99 ELSE tournament_level END ) tournamentLevel
+        FROM
+        rcs_business_single_bet_config
+        <where>
+            <if test="config.businessId != null">
+                AND business_id = #{config.businessId}
+            </if>
+            <if test="config.sportId != null">
+                AND sport_id = #{config.sportId}
+            </if>
+            <if test="config.matchType != null">
+                AND match_type = #{config.matchType}
+            </if>
+            <if test="config.timePeriod != null">
+                AND time_period = #{config.timePeriod}
+            </if>
+        </where>
+        ORDER BY tournamentLevel ASC
+    </select>
+</mapper>

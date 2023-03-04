@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.MatchStatisticsInfoMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.MatchStatisticsInfo">
+    <!--@mbg.generated-->
+    <!--@Table match_statistics_info-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="third_source_event_id" jdbcType="BIGINT" property="thirdSourceEventId" />
+    <result column="third_source_match_id" jdbcType="BIGINT" property="thirdSourceMatchId" />
+    <result column="third_match_id" jdbcType="BIGINT" property="thirdMatchId" />
+    <result column="standard_match_id" jdbcType="BIGINT" property="standardMatchId" />
+    <result column="event_time" jdbcType="INTEGER" property="eventTime" />
+    <result column="third_event_type_id" jdbcType="TINYINT" property="thirdEventTypeId" />
+    <result column="third_event_type" jdbcType="VARCHAR" property="thirdEventType" />
+    <result column="home_away" jdbcType="VARCHAR" property="homeAway" />
+    <result column="seconds_match_start" jdbcType="TINYINT" property="secondsMatchStart" />
+    <result column="match_length" jdbcType="TINYINT" property="matchLength" />
+    <result column="score" jdbcType="VARCHAR" property="score" />
+    <result column="corner_score" jdbcType="VARCHAR" property="cornerScore" />
+    <result column="yellow_card_score" jdbcType="VARCHAR" property="yellowCardScore" />
+    <result column="red_card_score" jdbcType="VARCHAR" property="redCardScore" />
+    <result column="shot_on_target_score" jdbcType="VARCHAR" property="shotOnTargetScore" />
+    <result column="shot_off_target_score" jdbcType="VARCHAR" property="shotOffTargetScore" />
+    <result column="dangerous_attack_score" jdbcType="VARCHAR" property="dangerousAttackScore" />
+    <result column="aces_score" jdbcType="VARCHAR" property="acesScore" />
+    <result column="double_fault_score" jdbcType="VARCHAR" property="doubleFaultScore" />
+    <result column="sport_id" jdbcType="VARCHAR" property="sportId" />
+    <result column="period_score" jdbcType="VARCHAR" property="periodScore" />
+    <result column="quarter_score" jdbcType="VARCHAR" property="quarterScore" />
+    <result column="set_score" jdbcType="VARCHAR" property="setScore" />
+    <result column="set1_score" jdbcType="VARCHAR" property="set1Score" />
+    <result column="set2_score" jdbcType="VARCHAR" property="set2Score" />
+    <result column="set3_score" jdbcType="VARCHAR" property="set3Score" />
+    <result column="set4_score" jdbcType="VARCHAR" property="set4Score" />
+    <result column="set5_score" jdbcType="VARCHAR" property="set5Score" />
+    <result column="set6_score" jdbcType="VARCHAR" property="set6Score" />
+    <result column="set7_score" jdbcType="VARCHAR" property="set7Score" />
+    <result column="set8_score" jdbcType="VARCHAR" property="set8Score" />
+    <result column="set9_score" jdbcType="VARCHAR" property="set9Score" />
+    <result column="set10_score" jdbcType="VARCHAR" property="set10Score" />
+    <result column="game_score" jdbcType="VARCHAR" property="gameScore" />
+    <result column="server" jdbcType="TINYINT" property="server" />
+    <result column="info" jdbcType="VARCHAR" property="info" />
+    <result column="remaining_time" jdbcType="TINYINT" property="remainingTime" />
+    <result column="period" jdbcType="TINYINT" property="period" />
+    <result column="period_length" jdbcType="TINYINT" property="periodLength" />
+    <result column="set_count" jdbcType="TINYINT" property="setCount" />
+    <result column="penalty_score" jdbcType="VARCHAR" property="penaltyScore" />
+    <result column="free_kick_score" jdbcType="VARCHAR" property="freeKickScore" />
+    <result column="extra_time_score" jdbcType="VARCHAR" property="extraTimeScore" />
+    <result column="set1_yellow_card_score" jdbcType="VARCHAR" property="set1YellowCardScore" />
+    <result column="set1_red_card_score" jdbcType="VARCHAR" property="set1RedCardScore" />
+    <result column="set1_corner_score" jdbcType="VARCHAR" property="set1CornerScore" />
+    <result column="set2_yellow_card_score" jdbcType="VARCHAR" property="set2YellowCardScore" />
+    <result column="set2_red_card_score" jdbcType="VARCHAR" property="set2RedCardScore" />
+    <result column="set2_corner_score" jdbcType="VARCHAR" property="set2CornerScore" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="modify_time" jdbcType="BIGINT" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, third_source_event_id, third_source_match_id, third_match_id, standard_match_id, 
+    event_time, third_event_type_id, third_event_type, home_away, seconds_match_start, 
+    match_length, score, corner_score, yellow_card_score, red_card_score, shot_on_target_score, 
+    shot_off_target_score, dangerous_attack_score, aces_score, double_fault_score, sport_id, 
+    period_score, quarter_score, set_score, set1_score, set2_score, set3_score, set4_score, 
+    set5_score, set6_score, set7_score, set8_score, set9_score, set10_score, game_score, 
+    server, info, remaining_time, period, period_length, set_count, penalty_score, free_kick_score, 
+    extra_time_score, set1_yellow_card_score, set1_red_card_score, set1_corner_score, 
+    set2_yellow_card_score, set2_red_card_score, set2_corner_score, remark, create_time, 
+    modify_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from match_statistics_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from match_statistics_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <update id="updateByPrimaryKeySelective" parameterType="com.panda.sport.rcs.pojo.MatchStatisticsInfo">
+    <!--@mbg.generated-->
+    update match_statistics_info
+    <set>
+      <if test="thirdSourceEventId != null">
+        third_source_event_id = #{thirdSourceEventId,jdbcType=BIGINT},
+      </if>
+      <if test="thirdSourceMatchId != null">
+        third_source_match_id = #{thirdSourceMatchId,jdbcType=BIGINT},
+      </if>
+      <if test="thirdMatchId != null">
+        third_match_id = #{thirdMatchId,jdbcType=BIGINT},
+      </if>
+      <if test="standardMatchId != null">
+        standard_match_id = #{standardMatchId,jdbcType=BIGINT},
+      </if>
+      <if test="eventTime != null">
+        event_time = #{eventTime,jdbcType=INTEGER},
+      </if>
+      <if test="thirdEventTypeId != null">
+        third_event_type_id = #{thirdEventTypeId,jdbcType=TINYINT},
+      </if>
+      <if test="thirdEventType != null">
+        third_event_type = #{thirdEventType,jdbcType=VARCHAR},
+      </if>
+      <if test="homeAway != null">
+        home_away = #{homeAway,jdbcType=VARCHAR},
+      </if>
+      <if test="secondsMatchStart != null">
+        seconds_match_start = #{secondsMatchStart,jdbcType=TINYINT},
+      </if>
+      <if test="matchLength != null">
+        match_length = #{matchLength,jdbcType=TINYINT},
+      </if>
+      <if test="score != null">
+        score = #{score,jdbcType=VARCHAR},
+      </if>
+      <if test="cornerScore != null">
+        corner_score = #{cornerScore,jdbcType=VARCHAR},
+      </if>
+      <if test="yellowCardScore != null">
+        yellow_card_score = #{yellowCardScore,jdbcType=VARCHAR},
+      </if>
+      <if test="redCardScore != null">
+        red_card_score = #{redCardScore,jdbcType=VARCHAR},
+      </if>
+      <if test="shotOnTargetScore != null">
+        shot_on_target_score = #{shotOnTargetScore,jdbcType=VARCHAR},
+      </if>
+      <if test="shotOffTargetScore != null">
+        shot_off_target_score = #{shotOffTargetScore,jdbcType=VARCHAR},
+      </if>
+      <if test="dangerousAttackScore != null">
+        dangerous_attack_score = #{dangerousAttackScore,jdbcType=VARCHAR},
+      </if>
+      <if test="acesScore != null">
+        aces_score = #{acesScore,jdbcType=VARCHAR},
+      </if>
+      <if test="doubleFaultScore != null">
+        double_fault_score = #{doubleFaultScore,jdbcType=VARCHAR},
+      </if>
+      <if test="sportId != null">
+        sport_id = #{sportId,jdbcType=VARCHAR},
+      </if>
+      <if test="periodScore != null">
+        period_score = #{periodScore,jdbcType=VARCHAR},
+      </if>
+      <if test="quarterScore != null">
+        quarter_score = #{quarterScore,jdbcType=VARCHAR},
+      </if>
+      <if test="setScore != null">
+        set_score = #{setScore,jdbcType=VARCHAR},
+      </if>
+      <if test="set1Score != null">
+        set1_score = #{set1Score,jdbcType=VARCHAR},
+      </if>
+      <if test="set2Score != null">
+        set2_score = #{set2Score,jdbcType=VARCHAR},
+      </if>
+      <if test="set3Score != null">
+        set3_score = #{set3Score,jdbcType=VARCHAR},
+      </if>
+      <if test="set4Score != null">
+        set4_score = #{set4Score,jdbcType=VARCHAR},
+      </if>
+      <if test="set5Score != null">
+        set5_score = #{set5Score,jdbcType=VARCHAR},
+      </if>
+      <if test="set6Score != null">
+        set6_score = #{set6Score,jdbcType=VARCHAR},
+      </if>
+      <if test="set7Score != null">
+        set7_score = #{set7Score,jdbcType=VARCHAR},
+      </if>
+      <if test="set8Score != null">
+        set8_score = #{set8Score,jdbcType=VARCHAR},
+      </if>
+      <if test="set9Score != null">
+        set9_score = #{set9Score,jdbcType=VARCHAR},
+      </if>
+      <if test="set10Score != null">
+        set10_score = #{set10Score,jdbcType=VARCHAR},
+      </if>
+      <if test="gameScore != null">
+        game_score = #{gameScore,jdbcType=VARCHAR},
+      </if>
+      <if test="server != null">
+        server = #{server,jdbcType=TINYINT},
+      </if>
+      <if test="info != null">
+        info = #{info,jdbcType=VARCHAR},
+      </if>
+      <if test="remainingTime != null">
+        remaining_time = #{remainingTime,jdbcType=TINYINT},
+      </if>
+      <if test="period != null">
+        period = #{period,jdbcType=TINYINT},
+      </if>
+      <if test="periodLength != null">
+        period_length = #{periodLength,jdbcType=TINYINT},
+      </if>
+      <if test="setCount != null">
+        set_count = #{setCount,jdbcType=TINYINT},
+      </if>
+      <if test="penaltyScore != null">
+        penalty_score = #{penaltyScore,jdbcType=VARCHAR},
+      </if>
+      <if test="freeKickScore != null">
+        free_kick_score = #{freeKickScore,jdbcType=VARCHAR},
+      </if>
+      <if test="extraTimeScore != null">
+        extra_time_score = #{extraTimeScore,jdbcType=VARCHAR},
+      </if>
+      <if test="set1YellowCardScore != null">
+        set1_yellow_card_score = #{set1YellowCardScore,jdbcType=VARCHAR},
+      </if>
+      <if test="set1RedCardScore != null">
+        set1_red_card_score = #{set1RedCardScore,jdbcType=VARCHAR},
+      </if>
+      <if test="set1CornerScore != null">
+        set1_corner_score = #{set1CornerScore,jdbcType=VARCHAR},
+      </if>
+      <if test="set2YellowCardScore != null">
+        set2_yellow_card_score = #{set2YellowCardScore,jdbcType=VARCHAR},
+      </if>
+      <if test="set2RedCardScore != null">
+        set2_red_card_score = #{set2RedCardScore,jdbcType=VARCHAR},
+      </if>
+      <if test="set2CornerScore != null">
+        set2_corner_score = #{set2CornerScore,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="modifyTime != null">
+        modify_time = #{modifyTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.panda.sport.rcs.pojo.MatchStatisticsInfo">
+    <!--@mbg.generated-->
+    update match_statistics_info
+    set third_source_event_id = #{thirdSourceEventId,jdbcType=BIGINT},
+      third_source_match_id = #{thirdSourceMatchId,jdbcType=BIGINT},
+      third_match_id = #{thirdMatchId,jdbcType=BIGINT},
+      standard_match_id = #{standardMatchId,jdbcType=BIGINT},
+      event_time = #{eventTime,jdbcType=INTEGER},
+      third_event_type_id = #{thirdEventTypeId,jdbcType=TINYINT},
+      third_event_type = #{thirdEventType,jdbcType=VARCHAR},
+      home_away = #{homeAway,jdbcType=VARCHAR},
+      seconds_match_start = #{secondsMatchStart,jdbcType=TINYINT},
+      match_length = #{matchLength,jdbcType=TINYINT},
+      score = #{score,jdbcType=VARCHAR},
+      corner_score = #{cornerScore,jdbcType=VARCHAR},
+      yellow_card_score = #{yellowCardScore,jdbcType=VARCHAR},
+      red_card_score = #{redCardScore,jdbcType=VARCHAR},
+      shot_on_target_score = #{shotOnTargetScore,jdbcType=VARCHAR},
+      shot_off_target_score = #{shotOffTargetScore,jdbcType=VARCHAR},
+      dangerous_attack_score = #{dangerousAttackScore,jdbcType=VARCHAR},
+      aces_score = #{acesScore,jdbcType=VARCHAR},
+      double_fault_score = #{doubleFaultScore,jdbcType=VARCHAR},
+      sport_id = #{sportId,jdbcType=VARCHAR},
+      period_score = #{periodScore,jdbcType=VARCHAR},
+      quarter_score = #{quarterScore,jdbcType=VARCHAR},
+      set_score = #{setScore,jdbcType=VARCHAR},
+      set1_score = #{set1Score,jdbcType=VARCHAR},
+      set2_score = #{set2Score,jdbcType=VARCHAR},
+      set3_score = #{set3Score,jdbcType=VARCHAR},
+      set4_score = #{set4Score,jdbcType=VARCHAR},
+      set5_score = #{set5Score,jdbcType=VARCHAR},
+      set6_score = #{set6Score,jdbcType=VARCHAR},
+      set7_score = #{set7Score,jdbcType=VARCHAR},
+      set8_score = #{set8Score,jdbcType=VARCHAR},
+      set9_score = #{set9Score,jdbcType=VARCHAR},
+      set10_score = #{set10Score,jdbcType=VARCHAR},
+      game_score = #{gameScore,jdbcType=VARCHAR},
+      server = #{server,jdbcType=TINYINT},
+      info = #{info,jdbcType=VARCHAR},
+      remaining_time = #{remainingTime,jdbcType=TINYINT},
+      period = #{period,jdbcType=TINYINT},
+      period_length = #{periodLength,jdbcType=TINYINT},
+      set_count = #{setCount,jdbcType=TINYINT},
+      penalty_score = #{penaltyScore,jdbcType=VARCHAR},
+      free_kick_score = #{freeKickScore,jdbcType=VARCHAR},
+      extra_time_score = #{extraTimeScore,jdbcType=VARCHAR},
+      set1_yellow_card_score = #{set1YellowCardScore,jdbcType=VARCHAR},
+      set1_red_card_score = #{set1RedCardScore,jdbcType=VARCHAR},
+      set1_corner_score = #{set1CornerScore,jdbcType=VARCHAR},
+      set2_yellow_card_score = #{set2YellowCardScore,jdbcType=VARCHAR},
+      set2_red_card_score = #{set2RedCardScore,jdbcType=VARCHAR},
+      set2_corner_score = #{set2CornerScore,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=BIGINT},
+      modify_time = #{modifyTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update match_statistics_info
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="third_source_event_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.thirdSourceEventId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="third_source_match_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.thirdSourceMatchId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="third_match_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.thirdMatchId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="standard_match_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.standardMatchId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="event_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.eventTime,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="third_event_type_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.thirdEventTypeId,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="third_event_type = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.thirdEventType,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="home_away = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.homeAway,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="seconds_match_start = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.secondsMatchStart,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="match_length = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.matchLength,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.score,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="corner_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.cornerScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="yellow_card_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.yellowCardScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="red_card_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.redCardScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="shot_on_target_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.shotOnTargetScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="shot_off_target_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.shotOffTargetScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="dangerous_attack_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.dangerousAttackScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="aces_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.acesScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="double_fault_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.doubleFaultScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="sport_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.sportId,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="period_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.periodScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="quarter_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.quarterScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.setScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set1_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set1Score,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set2_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set2Score,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set3_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set3Score,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set4_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set4Score,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set5_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set5Score,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set6_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set6Score,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set7_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set7Score,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set8_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set8Score,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set9_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set9Score,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set10_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set10Score,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="game_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.gameScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="server = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.server,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="info = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.info,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="remaining_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.remainingTime,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="period = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.period,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="period_length = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.periodLength,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="set_count = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.setCount,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="penalty_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.penaltyScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="free_kick_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.freeKickScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="extra_time_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.extraTimeScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set1_yellow_card_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set1YellowCardScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set1_red_card_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set1RedCardScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set1_corner_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set1CornerScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set2_yellow_card_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set2YellowCardScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set2_red_card_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set2RedCardScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="set2_corner_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.set2CornerScore,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="remark = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.remark,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="create_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.createTime,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="modify_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.modifyTime,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into match_statistics_info
+    (third_source_event_id, third_source_match_id, third_match_id, standard_match_id, 
+      event_time, third_event_type_id, third_event_type, home_away, seconds_match_start, 
+      match_length, score, corner_score, yellow_card_score, red_card_score, shot_on_target_score, 
+      shot_off_target_score, dangerous_attack_score, aces_score, double_fault_score, 
+      sport_id, period_score, quarter_score, set_score, set1_score, set2_score, set3_score, 
+      set4_score, set5_score, set6_score, set7_score, set8_score, set9_score, set10_score, 
+      game_score, server, info, remaining_time, period, period_length, set_count, penalty_score, 
+      free_kick_score, extra_time_score, set1_yellow_card_score, set1_red_card_score, 
+      set1_corner_score, set2_yellow_card_score, set2_red_card_score, set2_corner_score, 
+      remark, create_time, modify_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.thirdSourceEventId,jdbcType=BIGINT}, #{item.thirdSourceMatchId,jdbcType=BIGINT}, 
+        #{item.thirdMatchId,jdbcType=BIGINT}, #{item.standardMatchId,jdbcType=BIGINT}, 
+        #{item.eventTime,jdbcType=INTEGER}, #{item.thirdEventTypeId,jdbcType=TINYINT}, 
+        #{item.thirdEventType,jdbcType=VARCHAR}, #{item.homeAway,jdbcType=VARCHAR}, #{item.secondsMatchStart,jdbcType=TINYINT}, 
+        #{item.matchLength,jdbcType=TINYINT}, #{item.score,jdbcType=VARCHAR}, #{item.cornerScore,jdbcType=VARCHAR}, 
+        #{item.yellowCardScore,jdbcType=VARCHAR}, #{item.redCardScore,jdbcType=VARCHAR}, 
+        #{item.shotOnTargetScore,jdbcType=VARCHAR}, #{item.shotOffTargetScore,jdbcType=VARCHAR}, 
+        #{item.dangerousAttackScore,jdbcType=VARCHAR}, #{item.acesScore,jdbcType=VARCHAR}, 
+        #{item.doubleFaultScore,jdbcType=VARCHAR}, #{item.sportId,jdbcType=VARCHAR}, #{item.periodScore,jdbcType=VARCHAR}, 
+        #{item.quarterScore,jdbcType=VARCHAR}, #{item.setScore,jdbcType=VARCHAR}, #{item.set1Score,jdbcType=VARCHAR}, 
+        #{item.set2Score,jdbcType=VARCHAR}, #{item.set3Score,jdbcType=VARCHAR}, #{item.set4Score,jdbcType=VARCHAR}, 
+        #{item.set5Score,jdbcType=VARCHAR}, #{item.set6Score,jdbcType=VARCHAR}, #{item.set7Score,jdbcType=VARCHAR}, 
+        #{item.set8Score,jdbcType=VARCHAR}, #{item.set9Score,jdbcType=VARCHAR}, #{item.set10Score,jdbcType=VARCHAR}, 
+        #{item.gameScore,jdbcType=VARCHAR}, #{item.server,jdbcType=TINYINT}, #{item.info,jdbcType=VARCHAR}, 
+        #{item.remainingTime,jdbcType=TINYINT}, #{item.period,jdbcType=TINYINT}, #{item.periodLength,jdbcType=TINYINT}, 
+        #{item.setCount,jdbcType=TINYINT}, #{item.penaltyScore,jdbcType=VARCHAR}, #{item.freeKickScore,jdbcType=VARCHAR}, 
+        #{item.extraTimeScore,jdbcType=VARCHAR}, #{item.set1YellowCardScore,jdbcType=VARCHAR}, 
+        #{item.set1RedCardScore,jdbcType=VARCHAR}, #{item.set1CornerScore,jdbcType=VARCHAR}, 
+        #{item.set2YellowCardScore,jdbcType=VARCHAR}, #{item.set2RedCardScore,jdbcType=VARCHAR}, 
+        #{item.set2CornerScore,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR}, #{item.createTime,jdbcType=BIGINT}, 
+        #{item.modifyTime,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+</mapper>

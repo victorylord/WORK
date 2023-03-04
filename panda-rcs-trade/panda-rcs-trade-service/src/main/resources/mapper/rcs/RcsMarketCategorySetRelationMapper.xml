@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMarketCategorySetRelationMapper">
+    <select id="isContainPlayFromPlaySet" resultType="int">
+        SELECT
+        CASE
+            WHEN
+                COUNT( 1 ) > 0 THEN
+                    1 ELSE 0
+                END
+                FROM
+                    rcs_market_category_set_relation r
+                    LEFT JOIN rcs_market_category_set s ON s.id = r.market_category_set_id
+                WHERE
+                    s.`type` = #{type}
+                AND s.sport_id = #{sportId}
+                <if test="setId != null">
+                    and r.market_category_set_id != #{setId}
+                </if>
+            <if test="list!='' and list!=null">
+            AND r.market_category_id IN
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+</mapper>

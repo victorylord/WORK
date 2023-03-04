@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsOrderSecondConfigMapper">
+
+
+    <select id="selectOrderSecondConfig" resultType="com.panda.sport.rcs.vo.OrderSecondConfigVo">
+		SELECT
+			s.sport_id,
+			s.id as play_set_id,
+			l.text as play_set_name,
+			#{matchInfoId} as match_info_id,
+			#{uid} as uid,
+			IFNULL((SELECT second_status FROM rcs_order_second_config c WHERE c.uid = #{uid} AND c.match_info_id = #{matchInfoId} AND c.play_set_id = s.id ),0) second_status
+		FROM
+			rcs_market_category_set s left join rcs_language_internation l on s.name_code=l.name_code
+		WHERE
+			s.sport_id = #{sportId}
+			AND s.type = 1
+			AND s.`status` = 2
+		UNION ALL
+		SELECT
+			#{sportId} AS sport_id ,
+			'-1' as play_set_id,
+			'其他' as play_set_name,
+			#{matchInfoId} as match_info_id,
+			#{uid} as uid,
+			IFNULL((SELECT second_status FROM rcs_order_second_config c WHERE c.uid = #{uid} AND c.match_info_id = #{matchInfoId} AND c.play_set_id = -1 ),0) as second_status
+		FROM
+		dual
+	</select>
+
+    <insert id="insertOrderSecondConfig" keyColumn="id" keyProperty="id"
+            parameterType="com.panda.sport.rcs.pojo.RcsOrderSecondConfig" useGeneratedKeys="true">
+		insert rcs_order_second_config (uid, match_info_id,play_set_id, second_status, create_time, update_time,user_level,bet_amount,trader)
+        values (#{uid},#{matchInfoId},#{playSetId},#{secondStatus},#{createTime},#{updateTime},#{userLevel},#{betAmount},#{trader})
+        ON DUPLICATE KEY UPDATE
+        second_status= #{secondStatus},
+        update_time=#{updateTime}
+		,user_level = #{userLevel}
+		,bet_amount = #{betAmount}
+		,trader = #{trader}
+
+	</insert>
+
+    <select id="selectOrderSecondConfigCount" resultType="integer">
+		SELECT count(1)
+		FROM rcs_order_second_config t
+		WHERE t.uid != #{vo.uid,jdbcType=BIGINT}
+		AND t.second_status = 1
+		AND t.update_time > #{time,jdbcType=BIGINT}
+		AND t.match_info_id = #{vo.matchInfoId,jdbcType=BIGINT}
+		AND t.play_set_id = #{vo.playSetId,jdbcType=BIGINT}
+	</select>
+
+
+	<select id="selectOrderSecondTraders" resultType="java.lang.String">
+		SELECT distinct trader
+		FROM rcs_order_second_config t
+		WHERE t.second_status = 1  and t.trader is not null
+		 AND t.match_info_id = #{vo.matchInfoId,jdbcType=BIGINT} AND t.update_time > #{time,jdbcType=BIGINT}
+	</select>
+	<select id="selectOrderSecond" resultType="com.panda.sport.rcs.pojo.RcsOrderSecondConfig">
+		SELECT * FROM rcs_order_second_config t
+		WHERE  t.match_info_id = #{vo.matchInfoId,jdbcType=BIGINT}
+		AND t.play_set_id = #{vo.playSetId,jdbcType=BIGINT}
+		AND t.update_time > #{time,jdbcType=BIGINT}
+	</select>
+
+	<update id="updateOrderSecond">
+		update rcs_order_second_config
+		set second_status =#{vo.secondStatus},
+		user_level = #{vo.userLevel} ,
+		bet_amount = #{vo.betAmount},
+		trader = #{vo.trader},
+		uid= #{vo.uid},
+		create_time =#{createTime},
+		update_time=#{updateTime} WHERE match_info_id = #{vo.matchInfoId} and play_set_id = #{vo.playSetId}
+	</update>
+
+</mapper>

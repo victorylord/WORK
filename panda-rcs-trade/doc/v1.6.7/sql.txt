@@ -1,0 +1,29 @@
+INSERT INTO `panda_rcs`.`rcs_code`(`id`, `father_key`, `child_key`, `value`, `remark`, `crt_time`, `update_time`, `status`) VALUES (1207, 'snapshot', '1', '1、4、6、5、101、104、3', NULL, '2020-07-09 17:37:37', '2020-07-09 17:39:40', 1);
+INSERT INTO `panda_rcs`.`rcs_code`(`id`, `father_key`, `child_key`, `value`, `remark`, `crt_time`, `update_time`, `status`) VALUES (1208, 'snapshot', '2', '2、13、10、11、26、87、97、88、98、109、110', NULL, '2020-07-09 17:37:38', '2020-07-09 17:39:47', 1);
+INSERT INTO `panda_rcs`.`rcs_code`(`id`, `father_key`, `child_key`, `value`, `remark`, `crt_time`, `update_time`, `status`) VALUES (1209, 'snapshot', '3', '17、19、18、20、16、24、30、43、69、70', NULL, '2020-07-09 17:37:38', '2020-07-09 17:39:53', 1);
+INSERT INTO `panda_rcs`.`rcs_code`(`id`, `father_key`, `child_key`, `value`, `remark`, `crt_time`, `update_time`, `status`) VALUES (1210, 'snapshot', '4', '12、14、102、107、15、7、68', NULL, '2020-07-09 17:37:39', '2020-07-09 17:39:58', 1);
+INSERT INTO `panda_rcs`.`rcs_code`(`id`, `father_key`, `child_key`, `value`, `remark`, `crt_time`, `update_time`, `status`) VALUES (1211, 'snapshot', '5', '111、113、114、112、115、116、117、118、119、120、121、122、123、124、125', NULL, '2020-07-09 17:38:26', '2020-07-09 17:39:59', 1);
+INSERT INTO `panda_rcs`.`rcs_code`(`id`, `father_key`, `child_key`, `value`, `remark`, `crt_time`, `update_time`, `status`) VALUES (1212, 'snap_shot_processing_time', '0', '0', NULL, '2020-07-10 10:12:36', '2020-07-15 13:15:49', 1);
+
+
+CREATE TABLE `rcs_order_summary`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `sport_id` bigint(20) NOT NULL COMMENT '运动种类',
+  `match_id` bigint(20) NOT NULL COMMENT '赛事id',
+  `play_id` bigint(20) NOT NULL COMMENT '玩法id',
+  `market_id` bigint(20) NOT NULL COMMENT '盘口id',
+  `odds_id` bigint(20) NOT NULL COMMENT '投注项id',
+  `odds_value_max` decimal(16, 2) NOT NULL COMMENT '赔率   总投注额最大的赔率 或者早盘最后赔率',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `index`(`sport_id`, `match_id`, `play_id`, `market_id`, `odds_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 7712 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '玩法总投注额最多的赔率   只统计赛前盘' ROW_FORMAT = Dynamic;
+SET FOREIGN_KEY_CHECKS = 1;
+
+
+
+DELETE FROM  rcs_business_play_paid_config WHERE sport_id=2 AND play_type IN(1,2,13) ;
+DELETE FROM rcs_business_single_bet_config  WHERE sport_id=1  AND time_period=5
+DELETE FROM rcs_business_single_bet_config  WHERE sport_id=2  AND time_period in(4,1,2,3)
+
+
+

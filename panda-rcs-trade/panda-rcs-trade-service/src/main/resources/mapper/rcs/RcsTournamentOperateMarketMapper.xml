@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsTournamentOperateMarketMapper">
+
+    <select id="queryMatchAndTournamentMaxBetAmount" resultType="com.panda.sport.rcs.pojo.RcsTournamentMarketConfig">
+    	<if test="order.itemBean.placeNum != null and order.itemBean.placeNum != ''">
+    	SELECT s.max_single_bet_amount maxSingleBetAmount
+                FROM rcs_match_market_config s
+                WHERE s.match_id = #{order.matchId,jdbcType=VARCHAR}
+                AND s.play_id = #{order.playId,jdbcType=VARCHAR}
+                AND s.market_index = #{order.itemBean.placeNum,jdbcType=BIGINT}
+                and s.max_single_bet_amount is not null
+         UNION all
+    	</if>        
+        SELECT m.max_single_bet_amount maxSingleBetAmount
+                FROM rcs_tournament_market_config m
+                WHERE m.tournament_id = #{order.tournamentId,jdbcType=BIGINT}
+                AND   m.play_id = #{order.playId,jdbcType=VARCHAR}
+
+         LIMIT 1
+    </select>
+<!--    <select id="queryMarketWaterHeadConfig" resultType="com.panda.sport.data.rcs.dto.ThreewayOverLoadTriggerItem">-->
+<!--            SELECT s.play_id,-->
+<!--                    s.match_id,-->
+<!--                    s.market_id,-->
+<!--                    s.home_auto_change_rate,-->
+<!--                    s.away_auto_change_rate,-->
+<!--                    s.tie_auto_change_rate,-->
+<!--                    s.switch_auto_change_rate,-->
+<!--                    s.tournament_id,-->
+<!--                    s.play_phase_type-->
+<!--                FROM rcs_match_market_config s-->
+<!--                WHERE s.match_id = #{item.matchId,jdbcType=BIGINT}-->
+<!--                AND s.play_phase_type = #{item.playPhaseType,jdbcType=INTEGER}-->
+<!--    </select>-->
+
+    <select id="queryBusinessBetMaxAmount" resultType="com.panda.sport.rcs.pojo.RcsBusinessSingleBetConfig">
+            SELECT  b.business_id as businessId,
+                    b.match_type as matchType,
+                    b.order_max_value as orderMaxValue,
+                    b.play_id as playId,
+                    b.time_period as timePeriod
+            FROM standard_sport_tournament t
+            JOIN rcs_business_single_bet_config b
+            ON b.tournament_level = t.tournament_level AND t.sport_id = b.sport_id
+            JOIN standard_sport_market_category_ref c
+            ON b.time_period = c.scope_id AND c.category_id = b.play_id AND t.sport_id = c.sport_id
+            WHERE t.id = #{config.tournamentId,jdbcType=BIGINT}
+            AND b.play_id = #{config.playId,jdbcType=BIGINT}
+            AND c.category_id = #{config.playId,jdbcType=BIGINT}
+            AND b.business_id = '1261540827428163584'
+            AND b.match_type = #{config.matchType,jdbcType=INTEGER}
+            AND b.`status` = 1
+    </select>
+    <select id="queryMarketOddsList" resultType="com.panda.sport.data.rcs.dto.ThreewayOverLoadTriggerItem">
+        SELECT
+            sm.standard_match_info_id as matchId,
+            mi.standard_tournament_id as tournamentId,
+            sm.market_category_id as playId,
+            smo.market_id as marketId,
+            smo.odds_type as oddsType,
+            smo.odds_value as maxOdds,
+            c.remark as playPhaseType,
+            c.`value` as rollType,
+            sm.addition1 as nameExpressionValue
+        FROM
+            standard_sport_market sm
+            JOIN rcs_code c ON sm.market_category_id = c.child_key
+            AND c.father_key = 'play_phase' AND c.remark = #{item.playPhaseType,jdbcType=INTEGER}
+            JOIN standard_sport_market_odds smo ON smo.market_id = sm.id
+            LEFT JOIN standard_match_info mi ON sm.standard_match_info_id = mi.id
+        WHERE sm.standard_match_info_id = #{item.matchId,jdbcType=BIGINT}
+        AND smo.odds_value > 0
+        ORDER BY sm.id ASC
+    </select>
+    <select id="queryMarketCount" resultType="long">
+	    SELECT t.market_count FROM rcs_standard_sport_market_sell t WHERE t.match_info_id = #{item.matchId,jdbcType=BIGINT}
+    </select>
+
+<!--    <insert id="saveAndUpdateMarketWaterHeadConfig" parameterType="java.util.List">-->
+<!--        <foreach collection="list" index="index" item="item" separator=";">-->
+<!--            INSERT INTO `panda_rcs`.`rcs_match_market_config`(-->
+<!--            `match_id`,-->
+<!--            `tournament_id`,-->
+<!--            `play_id`,-->
+<!--            `market_id`,-->
+<!--            `home_auto_change_rate`,-->
+<!--            `away_auto_change_rate`,-->
+<!--            `tie_auto_change_rate`,-->
+<!--            `switch_auto_change_rate`,-->
+<!--            play_phase_type-->
+<!--            )-->
+<!--            VALUES (-->
+<!--            #{item.matchId,jdbcType=BIGINT},-->
+<!--            #{item.tournamentId,jdbcType=INTEGER},-->
+<!--            #{item.playId,jdbcType=INTEGER},-->
+<!--            #{item.marketId,jdbcType=BIGINT},-->
+<!--            #{item.homeAutoChangeRate,jdbcType=DOUBLE},-->
+<!--            #{item.awayAutoChangeRate,jdbcType=DOUBLE},-->
+<!--            #{item.tieAutoChangeRate,jdbcType=DOUBLE},-->
+<!--            #{item.switchAutoChangeRate,jdbcType=INTEGER},-->
+<!--            #{item.playPhaseType,jdbcType=INTEGER}-->
+<!--            )-->
+<!--            ON DUPLICATE KEY UPDATE-->
+<!--            home_auto_change_rate = #{item.homeAutoChangeRate,jdbcType=DOUBLE},-->
+<!--            away_auto_change_rate = #{item.awayAutoChangeRate,jdbcType=DOUBLE},-->
+<!--            tie_auto_change_rate = #{item.tieAutoChangeRate,jdbcType=DOUBLE},-->
+<!--            switch_auto_change_rate = #{item.switchAutoChangeRate,jdbcType=INTEGER},-->
+<!--            play_phase_type = #{item.playPhaseType,jdbcType=INTEGER}-->
+<!--        </foreach>-->
+<!--    </insert>-->
+
+    <update id="insertOrUpdateTournamentConfig">
+            INSERT INTO `panda_rcs`.`rcs_tournament_market_config`(
+            `tournament_id`,
+            `play_id`,
+            `margin`,
+            `home_level_first_max_amount`,
+            `home_level_first_odds_rate`,
+            `home_level_second_max_amount`,
+            `home_level_second_odds_rate`,
+            `max_single_bet_amount`,
+            `max_odds`,
+            `min_odds`,
+            `data_source`,
+            `away_level_first_odds_rate`,
+            `away_level_second_odds_rate`,
+            `auto_bet_stop`,
+            `home_auto_change_rate`,
+            `away_auto_change_rate`,
+            `tie_auto_change_rate`,
+            `balance_option`,
+            `home_margin`,
+            `away_margin`,
+            `tie_margin`,
+            `odd_change_rule`,
+            `home_single_max_amount`,
+            `home_multi_max_amount`,
+            `home_single_odds_rate`,
+            `home_multi_odds_rate`,
+            `away_single_odds_rate`,
+            `away_multi_odds_rate`,
+            `market_type`
+            )
+            VALUES (
+            #{config.tournamentId,jdbcType=INTEGER},
+            #{config.playId,jdbcType=INTEGER},
+            #{config.margin,jdbcType=DECIMAL},
+            #{config.homeLevelFirstMaxAmount,jdbcType=BIGINT},
+            #{config.homeLevelFirstOddsRate,jdbcType=DECIMAL},
+            #{config.homeLevelSecondMaxAmount,jdbcType=BIGINT},
+            #{config.homeLevelSecondOddsRate,jdbcType=DECIMAL},
+            #{config.maxSingleBetAmount,jdbcType=BIGINT},
+            #{config.maxOdds,jdbcType=DECIMAL},
+            #{config.minOdds,jdbcType=DECIMAL},
+            #{config.dataSource,jdbcType=INTEGER},
+            #{config.awayLevelFirstOddsRate,jdbcType=DECIMAL},
+            #{config.awayLevelSecondOddsRate,jdbcType=DECIMAL},
+            #{config.autoBetStop,jdbcType=VARCHAR},
+            #{config.homeAutoChangeRate,jdbcType=DECIMAL},
+            #{config.awayAutoChangeRate,jdbcType=DECIMAL},
+            #{config.tieAutoChangeRate,jdbcType=DECIMAL},
+            #{config.balanceOption,jdbcType=INTEGER},
+            #{config.homeMargin,jdbcType=DECIMAL},
+            #{config.awayMargin,jdbcType=DECIMAL},
+            #{config.tieMargin,jdbcType=DECIMAL},
+            #{config.oddChangeRule,jdbcType=INTEGER},
+            #{config.homeSingleMaxAmount,jdbcType=BIGINT},
+            #{config.homeMultiMaxAmount,jdbcType=BIGINT},
+            #{config.homeSingleOddsRate,jdbcType=DECIMAL},
+            #{config.homeMultiOddsRate,jdbcType=DECIMAL},
+            #{config.awaySingleOddsRate,jdbcType=DECIMAL},
+            #{config.awayMultiOddsRate,jdbcType=DECIMAL},
+            #{config.marketType,jdbcType=VARCHAR}
+            )
+            ON DUPLICATE KEY UPDATE
+                `margin` = 	#{config.margin,jdbcType=DECIMAL},
+                `home_level_first_max_amount` = 	#{config.homeLevelFirstMaxAmount,jdbcType=BIGINT},
+                `home_level_first_odds_rate` = 	#{config.homeLevelFirstOddsRate,jdbcType=DECIMAL},
+                `home_level_second_max_amount` = 	#{config.homeLevelSecondMaxAmount,jdbcType=BIGINT},
+                `home_level_second_odds_rate` = 	#{config.homeLevelSecondOddsRate,jdbcType=DECIMAL},
+                `max_single_bet_amount` = 	#{config.maxSingleBetAmount,jdbcType=BIGINT},
+                `max_odds` = 	#{config.maxOdds,jdbcType=DECIMAL},
+                `min_odds` = 	#{config.minOdds,jdbcType=DECIMAL},
+                `data_source` = 	#{config.dataSource,jdbcType=INTEGER},
+                `away_level_first_odds_rate` = 	#{config.awayLevelFirstOddsRate,jdbcType=DECIMAL},
+                `away_level_second_odds_rate` = 	#{config.awayLevelSecondOddsRate,jdbcType=DECIMAL},
+                `auto_bet_stop` = 	#{config.autoBetStop,jdbcType=VARCHAR},
+                `home_auto_change_rate` = 	#{config.homeAutoChangeRate,jdbcType=DECIMAL},
+                `away_auto_change_rate` = 	#{config.awayAutoChangeRate,jdbcType=DECIMAL},
+                `tie_auto_change_rate` = 	#{config.tieAutoChangeRate,jdbcType=DECIMAL},
+                `balance_option` = 	#{config.balanceOption,jdbcType=INTEGER},
+                `home_margin` = 	#{config.homeMargin,jdbcType=DECIMAL},
+                `away_margin` = 	#{config.awayMargin,jdbcType=DECIMAL},
+                `tie_margin` = 	#{config.tieMargin,jdbcType=DECIMAL},
+                `odd_change_rule` = 	#{config.oddChangeRule,jdbcType=INTEGER},
+                `home_single_max_amount` = 	#{config.homeSingleMaxAmount,jdbcType=BIGINT},
+                `home_multi_max_amount` = 	#{config.homeMultiMaxAmount,jdbcType=BIGINT},
+                `home_single_odds_rate` = 	#{config.homeSingleOddsRate,jdbcType=DECIMAL},
+                `home_multi_odds_rate` = 	#{config.homeMultiOddsRate,jdbcType=DECIMAL},
+                `away_single_odds_rate` = 	#{config.awaySingleOddsRate,jdbcType=DECIMAL},
+                `away_multi_odds_rate` = 	#{config.awayMultiOddsRate,jdbcType=DECIMAL},
+                `market_type` = 	#{config.marketType,jdbcType=VARCHAR}
+
+    </update>
+</mapper>

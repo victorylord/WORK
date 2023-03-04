@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsLabelLimitConfigMapper">
+    <select id="selectRcsLabelLimitConfig" resultType="com.panda.sport.rcs.vo.RcsLabelLimitConfigVo">
+        SELECT
+            c.id,
+            c.bet_extra_delay,
+            c.extra_margin,
+            c.limit_percentage,
+            c.special_betting_limit,
+            c.sport_id,
+            c.tag_market_level_id,
+            l.level_id tag_id,
+            l.level_name name,
+            c.volume_percentage
+        FROM
+            rcs_label_limit_config c
+            RIGHT JOIN t_user_level l ON l.level_id = c.tag_id
+    </select>
+
+    <update id="removeRcsLabelLimitConfigs" >
+        DELETE FROM rcs_label_limit_config WHERE tag_id in
+        <foreach close=")" collection="tagIdList" item="item" open="(" separator=", ">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <select id="getRcsLabelLimitConfigs" resultType="com.panda.sport.rcs.pojo.RcsLabelLimitConfig">
+        SELECT g.* FROM `rcs_label_limit_config` g;
+    </select>
+</mapper>

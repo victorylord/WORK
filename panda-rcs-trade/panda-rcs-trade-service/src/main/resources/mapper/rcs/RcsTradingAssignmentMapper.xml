@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsTradingAssignmentMapper">
+    <select id="selectRcsTradingAssignment" resultType="com.panda.sport.rcs.pojo.vo.TradingAssignmentDataVo">
+        SELECT * FROM rcs_trading_assignment WHERE  `status`=1 and match_id=#{matchId} AND match_type=#{matchType}
+        AND play_collection_id in
+        <foreach close=")" collection="playSetList" item="item" open="(" separator=", ">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+        ORDER BY create_time
+    </select>
+
+    <delete id="deleteTradingAssignmentByUserIdList">
+        DELETE FROM rcs_trading_assignment WHERE match_id=#{matchId} AND match_type=#{matchType} and  user_id IN
+        <foreach close=")" collection="userIdList" item="item" open="(" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="selectTradingAssignmentCount" resultType="java.lang.Integer">
+        SELECT count(1) FROM(SELECT  DISTINCT user_id FROM rcs_trading_assignment WHERE match_id=#{matchId} AND match_type=#{matchType} AND user_id!=#{tradeId}) c
+    </select>
+
+    <select id="queryTradeMatchIds" resultType="java.lang.Long">
+        SELECT DISTINCT
+        rta.match_id
+        FROM
+        rcs_category_set_trader_weight rta
+        JOIN standard_match_info smi ON smi.id = rta.match_id
+        WHERE
+        smi.match_status not in (3) AND smi.begin_time > (UNIX_TIMESTAMP(NOW())-24*60*60*3)*1000
+        <if test="traderId != null">
+            and rta.trader_id =#{traderId}
+        </if>
+        <if test="matchType != null">
+            <if test="matchType == 1">
+                and rta.market_type =0
+                and smi.odds_live = 1
+            </if>
+            <if test="matchType == 0">
+                and rta.market_type =1
+                and smi.odds_live = 0
+            </if>
+        </if>
+    </select>
+<!--    <select id="queryTradeMatchIds" resultType="java.lang.Long">-->
+<!--        SELECT DISTINCT-->
+<!--        rta.match_id-->
+<!--        FROM-->
+<!--        rcs_trading_assignment rta-->
+<!--        LEFT JOIN standard_match_info smi ON smi.id = rta.match_id-->
+<!--        WHERE-->
+<!--        rta.`status` = 1 AND smi.match_status not in (3) AND smi.begin_time > (UNIX_TIMESTAMP(NOW())-24*60*60*3)*1000-->
+<!--        <if test="traderId != null">-->
+<!--            and rta.user_id =#{traderId}-->
+<!--        </if>-->
+<!--        <if test="matchType != null">-->
+<!--            and rta.match_type =#{matchType}-->
+<!--        </if>-->
+<!--    </select>-->
+
+    <select id="selectUserId" resultType="java.lang.Integer">
+        SELECT DISTINCT trader_id FROM rcs_category_set_trader_weight WHERE match_id=#{matchId} AND market_type=#{matchType}
+    </select>
+<!--    <select id="selectUserId" resultType="java.lang.Integer">-->
+<!--        SELECT DISTINCT user_id FROM rcs_trading_assignment WHERE match_id=#{matchId} AND match_type=#{matchType}-->
+<!--    </select>-->
+
+    <update id="deleteByIdAndMatchId">
+        DELETE  FROM rcs_trading_assignment  WHERE match_id=#{matchId} AND match_type=#{matchType} AND user_id=#{traderId}
+    </update>
+</mapper>

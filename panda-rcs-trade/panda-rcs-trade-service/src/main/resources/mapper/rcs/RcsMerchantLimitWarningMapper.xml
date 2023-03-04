@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMerchantLimitWarningMapper">
+    <select id="selectByPage" resultType="com.panda.sport.rcs.pojo.RcsMerchantLimitWarning">
+        SELECT
+            w.id,
+            c.child_key business_name,
+            w.business_id,
+            w.credit_id,
+            m.credit_name as creditName,
+            w.business_single_day_limit,
+            w.amount_used,
+            date_format(w.create_time, '%Y-%m-%d %H:%i:%s') create_time
+        FROM
+            rcs_merchant_limit_warning w
+            LEFT JOIN rcs_operate_merchants_set m on m.merchants_id = w.credit_id
+            LEFT JOIN rcs_code c ON c.`value` = w.business_id
+            AND c.father_key = "business"
+            <if test="time!=null">
+                WHERE
+                UNIX_TIMESTAMP( w.create_time ) * 1000 > #{time}
+            </if>
+        ORDER BY create_time DESC
+ 
+    </select>
+
+    <select id="getCurrentDayCount" resultType="java.lang.Integer">
+        SELECT count(1) FROM
+        rcs_merchant_limit_warning w
+        LEFT JOIN rcs_operate_merchants_set m on m.merchants_id = w.credit_id
+        LEFT JOIN rcs_code c ON c.`value` = w.business_id
+        AND c.father_key = "business"
+        WHERE UNIX_TIMESTAMP( w.create_time ) &gt;= unix_timestamp(date_format(now(), '%Y-%m-%d'))
+    </select>
+</mapper>

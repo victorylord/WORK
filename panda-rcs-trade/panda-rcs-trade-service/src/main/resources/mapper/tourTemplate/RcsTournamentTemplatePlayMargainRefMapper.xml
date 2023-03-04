@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.tourTemplate.RcsTournamentTemplatePlayMargainRefMapper">
+
+    <insert id="insertBatch" keyColumn="id" keyProperty="list.id" parameterType="list" useGeneratedKeys="true">
+        insert into rcs_tournament_template_play_margain_ref
+        (margain_id,time_val,margain,balance_option,max_odds,min_odds,odd_change_rule,home_multi_max_amount,home_single_max_amount,home_multi_odds_rate,
+        home_single_odds_rate,away_multi_odds_rate,away_single_odds_rate,order_single_pay_val,order_single_bet_val,user_multi_pay_val,multi_diff_val,multi_odds_rate,home_level_first_max_amount,
+        home_level_second_max_amount,home_level_first_odds_rate,home_level_second_odds_rate,away_level_first_odds_rate,away_level_second_odds_rate,is_market_config,
+        is_quota_config,pause_margain,normal_wait_time,pause_wait_time,create_time,update_time,status,level_first_market_amount,level_second_market_amount,home_level_first_market_rate,
+        home_level_second_market_rate,away_level_first_market_rate,away_level_second_market_rate,market_single_max_amount,market_cumulative_max_amount,home_single_market_rate,
+        home_cumulative_market_rate,away_single_market_rate,away_cumulative_market_rate,pumping_option,category_pre_status,cash_out_margin,market_count,vice_market_ratio,pending_order_pay_val)
+
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.margainId,jdbcType=BIGINT},#{item.timeVal,jdbcType=BIGINT},#{item.margain,jdbcType=VARCHAR},#{item.balanceOption,jdbcType=INTEGER},#{item.maxOdds,jdbcType=DECIMAL},
+            #{item.minOdds,jdbcType=DECIMAL},#{item.oddChangeRule,jdbcType=INTEGER},#{item.homeMultiMaxAmount,jdbcType=BIGINT},#{item.homeSingleMaxAmount,jdbcType=BIGINT},#{item.homeMultiOddsRate,jdbcType=DECIMAL},
+            #{item.homeSingleOddsRate,jdbcType=DECIMAL},#{item.awayMultiOddsRate,jdbcType=DECIMAL},#{item.awaySingleOddsRate,jdbcType=DECIMAL},#{item.orderSinglePayVal,jdbcType=BIGINT},#{item.orderSingleBetVal,jdbcType=BIGINT},
+            #{item.userMultiPayVal,jdbcType=BIGINT},#{item.multiDiffVal,jdbcType=BIGINT},#{item.multiOddsRate,jdbcType=BIGINT},#{item.homeLevelFirstMaxAmount,jdbcType=BIGINT},#{item.homeLevelSecondMaxAmount,jdbcType=BIGINT},
+            #{item.homeLevelFirstOddsRate,jdbcType=DECIMAL},#{item.homeLevelSecondOddsRate,jdbcType=DECIMAL},#{item.awayLevelFirstOddsRate,jdbcType=DECIMAL},#{item.awayLevelSecondOddsRate,jdbcType=DECIMAL},
+            #{item.isMarketConfig,jdbcType=INTEGER},#{item.isQuotaConfig,jdbcType=INTEGER},#{item.pauseMargain,jdbcType=VARCHAR},#{item.normalWaitTime,jdbcType=VARCHAR},#{item.pauseWaitTime,jdbcType=VARCHAR},
+            now(),now(),#{item.status,jdbcType=INTEGER},#{item.levelFirstMarketAmount,jdbcType=DECIMAL},#{item.levelSecondMarketAmount,jdbcType=DECIMAL},#{item.homeLevelFirstMarketRate,jdbcType=DECIMAL},#{item.homeLevelSecondMarketRate,jdbcType=DECIMAL},
+            #{item.awayLevelFirstMarketRate,jdbcType=DECIMAL},#{item.awayLevelSecondMarketRate,jdbcType=DECIMAL},#{item.marketSingleMaxAmount,jdbcType=DECIMAL},#{item.marketCumulativeMaxAmount,jdbcType=DECIMAL},
+            #{item.homeSingleMarketRate,jdbcType=DECIMAL},#{item.homeCumulativeMarketRate,jdbcType=DECIMAL},#{item.awaySingleMarketRate,jdbcType=DECIMAL},#{item.awayCumulativeMarketRate,jdbcType=DECIMAL},#{item.pumpingOption,jdbcType=INTEGER},
+            #{item.categoryPreStatus,jdbcType=INTEGER},#{item.cashOutMargin,jdbcType=BIGINT},#{item.marketCount,jdbcType=INTEGER},#{item.viceMarketRatio,jdbcType=VARCHAR},#{item.pendingOrderPayVal,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+    <update id="updatePlayMargainRefById"
+            parameterType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargainRef">
+        update rcs_tournament_template_play_margain_ref
+        <trim prefix="set" suffixOverrides=",">
+            <if test="margain != null">
+                margain = #{margain,jdbcType=VARCHAR},
+            </if>
+            <if test="balanceOption != null">
+                balance_option = #{balanceOption,jdbcType=INTEGER},
+            </if>
+            <if test="maxOdds != null">
+                max_odds = #{maxOdds,jdbcType=DECIMAL},
+            </if>
+            <if test="minOdds != null">
+                min_odds = #{minOdds,jdbcType=DECIMAL},
+            </if>
+            <if test="oddChangeRule != null">
+                odd_change_rule = #{oddChangeRule,jdbcType=INTEGER},
+            </if>
+            <if test="homeMultiMaxAmount != null">
+                home_multi_max_amount = #{homeMultiMaxAmount,jdbcType=BIGINT},
+            </if>
+            <if test="homeSingleMaxAmount != null">
+                home_single_max_amount = #{homeSingleMaxAmount,jdbcType=BIGINT},
+            </if>
+            <if test="homeMultiOddsRate != null">
+                home_multi_odds_rate = #{homeMultiOddsRate,jdbcType=DECIMAL},
+            </if>
+            <if test="homeSingleOddsRate != null">
+                home_single_odds_rate = #{homeSingleOddsRate,jdbcType=DECIMAL},
+            </if>
+            <if test="awayMultiOddsRate != null">
+                away_multi_odds_rate = #{awayMultiOddsRate,jdbcType=DECIMAL},
+            </if>
+            <if test="awaySingleOddsRate != null">
+                away_single_odds_rate = #{awaySingleOddsRate,jdbcType=DECIMAL},
+            </if>
+            <if test="orderSinglePayVal != null">
+                order_single_pay_val = #{orderSinglePayVal,jdbcType=BIGINT},
+            </if>
+            <if test="orderSingleBetVal != null">
+                order_single_bet_val = #{orderSingleBetVal,jdbcType=BIGINT},
+            </if>
+            <if test="userMultiPayVal != null">
+                user_multi_pay_val = #{userMultiPayVal,jdbcType=BIGINT},
+            </if>
+            <if test="pendingOrderPayVal != null">
+                pending_order_pay_val = #{pendingOrderPayVal,jdbcType=BIGINT},
+            </if>
+            <if test="multiDiffVal != null">
+                multi_diff_val = #{multiDiffVal,jdbcType=BIGINT},
+            </if>
+            <if test="multiOddsRate != null">
+                multi_odds_rate = #{multiOddsRate,jdbcType=DECIMAL},
+            </if>
+            <if test="homeLevelFirstMaxAmount != null">
+                home_level_first_max_amount = #{homeLevelFirstMaxAmount,jdbcType=BIGINT},
+            </if>
+            <if test="homeLevelSecondMaxAmount != null">
+                home_level_second_max_amount = #{homeLevelSecondMaxAmount,jdbcType=BIGINT},
+            </if>
+            <if test="homeLevelFirstOddsRate != null">
+                home_level_first_odds_rate = #{homeLevelFirstOddsRate,jdbcType=DECIMAL},
+            </if>
+            <if test="homeLevelSecondOddsRate != null">
+                home_level_second_odds_rate = #{homeLevelSecondOddsRate,jdbcType=DECIMAL},
+            </if>
+            <if test="awayLevelFirstOddsRate != null">
+                away_level_first_odds_rate = #{awayLevelFirstOddsRate,jdbcType=DECIMAL},
+            </if>
+            <if test="awayLevelSecondOddsRate != null">
+                away_level_second_odds_rate = #{awayLevelSecondOddsRate,jdbcType=DECIMAL},
+            </if>
+            <if test="isMarketConfig != null">
+                is_market_config = #{isMarketConfig,jdbcType=INTEGER},
+            </if>
+            <if test="isQuotaConfig != null">
+                is_quota_config = #{isQuotaConfig,jdbcType=INTEGER},
+            </if>
+            <if test="pauseMargain != null">
+                pause_margain = #{pauseMargain,jdbcType=VARCHAR},
+            </if>
+            <if test="normalWaitTime != null">
+                normal_wait_time = #{normalWaitTime,jdbcType=INTEGER},
+            </if>
+            <if test="pauseWaitTime != null">
+                pause_wait_time = #{pauseWaitTime,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="levelFirstMarketAmount != null">
+                level_first_market_amount = #{levelFirstMarketAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="levelSecondMarketAmount != null">
+                level_second_market_amount = #{levelSecondMarketAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="homeLevelFirstMarketRate != null">
+                home_level_first_market_rate = #{homeLevelFirstMarketRate,jdbcType=DECIMAL},
+            </if>
+            <if test="homeLevelSecondMarketRate != null">
+                home_level_second_market_rate = #{homeLevelSecondMarketRate,jdbcType=DECIMAL},
+            </if>
+            <if test="awayLevelFirstMarketRate != null">
+                away_level_first_market_rate = #{awayLevelFirstMarketRate,jdbcType=DECIMAL},
+            </if>
+            <if test="awayLevelSecondMarketRate != null">
+                away_level_second_market_rate = #{awayLevelSecondMarketRate,jdbcType=DECIMAL},
+            </if>
+            <if test="marketSingleMaxAmount != null">
+                market_single_max_amount = #{marketSingleMaxAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="marketCumulativeMaxAmount != null">
+                market_cumulative_max_amount = #{marketCumulativeMaxAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="homeSingleMarketRate != null">
+                home_single_market_rate = #{homeSingleMarketRate,jdbcType=DECIMAL},
+            </if>
+            <if test="homeCumulativeMarketRate != null">
+                home_cumulative_market_rate = #{homeCumulativeMarketRate,jdbcType=DECIMAL},
+            </if>
+            <if test="awaySingleMarketRate != null">
+                away_single_market_rate = #{awaySingleMarketRate,jdbcType=DECIMAL},
+            </if>
+            <if test="awayCumulativeMarketRate != null">
+                away_cumulative_market_rate = #{awayCumulativeMarketRate,jdbcType=DECIMAL},
+            </if>
+            <if test="pumpingOption != null">
+                pumping_option = #{pumpingOption,jdbcType=INTEGER},
+            </if>
+            <if test="categoryPreStatus != null">
+                category_pre_status = #{categoryPreStatus,jdbcType=INTEGER},
+            </if>
+            <if test="cashOutMargin != null">
+                cash_out_margin = #{cashOutMargin,jdbcType=BIGINT},
+            </if>
+            <if test="marketCount != null">
+                market_count = #{marketCount,jdbcType=INTEGER},
+            </if>
+            <if test="viceMarketRatio != null">
+                vice_market_ratio = #{viceMarketRatio,jdbcType=VARCHAR},
+            </if>
+            update_time = now(),
+        </trim>
+        where margain_id = #{margainId,jdbcType=BIGINT} and time_val = #{timeVal,jdbcType=BIGINT}
+    </update>
+    <update id="updatePlayMargainRefStatusByMatchIds">
+        UPDATE rcs_tournament_template_play_margain_ref t1
+            LEFT JOIN rcs_tournament_template_play_margain t2 ON t2.id = t1.margain_id
+            LEFT JOIN rcs_tournament_template t3 ON t3.id = t2.template_id
+            SET t1.`status` = #{status}
+        WHERE
+            t3.type_val in
+            <foreach close=")" collection="matchIds" item="id" open="(" separator=",">
+                #{id}
+            </foreach>
+            AND t1.status = 1
+    </update>
+    <select id="selectPreLastPlayMargainRef"
+            resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargainRef">
+        SELECT *
+        FROM rcs_tournament_template_play_margain_ref ref
+        WHERE ref.margain_id = #{margainId}
+          AND ref.time_val &gt; #{timeVal}
+        ORDER BY ref.time_val ASC limit 1
+    </select>
+
+    <select id="selectLiveLastPlayMargainRef"
+            resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargainRef">
+        SELECT *
+        FROM rcs_tournament_template_play_margain_ref ref
+        WHERE ref.margain_id = #{margainId}
+          AND ref.time_val &lt; #{timeVal}
+        ORDER BY ref.time_val DESC limit 1
+    </select>
+
+    <select id="selectMarginRefByTemplateId"
+            resultType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplatePlayMargainRef">
+        SELECT r.*
+        FROM rcs_tournament_template t,
+             rcs_tournament_template_play_margain m,
+             rcs_tournament_template_play_margain_ref r
+        WHERE t.id = m.template_id
+          AND m.valid_margin_id = r.id
+          AND t.type = 3
+          AND t.id = #{id}
+    </select>
+</mapper>

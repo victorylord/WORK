@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMatchMarketProbabilityConfigMapper">
+
+    <insert id="insertOrUpdateMarketProbabilityConfig">
+        <foreach collection="list" item="item" index="index" separator=";">
+            INSERT INTO `panda_rcs`.`rcs_match_market_probability_config` (
+            `match_id`,
+            `play_id`,
+            market_id,
+
+            `odds_type`,
+            `probability`
+            )
+            VALUES
+            ( #{item.matchId},
+            #{item.playId},
+            #{item.marketId,jdbcType=BIGINT},
+
+            #{item.oddsType},
+            #{item.probability}
+            )
+            ON DUPLICATE KEY UPDATE
+            `probability`=	#{item.probability,jdbcType=DECIMAL}
+        </foreach>
+    </insert>
+
+    <update id="updateProbabilityBySelectivetToZero">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update rcs_match_market_probability_config
+            <set>
+                    probability = 0,
+                    odds_change_times = 0
+            </set>
+            <where>
+                match_id = #{item.matchId,jdbcType=BIGINT}
+                <if test="item.playId != null">
+                    and play_id = #{item.playId,jdbcType=BIGINT}
+                </if>
+                <if test="item.marketId != null">
+                    and market_id = #{item.marketId,jdbcType=BIGINT}
+                </if>
+                <if test="item.oddsType != null and item.oddsType != ''">
+                    and odds_type = #{item.oddsType,jdbcType=VARCHAR}
+                </if>
+            </where>
+        </foreach>
+    </update>
+</mapper>

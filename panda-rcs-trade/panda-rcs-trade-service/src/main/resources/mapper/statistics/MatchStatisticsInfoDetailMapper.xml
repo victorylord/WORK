@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.statistics.MatchStatisticsInfoDetailMapper">
+
+    <select id="selectTennisScoreByPlayId" resultType="string">
+        SELECT concat(t1,":",t2)
+        from match_statistics_info_detail t
+        WHERE standard_match_id=#{matchId}
+        <if test="ju != null">
+            AND t.code = "setScore"
+            AND t.first_num = #{pan}
+            AND t.second_num = #{ju}
+        </if>
+        <if test="pan != null and ju == null">
+            AND t.code = "matchScore"
+            AND t.first_num = #{pan}
+        </if>
+        <if test="pan == null and ju == null">
+            AND t.code = "matchScore"
+            AND t.first_num = 0
+        </if>
+    </select>
+
+
+    <select id="selectScoreByCode" resultType="com.panda.sport.rcs.pojo.MatchStatisticsInfoDetail">
+        SELECT * from match_statistics_info_detail t WHERE `code` like concat(#{code},'%') and standard_match_id = #{matchId}
+    </select>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.TSettleMapper">
+
+
+    <select id="getCustomizedOrderList" resultType="com.panda.sport.rcs.pojo.report.CalcSettleItem">
+        SELECT
+            DATE_FORMAT(FROM_UNIXTIME(c.begin_time/1000-43200),'%Y-%m-%d') AS matchDate,
+            DATE_FORMAT(FROM_UNIXTIME(b.bet_time/1000-43200),'%Y-%m-%d') AS betDate,
+            DATE_FORMAT(FROM_UNIXTIME(a.settle_time/1000-43200),'%Y-%m-%d') AS settleDate,
+            b.sport_id sportId,
+            c.standard_tournament_id tournamentId,
+            b.match_type matchType,
+            b.play_id playId,
+            a.bet_amount betAmount,
+            a.settle_amount settleAmount,
+            a.bet_no betNo,
+            a.settle_status settleStatus,
+            a.orderStatus,
+            a.uid
+        FROM
+            (select a.settle_time,a.bet_amount, a.settle_amount, a.bet_no, a.settle_status,
+                case
+                when (a.out_come > 1 and a.out_come &lt; 7) then 1
+                when (a.out_come = 7 or a.out_come = 8) then 2
+                else 0
+                end as orderStatus,a.uid
+            from t_settle a
+        where
+            a.series_type=1 AND
+            ( a.calc_status IS NULL OR a.calc_status = 0 ) AND
+            a.settle_time >= #{beginTime} AND
+            a.settle_time &lt; #{endTime} limit #{start},#{limit}) as a
+        LEFT JOIN t_order_detail b ON a.bet_no = b.bet_no
+        LEFT JOIN standard_match_info c ON b.match_id = c.id
+        order by a.bet_no asc
+
+    </select>
+
+    <select id="getMinDates" resultType="com.panda.sport.rcs.pojo.report.MinDates">
+        SELECT
+            DATE_FORMAT( FROM_UNIXTIME( MIN( b.bet_time )/ 1000-43200 ), '%Y-%m-%d' ) minBetDate,
+            DATE_FORMAT( FROM_UNIXTIME( MIN( c.begin_time )/ 1000-43200 ), '%Y-%m-%d' ) minMatchDate
+        FROM
+            ( SELECT a.bet_no FROM t_settle a WHERE a.series_type = 1 AND a.settle_time >= #{startTime} ) AS a
+            LEFT JOIN t_order_detail b ON a.bet_no = b.bet_no
+            LEFT JOIN standard_match_info c ON b.match_id = c.id
+
+    </select>
+
+    <select id="getCountCustomizedOrder" resultType="java.lang.Long">
+        SELECT
+            count(0)
+        FROM
+            (select a.bet_no from t_settle a where a.series_type=1 AND
+            ( a.calc_status IS NULL OR a.calc_status = 0 ) AND
+            a.settle_time >= #{beginTime} AND
+            a.settle_time &lt; #{endTime} ) as a
+            LEFT JOIN t_order_detail b ON a.bet_no = b.bet_no
+            LEFT JOIN standard_match_info c ON b.match_id = c.id
+    </select>
+
+    <update id="updateTSettleToOrderStatic">
+        update t_settle set calc_status=calc_status+1 where bet_no = #{list.betNo}
+    </update>
+
+    <select id="selectIdByDate" resultType="java.lang.Long">
+        select bet_no from t_settle where calc_status >= 1 and settle_time >= #{startDate} and settle_time &lt; #{endDate} order by bet_no asc
+    </select>
+
+
+    <update id="updateSettleStatusByIds" parameterType="java.util.List">
+        update t_settle set calc_status = 0 where bet_no in
+        <foreach close=")" collection="list" item="item" open="(" separator=",">
+            #{item}
+        </foreach>
+
+    </update>
+    <select id="selectByMatchId" resultType="java.lang.Long">
+       SELECT
+            *
+        FROM
+            t_settle
+        WHERE
+            order_no IN ( SELECT order_no FROM t_order_detail WHERE match_id = #{matchId} )
+    </select>
+
+</mapper>

@@ -1,0 +1,750 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsOrderStatisticBetTimeMapper">
+    <delete id="deleteInfoByDate">
+        delete from rcs_order_statistic_bet_time where bet_date >= #{startDate}
+    </delete>
+    <insert id="updateRcsOrderStatisticBetTime" parameterType="java.util.List">
+        <foreach collection="list" index="index" item="item" separator=";">
+            INSERT INTO `panda_rcs`.`rcs_order_statistic_bet_time`(
+            `bet_date`,
+            `sport_id`,
+            `tournament_id`,
+            `match_type`,
+            `play_id`,
+            `order_status`,
+            `order_amount_sum`,
+            `order_count`,
+            `customer_count`,
+            `amount_gtten_thousand_count`,
+            `amount_gtfive_thousand_count`,
+            `amount_gttwo_thousand_count`,
+            `amount_gtone_thousand_count`,
+            `amount_ltone_thousand_count`,
+            `amount_profit`
+            )
+            VALUES (
+            #{item.betDate},
+            #{item.sportId},
+            #{item.tournamentId},
+            #{item.matchType},
+            #{item.playId},
+            #{item.orderStatus},
+            #{item.orderAmountSum},
+            #{item.orderCount},
+            #{item.customerCount},
+            #{item.amountGttenThousandCount},
+            #{item.amountGtfiveThousandCount},
+            #{item.amountGttwoThousandCount},
+            #{item.amountGtoneThousandCount},
+            #{item.amountLtoneThousandCount},
+            #{item.amountProfit}
+            )
+            ON DUPLICATE KEY UPDATE
+            order_amount_sum=order_amount_sum + #{item.orderAmountSum},
+            order_count=order_count + #{item.orderCount},
+            amount_gtten_thousand_count=amount_gtten_thousand_count + #{item.amountGttenThousandCount},
+            amount_gtfive_thousand_count=amount_gtfive_thousand_count + #{item.amountGtfiveThousandCount},
+            amount_gttwo_thousand_count=amount_gttwo_thousand_count + #{item.amountGttwoThousandCount},
+            amount_gtone_thousand_count=amount_gtone_thousand_count + #{item.amountGtoneThousandCount},
+            amount_ltone_thousand_count=amount_ltone_thousand_count + #{item.amountLtoneThousandCount},
+            amount_profit=amount_profit + #{item.amountProfit}
+        </foreach>
+    </insert>
+    <insert id="updateRcsOrderStatisticBet">
+        INSERT INTO `panda_rcs`.`rcs_order_statistic_bet_time`(
+        `bet_date`,
+        `sport_id`,
+        `tournament_id`,
+        `match_type`,
+        `play_id`,
+        `order_status`,
+        `order_amount_sum`,
+        `order_count`,
+        `customer_count`,
+        `amount_gtten_thousand_count`,
+        `amount_gtfive_thousand_count`,
+        `amount_gttwo_thousand_count`,
+        `amount_gtone_thousand_count`,
+        `amount_ltone_thousand_count`,
+        `amount_profit`
+        )
+        VALUES (
+        #{bet.betDate},
+        #{bet.sportId},
+        #{bet.tournamentId},
+        #{bet.matchType},
+        #{bet.playId},
+        #{bet.orderStatus},
+        #{bet.orderAmountSum},
+        #{bet.orderCount},
+        #{bet.customerCount},
+        #{bet.amountGttenThousandCount},
+        #{bet.amountGtfiveThousandCount},
+        #{bet.amountGttwoThousandCount},
+        #{bet.amountGtoneThousandCount},
+        #{bet.amountLtoneThousandCount},
+        #{bet.amountProfit}
+        )
+        ON DUPLICATE KEY UPDATE
+        order_amount_sum=order_amount_sum + #{bet.orderAmountSum},
+        order_count=order_count + #{bet.orderCount},
+        amount_gtten_thousand_count=amount_gtten_thousand_count + #{bet.amountGttenThousandCount},
+        amount_gtfive_thousand_count=amount_gtfive_thousand_count + #{bet.amountGtfiveThousandCount},
+        amount_gttwo_thousand_count=amount_gttwo_thousand_count + #{bet.amountGttwoThousandCount},
+        amount_gtone_thousand_count=amount_gtone_thousand_count + #{bet.amountGtoneThousandCount},
+        amount_ltone_thousand_count=amount_ltone_thousand_count + #{bet.amountLtoneThousandCount},
+        amount_profit=amount_profit + #{bet.amountProfit}
+    </insert>
+    <select id="selectBaseOrdersByDay" resultType="com.panda.sport.rcs.vo.BaseRcsOrderStatisticTimeVo">
+        SELECT
+        rosd.order_day,
+        rosd.order_year,
+        rosd.order_phase,
+        rosd.order_week,
+        <if test="base.settleTimeType == null">
+            rosmt.match_date base_date,
+        </if>
+        <if test="base.settleTimeType == 1">
+            rosmt.match_date base_date,
+        </if>
+        <if test="base.settleTimeType == 2">
+            rosmt.bet_date base_date,
+        </if>
+        <if test="base.settleTimeType == 3">
+            rosmt.settle_date base_date,
+        </if>
+        <if test="base.matchTypes != null">
+            rosmt.match_type,
+        </if>
+        <if test="base.tournamentIds != null">
+            rosmt.tournament_id,
+        </if>
+        <if test="base.sportIds != null">
+            rosmt.sport_id,
+        </if>
+        <if test="base.playIds != null">
+            rosmt.play_id,
+        </if>
+        rosmt.order_status,
+        IFNULL(SUM(rosmt.order_amount_sum),0) order_amount_sum,
+        IFNULL(SUM(rosmt.order_count),0) order_count,
+        IFNULL(SUM(rosmt.customer_count),0) customer_count,
+        IFNULL(SUM(rosmt.amount_per_order_count),0) amount_per_order_count,
+        IFNULL(SUM(rosmt.order_count_per_customer),0) order_count_per_customer,
+        IFNULL(SUM(rosmt.amount_per_customer),0) amount_per_customer,
+        IFNULL(SUM(rosmt.amount_gtten_thousand_count),0) amount_gtten_thousand_count,
+        IFNULL(SUM(rosmt.amount_gtfive_thousand_count),0) amount_gtfive_thousand_count,
+        IFNULL(SUM(rosmt.amount_gttwo_thousand_count),0) amount_gttwo_thousand_count,
+        IFNULL(SUM(rosmt.amount_gtone_thousand_count),0) amount_gtone_thousand_count,
+        IFNULL(SUM(rosmt.amount_ltone_thousand_count),0) amount_ltone_thousand_count,
+        IFNULL( SUM(rosmt.amount_profit),0) amount_profit,
+        IFNULL((SUM(rosmt.amount_profit) /SUM(rosmt.order_amount_sum )),0) amount_profit_per_order_count
+        FROM
+        <if test="base.settleTimeType == null">
+            rcs_order_statistic_match_time rosmt
+            LEFT JOIN rcs_order_statistic_date rosd ON rosmt.match_date = rosd.order_day
+        </if>
+        <if test="base.settleTimeType == 1">
+            rcs_order_statistic_match_time rosmt
+            LEFT JOIN rcs_order_statistic_date rosd ON rosmt.match_date = rosd.order_day
+        </if>
+        <if test="base.settleTimeType == 2">
+            rcs_order_statistic_bet_time rosmt
+            LEFT JOIN rcs_order_statistic_date rosd ON rosmt.bet_date = rosd.order_day
+        </if>
+        <if test="base.settleTimeType == 3">
+            rcs_order_statistic_settle_time rosmt
+            LEFT JOIN rcs_order_statistic_date rosd ON rosmt.settle_date = rosd.order_day
+        </if>
+        <where>
+            <foreach collection="base.timeBeanVoList" index="index" item="item" open="(" close=")" separator="or">
+                <if test="item.startTime != null and item.endTime != null ">
+                    <if test="base.settleTimeType == null">
+                        ( rosmt.match_date &gt;= #{item.startTime} and rosmt.match_date &lt; #{item.endTime} )
+                    </if>
+                    <if test="base.settleTimeType == 1">
+                        ( rosmt.match_date &gt;= #{item.startTime} and rosmt.match_date &lt; #{item.endTime} )
+                    </if>
+                    <if test="base.settleTimeType == 2">
+                        ( rosmt.bet_date &gt;= '${item.startTime}' and rosmt.bet_date &lt; '${item.endTime}' )
+                    </if>
+                    <if test="base.settleTimeType == 3">
+                        (rosmt.settle_date &gt;= #{item.startTime} and rosmt.settle_date &lt;= #{item.endTime} )
+                    </if>
+                </if>
+            </foreach>
+            <if test="base.matchTypes != null">
+                AND rosmt.match_type in
+                <foreach item="item" index="index" collection="base.matchTypes"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="base.tournamentIds != null">
+                AND rosmt.tournament_id in
+                <foreach item="item" index="index" collection="base.tournamentIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="base.sportIds != null">
+                AND rosmt.sport_id in
+                <foreach item="item" index="index" collection="base.sportIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="base.playIds != null">
+                AND rosmt.play_id in
+                <foreach item="item" index="index" collection="base.playIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="base.orderStatuses != null">
+                AND rosmt.order_status in
+                <foreach item="item" index="index" collection="base.orderStatuses"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        GROUP BY
+        <if test="base.dateType == null">
+            rosd.order_year
+        </if>
+        <if test="base.dateType == 1">
+            rosd.order_year
+        </if>
+        <if test="base.dateType == 2">
+            rosd.order_year,rosd.order_phase
+        </if>
+        <if test="base.dateType == 3">
+            rosd.order_year,rosd.order_phase,rosd.order_week
+        </if>
+        <if test="base.dateType == 4">
+            rosd.order_day
+        </if>
+        <if test="base.matchTypes != null">
+            ,rosmt.match_type
+        </if>
+        <if test="base.tournamentIds != null">
+            ,rosmt.tournament_id
+        </if>
+        <if test="base.sportIds != null">
+            ,rosmt.sport_id
+        </if>
+        <if test="base.playIds != null">
+            ,rosmt.play_id
+        </if>
+        ORDER BY base_date
+    </select>
+
+    <select id="selectSumBaseOrders" resultType="com.panda.sport.rcs.vo.BaseRcsOrderStatisticTimeVo">
+        SELECT
+        <if test="base.settleTimeType == null">
+            match_date base_date,
+        </if>
+        <if test="base.settleTimeType == 1">
+            match_date base_date,
+        </if>
+        <if test="base.settleTimeType == 2">
+            bet_date base_date,
+        </if>
+        <if test="base.settleTimeType == 3">
+            settle_date base_date,
+        </if>
+        <if test="base.matchTypes != null">
+            match_type,
+        </if>
+        <if test="base.tournamentIds != null">
+            tournament_id,
+        </if>
+        <if test="base.sportIds != null">
+            sport_id,
+        </if>
+        <if test="base.playIds != null">
+            play_id,
+        </if>
+        order_status,
+        IFNULL(SUM(order_amount_sum),0) order_amount_sum,
+        IFNULL(SUM(order_count),0) order_count,
+        IFNULL(SUM(customer_count),0) customer_count,
+        IFNULL(SUM(amount_per_order_count),0) amount_per_order_count,
+        IFNULL(SUM(order_count_per_customer),0) order_count_per_customer,
+        IFNULL(SUM(amount_per_customer),0) amount_per_customer,
+        IFNULL(SUM(amount_gtten_thousand_count),0) amount_gtten_thousand_count,
+        IFNULL(SUM(amount_gtfive_thousand_count),0) amount_gtfive_thousand_count,
+        IFNULL(SUM(amount_gttwo_thousand_count),0) amount_gttwo_thousand_count,
+        IFNULL(SUM(amount_gtone_thousand_count),0) amount_gtone_thousand_count,
+        IFNULL(SUM(amount_ltone_thousand_count),0) amount_ltone_thousand_count,
+        IFNULL( SUM(amount_profit),0) amount_profit,
+        IFNULL((SUM(amount_profit) /SUM(order_amount_sum )),0) amount_profit_per_order_count
+        FROM
+        <if test="base.settleTimeType == null">
+            rcs_order_statistic_match_time
+        </if>
+        <if test="base.settleTimeType == 1">
+            rcs_order_statistic_match_time
+        </if>
+        <if test="base.settleTimeType == 2">
+            rcs_order_statistic_bet_time
+        </if>
+        <if test="base.settleTimeType == 3">
+            rcs_order_statistic_settle_time
+        </if>
+        <where>
+            <foreach collection="base.timeBeanVoList" index="index" item="item" open="(" close=")" separator="or">
+                <if test="item.startTime != null and item.endTime != null ">
+                    <if test="base.settleTimeType == null">
+                        ( match_date &gt;= #{item.startTime} and match_date &lt; #{item.endTime} )
+                    </if>
+                    <if test="base.settleTimeType == 1">
+                        ( match_date &gt;= #{item.startTime} and match_date &lt; #{item.endTime} )
+                    </if>
+                    <if test="base.settleTimeType == 2">
+                        ( bet_date &gt;= '${item.startTime}' and bet_date &lt; '${item.endTime}' )
+                    </if>
+                    <if test="base.settleTimeType == 3">
+                        (settle_date &gt;= #{item.startTime} and settle_date &lt;= #{item.endTime} )
+                    </if>
+                </if>
+            </foreach>
+            <if test="base.matchTypes != null">
+                AND match_type in
+                <foreach item="item" index="index" collection="base.matchTypes"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="base.tournamentIds != null  and base.allTournament!=1">
+                AND tournament_id in
+                <foreach item="item" index="index" collection="base.tournamentIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="base.sportIds != null">
+                AND sport_id in
+                <foreach item="item" index="index" collection="base.sportIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="base.playIds != null">
+                AND play_id in
+                <foreach item="item" index="index" collection="base.playIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="base.orderStatuses != null">
+                AND order_status in
+                <foreach item="item" index="index" collection="base.orderStatuses"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBaseOrders" resultType="com.panda.sport.rcs.vo.BaseRcsOrderStatisticTimeVo">
+        SELECT
+        rosd.order_day,
+        rosd.order_year,
+        rosd.order_phase,
+        rosd.order_week,
+        <if test="base.settleTimeType == null">
+            rosmt.match_date base_date,
+        </if>
+        <if test="base.settleTimeType == 1">
+            rosmt.match_date base_date,
+        </if>
+        <if test="base.settleTimeType == 2">
+            rosmt.bet_date base_date,
+        </if>
+        <if test="base.settleTimeType == 3">
+            rosmt.settle_date base_date,
+        </if>
+        <if test="base.matchTypes != null">
+            rosmt.match_type,
+        </if>
+        <if test="base.sportIds != null">
+            rosmt.sport_id,
+        </if>
+        <if test="base.tournamentIds != null">
+            <if test="base.sportIds == null">
+                rosmt.sport_id,
+            </if>
+            rosmt.tournament_id,
+            tournament.tournament_level,
+            tournament.text tournament_name,
+        </if>
+        <if test="base.playIds != null">
+            rosmt.play_id,
+        </if>
+        rosmt.order_status,
+        IFNULL(SUM(rosmt.order_amount_sum),0) order_amount_sum,
+        IFNULL(SUM(rosmt.order_count),0) order_count,
+        IFNULL(SUM(rosmt.customer_count),0) customer_count,
+        IFNULL((SUM( rosmt.order_amount_sum )/SUM( rosmt.order_count)), 0 ) amount_per_order_count,
+        IFNULL(SUM(rosmt.order_count_per_customer),0) order_count_per_customer,
+        IFNULL(SUM(rosmt.amount_per_customer),0) amount_per_customer,
+        IFNULL(SUM(rosmt.amount_gtten_thousand_count),0) amount_gtten_thousand_count,
+        IFNULL(SUM(rosmt.amount_gtfive_thousand_count),0) amount_gtfive_thousand_count,
+        IFNULL(SUM(rosmt.amount_gttwo_thousand_count),0) amount_gttwo_thousand_count,
+        IFNULL(SUM(rosmt.amount_gtone_thousand_count),0) amount_gtone_thousand_count,
+        IFNULL(SUM(rosmt.amount_ltone_thousand_count),0) amount_ltone_thousand_count,
+        IFNULL( SUM(rosmt.amount_profit),0) amount_profit,
+        IFNULL((SUM(rosmt.amount_profit) /SUM(rosmt.order_amount_sum )),0) amount_profit_per_order_count
+        FROM
+        <if test="base.settleTimeType == null">
+            rcs_order_statistic_match_time rosmt
+            LEFT JOIN rcs_order_statistic_date rosd ON rosmt.match_date = rosd.order_day
+        </if>
+        <if test="base.settleTimeType == 1">
+            rcs_order_statistic_match_time rosmt
+            LEFT JOIN rcs_order_statistic_date rosd ON rosmt.match_date = rosd.order_day
+        </if>
+        <if test="base.settleTimeType == 2">
+            rcs_order_statistic_bet_time rosmt
+            LEFT JOIN rcs_order_statistic_date rosd ON rosmt.bet_date = rosd.order_day
+        </if>
+        <if test="base.settleTimeType == 3">
+            rcs_order_statistic_settle_time rosmt
+            LEFT JOIN rcs_order_statistic_date rosd ON rosmt.settle_date = rosd.order_day
+        </if>
+        <if test="base.tournamentIds != null">
+            LEFT JOIN (
+	            SELECT
+		            sst.id id,
+		            JSON_UNQUOTE(JSON_EXTRACT(li.text, '$.zs')) text,
+		            CASE
+		            WHEN sst.tournament_level = 0 
+		            THEN 99 ELSE sst.tournament_level
+		            END tournament_level
+	            FROM
+		            standard_sport_tournament sst
+		            LEFT JOIN rcs_language_internation li ON li.name_code = sst.name_code
+	            GROUP BY li.name_code
+            ) tournament ON tournament.id = rosmt.tournament_id
+        </if>
+        <where>
+            <foreach collection="base.timeBeanVoList" index="index" item="item" open="(" close=")" separator="or">
+                <if test="item.startTime != null and item.endTime != null ">
+                    <if test="base.settleTimeType == null">
+                        ( rosmt.match_date &gt;= #{item.startTime} and rosmt.match_date &lt; #{item.endTime} )
+                    </if>
+                    <if test="base.settleTimeType == 1">
+                        ( rosmt.match_date &gt;= #{item.startTime} and rosmt.match_date &lt; #{item.endTime} )
+                    </if>
+                    <if test="base.settleTimeType == 2">
+                        ( rosmt.bet_date &gt;= '${item.startTime}' and rosmt.bet_date &lt; '${item.endTime}' )
+                    </if>
+                    <if test="base.settleTimeType == 3">
+                        (rosmt.settle_date &gt;= #{item.startTime} and rosmt.settle_date &lt; #{item.endTime} )
+                    </if>
+                </if>
+            </foreach>
+            <if test="base.matchTypes != null">
+                AND rosmt.match_type in
+                <foreach item="item" index="index" collection="base.matchTypes"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="base.tournamentIds != null and base.allTournament!=1">
+                AND rosmt.tournament_id in
+                <foreach item="item" index="index" collection="base.tournamentIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="base.sportIds != null">
+                AND rosmt.sport_id in
+                <foreach item="item" index="index" collection="base.sportIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="base.playIds != null and base.allPlayId!=1">
+                AND rosmt.play_id in
+                <foreach item="item" index="index" collection="base.playIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="base.orderStatuses != null">
+                AND rosmt.order_status in
+                <foreach item="item" index="index" collection="base.orderStatuses"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        GROUP BY
+        <if test="base.dateType == null">
+            rosd.order_year
+        </if>
+        <if test="base.dateType == 1">
+            rosd.order_year
+        </if>
+        <if test="base.dateType == 2">
+            rosd.order_year,rosd.order_phase
+        </if>
+        <if test="base.dateType == 3">
+            rosd.order_year,rosd.order_phase,rosd.order_week
+        </if>
+        <if test="base.dateType == 4">
+            rosd.order_day
+        </if>
+        <if test="base.matchTypes != null">
+            ,rosmt.match_type
+        </if>
+        <if test="base.sportIds != null">
+            ,rosmt.sport_id
+        </if>
+        <if test="base.tournamentIds != null">
+            <if test="base.sportIds == null">
+                ,rosmt.sport_id
+            </if>
+            ,rosmt.tournament_id
+        </if>
+        <if test="base.playIds != null">
+            ,rosmt.play_id
+        </if>
+        ORDER BY
+        <trim prefix="" suffix="" suffixOverrides=",">
+            <if test="base.sortId == null">
+                base_date,
+                <if test="base.sportIds != null">
+                    rosmt.sport_id ASC,
+                </if>
+                <if test="base.tournamentIds != null">
+                    <if test="base.sportIds == null">
+                        rosmt.sport_id ASC,
+                    </if>
+                    tournament.tournament_level ASC,tournament.text ASC,
+                </if>
+                <if test="base.matchTypes != null">
+                    rosmt.match_type DESC,
+                </if>
+                <if test="base.playIds != null">
+                    rosmt.play_id ASC,
+                </if>
+            </if>
+            <if test="base.sortId == 1">
+                base_date  <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 2">
+                base_date,
+                <if test="base.sportIds != null">
+                    rosmt.sport_id ASC,
+                </if>
+                <if test="base.tournamentIds != null">
+                    tournament.tournament_level ASC,tournament.text ASC,
+                </if>
+                <if test="base.matchTypes != null">
+                    rosmt.match_type DESC,
+                </if>
+                <if test="base.playIds != null">
+                    rosmt.play_id ASC,
+                </if>
+            </if>
+            <if test="base.sortId == 3">
+                order_amount_sum
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 4">
+                order_count
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 5">
+                customer_count
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 6">
+                amount_per_order_count
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 7">
+                order_count_per_customer
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 8">
+                amount_per_customer
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 9">
+                amount_gtten_thousand_count
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 10">
+                amount_gtfive_thousand_count
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 11">
+                amount_gttwo_thousand_count
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 12">
+                amount_gtone_thousand_count
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 13">
+                amount_ltone_thousand_count
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 14">
+                amount_profit
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+            <if test="base.sortId == 15">
+                amount_profit_per_order_count
+                <if test="base.isAsc==0">DESC</if>,
+            </if>
+        </trim>
+    </select>
+    <select id="queryUserCount" resultType="java.lang.Long">
+        SELECT
+        COUNT( DISTINCT a.uid )
+        FROM
+        t_settle a
+        LEFT JOIN t_order_detail b ON a.bet_no = b.bet_no
+        LEFT JOIN standard_match_info c ON c.id=b.match_id
+        WHERE
+        a.series_type = 1
+        AND a.calc_status = 1
+        <if test="sportId!=null">
+            and b.sport_id = #{sportId,jdbcType=INTEGER}
+        </if>
+        <if test="playId!=null">
+            AND b.play_id = #{playId,jdbcType=INTEGER}
+        </if>
+        <if test="matchType!=null">
+            AND b.match_type = #{matchType,jdbcType=INTEGER}
+        </if>
+        <if test="tournamentId!=null">
+            AND c.standard_tournament_id = #{tournamentId,jdbcType=INTEGER}
+        </if>
+        AND a.out_come in
+        <foreach close=")" collection="orderStatus" item="item" open="(" separator=", ">
+            #{item}
+        </foreach>
+        AND
+        <if test="settleTimeType == 2">
+            <foreach collection="list" item="item" open="(" separator=" OR " close=")">
+                (b.bet_time &gt;= #{item.startTimeValue,jdbcType=TIMESTAMP}
+                AND b.bet_time &lt; #{item.endTimeValue,jdbcType=TIMESTAMP})
+            </foreach>
+        </if>
+        <if test="settleTimeType == 1">
+            <foreach collection="list" item="item" open="(" separator=" OR " close=")">
+                (c.begin_time &gt;= #{item.startTimeValue,jdbcType=TIMESTAMP}
+                AND c.begin_time &lt; #{item.endTimeValue,jdbcType=TIMESTAMP})
+            </foreach>
+        </if>
+        <if test="settleTimeType == 3">
+            <foreach collection="list" item="item" open="(" separator=" OR " close=")">
+                (a.settle_time &gt;= #{item.startTimeValue,jdbcType=TIMESTAMP}
+                AND a.settle_time &lt; #{item.endTimeValue,jdbcType=TIMESTAMP})
+            </foreach>
+        </if>
+    </select>
+    <select id="queryUserCountTotal" resultType="java.lang.Long">
+        SELECT
+        COUNT( DISTINCT a.uid )
+        FROM
+        t_settle a
+        LEFT JOIN t_order_detail b ON a.bet_no = b.bet_no
+        LEFT JOIN standard_match_info c ON c.id=b.match_id
+        WHERE
+        a.series_type = 1
+        AND a.calc_status = 1
+        <if test="sportIdList!=null">
+            AND b.sport_id in
+            <foreach close=")" collection="sportIdList" item="item" open="(" separator=", ">
+                #{item}
+            </foreach>
+        </if>
+        <if test="playIdList!=null">
+            AND b.play_id in
+            <foreach close=")" collection="playIdList" item="item" open="(" separator=", ">
+                #{item}
+            </foreach>
+        </if>
+        <if test="matchTypeList!=null">
+            AND b.match_type in
+            <foreach close=")" collection="matchTypeList" item="item" open="(" separator=", ">
+                #{item}
+            </foreach>
+        </if>
+        <if test="tournamentIdList!=null">
+            AND c.standard_tournament_id in
+            <foreach close=")" collection="tournamentIdList" item="item" open="(" separator=", ">
+                #{item}
+            </foreach>
+        </if>
+        AND a.out_come in
+        <foreach close=")" collection="orderStatusList" item="item" open="(" separator=", ">
+            #{item}
+        </foreach>
+        AND
+        <if test="settleTimeType == 1">
+            <foreach collection="timeBeanVoList" item="item" open="(" separator=" OR " close=")">
+                (c.begin_time &gt;= #{item.startTimeValue,jdbcType=TIMESTAMP}
+                AND c.begin_time &lt; #{item.endTimeValue,jdbcType=TIMESTAMP})
+            </foreach>
+        </if>
+        <if test="settleTimeType == 2">
+            <foreach collection="timeBeanVoList" item="item" open="(" separator=" OR " close=")">
+                (b.bet_time &gt;= #{item.startTimeValue,jdbcType=TIMESTAMP}
+                AND b.bet_time &lt; #{item.endTimeValue,jdbcType=TIMESTAMP})
+            </foreach>
+        </if>
+        <if test="settleTimeType == 3">
+            <foreach collection="timeBeanVoList" item="item" open="(" separator=" OR " close=")">
+                (a.settle_time &gt;= #{item.startTimeValue,jdbcType=TIMESTAMP}
+                AND a.settle_time &lt; #{item.endTimeValue,jdbcType=TIMESTAMP})
+            </foreach>
+        </if>
+    </select>
+
+</mapper>
+        <!--<if test="base.dateType == 4">
+                        <if test="base.settleTimeType == null">
+                            rosmt.match_date in
+                        </if>
+                        <if test="base.settleTimeType == 1">
+                            rosmt.match_date in
+                        </if>
+                        <if test="base.settleTimeType == 2">
+                            rosmt.bet_date in
+                        </if>
+                        <if test="base.settleTimeType == 3">
+                            rosmt.settle_date in
+                        </if>
+                        <foreach item="item" index="index" collection="base.timeBeanVoList"
+                                 open="(" separator="," close=")">
+                            #{item.startTime}
+                        </foreach>
+                    </if>
+                    <if test="base.dateType != 4">
+                        <foreach collection="base.timeBeanVoList" index="index" item="item" separator="or">
+                            <if test="item.startTime != null and item.endTime != null ">
+                                <if test="base.settleTimeType == null">
+                                    ( rosmt.match_date &gt;= #{item.startTime} and rosmt.match_date &lt; #{item.endTime} )
+                                </if>
+                                <if test="base.settleTimeType == 1">
+                                    ( rosmt.match_date &gt;= #{item.startTime} and rosmt.match_date &lt; #{item.endTime} )
+                                </if>
+                                <if test="base.settleTimeType == 2">
+                                    ( rosmt.bet_date &gt;= '${item.startTime}' and rosmt.bet_date &lt; '${item.endTime}' )
+                                </if>
+                                <if test="base.settleTimeType == 3">
+                                    (rosmt.settle_date &gt;= #{item.startTime} and rosmt.settle_date &lt;= #{item.endTime} )
+                                </if>
+                            </if>
+                        </foreach>
+                    </if>-->

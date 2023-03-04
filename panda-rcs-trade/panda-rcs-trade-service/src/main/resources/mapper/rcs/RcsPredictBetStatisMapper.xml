@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsPredictBetStatisMapper">
+
+    <select id="queryBetPlayStatis" resultType="com.panda.sport.rcs.vo.statistics.RcsPredictBetStatisVo">
+        SELECT b.sport_id as sportId,
+        b.match_id as matchId,
+        b.play_id as playId,
+        b.market_id as marketId,
+        IFNULL(m.create_time,unix_timestamp() * 1000) as marketCreatedTime,
+        b.match_type as matchType,
+        b.market_value_complete as marketValueComplete,
+        b.market_value_current as marketValueCurrent,
+        b.odds_item as oddsItem,
+        b.bet_score as betScore,
+        SUM(b.bet_amount) as betAmount,
+        SUM(b.bet_num) as betNum,
+        SUM(b.odds_sum) as oddsSum,
+        ROUND(SUM(b.odds_sum)/SUM(b.bet_num),3) as averageOdds,
+        i.match_period_id
+        FROM rcs_predict_bet_statis b
+        LEFT JOIN standard_sport_market m ON b.market_id = m.id
+        LEFT JOIN standard_match_info i ON m.standard_match_info_id=i.id
+        WHERE b.match_id = #{bet.matchId,jdbcType=BIGINT,jdbcType=VARCHAR}
+        <if test="bet.playId != 0">
+            AND b.play_id = #{bet.playId,jdbcType=INTEGER}
+        </if>
+        <if test="bet.playType == 2">
+            AND b.play_id in (2,18)
+	        GROUP BY b.market_value_current,b.odds_item
+        </if>
+        <if test="bet.playType == 1">
+            AND b.play_id in (4,19)
+            <if test="bet.iSBenchmarkScore == 0">
+	            GROUP BY b.market_value_complete,b.odds_item
+	        </if>
+	        <if test="bet.iSBenchmarkScore == 1">
+	            GROUP BY b.market_value_complete,b.market_value_current,b.odds_item
+	        </if>
+        </if>
+    </select>
+    <select id="getRcsPredictBetStatisVo1" resultType="com.panda.sport.rcs.vo.statistics.ActualVolumeVO">
+        SELECT
+        a.match_id,
+        a.match_type,
+        a.play_id,
+        a.market_id,
+        a.odds_item,
+        a.bet_num,
+        a.bet_amount,
+        a.market_value_complete,
+        c.place_num market_index
+        FROM
+        (
+        SELECT
+        s.match_id,
+        s.match_type,
+        s.play_id,
+        s.market_id,
+        s.odds_item,
+        SUM( s.bet_num ) bet_num,
+        SUM( s.bet_amount ) bet_amount,
+        s.market_value_current market_value_complete
+        FROM
+        rcs_predict_bet_statis s
+	WHERE
+		s.match_id = #{matchId}
+		AND (s.odds_item=1 OR s.odds_item=2)
+        <if test="matchType!=-1">
+            AND s.match_type = #{matchType}
+        </if>
+        AND s.play_id IN
+        <foreach close=")" collection="playIds" item="item" open="(" separator=", ">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+	GROUP BY
+		s.match_id,
+        <if test="matchType!=-1">
+            s.match_type,
+        </if>
+        s.play_id,
+        s.market_id,
+        s.odds_item,
+        s.market_value_current
+	) a
+        LEFT JOIN rcs_standard_place_ref c ON c.market_id=a.market_id AND place_num=1
+        ORDER BY
+	a.market_value_complete + 0,
+	a.market_id
+    </select>
+
+    <select id="getRcsPredictBetStatisVo2" resultType="com.panda.sport.rcs.vo.statistics.ActualVolumeVO">
+        SELECT
+        a.match_id,
+        a.match_type,
+        a.play_id,
+        a.market_id,
+        a.odds_item,
+        a.bet_num,
+        a.bet_amount,
+        a.market_value_complete,
+        c.place_num market_index
+        FROM
+        (
+        SELECT
+        s.match_id,
+        s.match_type,
+        s.play_id,
+        s.market_id,
+        s.odds_item,
+        SUM( s.bet_num ) bet_num,
+        SUM( s.bet_amount ) bet_amount,
+        s.market_value_current market_value_complete
+        FROM
+        rcs_predict_bet_statis s
+        WHERE
+        s.match_id = #{matchId}
+        AND s.odds_item !=1
+        and s.odds_item !=2
+        <if test="matchType!=-1">
+            AND s.match_type = #{matchType}
+        </if>
+        AND s.play_id IN
+        <foreach close=")" collection="playIds" item="item" open="(" separator=", ">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+        GROUP BY
+        s.match_id,
+        <if test="matchType!=-1">
+            s.match_type,
+        </if>
+        s.play_id,
+        s.market_id,
+        s.odds_item,
+        s.market_value_current
+        ) a
+        LEFT JOIN rcs_standard_place_ref c ON c.market_id=a.market_id AND place_num=1
+        ORDER BY
+        a.market_value_complete + 0 DESC,
+        a.market_id
+    </select>
+
+    <select id="getRcsPredictBetStatisVo" resultType="com.panda.sport.rcs.vo.statistics.ActualVolumeVO">
+        SELECT
+        s.match_id,
+        s.match_type,
+        s.play_id,
+        s.sub_play_id,
+        s.market_id,
+        s.odds_item,
+        s.bet_score,
+        SUM( s.bet_num ) bet_num,
+        SUM( s.bet_amount ) bet_amount,
+        SUM( s.bet_amount_pay ) bet_amount_pay,
+        SUM( s.bet_amount_complex ) bet_amount_complex,
+        s.market_value_current market_value_complete,
+
+        (SELECT place_num FROM  rcs_standard_place_ref c
+        WHERE c.market_id=s.market_id    limit 1 )   market_index
+        FROM
+        rcs_predict_bet_statis s
+
+        WHERE
+        s.match_id = #{matchId}
+        AND bet_num!=0
+        <if test="matchType!=-1">
+            AND s.match_type = #{matchType}
+        </if>
+        AND s.sub_play_id IN
+        <foreach close=")" collection="playIds" item="item" open="(" separator=", ">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+        AND s.hash_unique is not null
+        GROUP BY
+        s.match_id,
+        s.play_id,
+        s.sub_play_id,
+        s.market_id,
+        s.odds_item,
+        s.market_value_current
+
+        order by s.market_value_complete desc
+    </select>
+</mapper>

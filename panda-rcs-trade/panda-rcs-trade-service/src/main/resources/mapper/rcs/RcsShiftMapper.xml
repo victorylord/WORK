@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsShiftMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsShift">
+    <!--@mbg.generated-->
+    <!--@Table rcs_shift-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="sport_id" jdbcType="INTEGER" property="sportId" />
+    <result column="user_code" jdbcType="VARCHAR" property="userCode" />
+    <result column="shift" jdbcType="VARCHAR" property="shift" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, sport_id, user_code, shift, create_time, update_time
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update rcs_shift
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="sport_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.sportId,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="user_code = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.userCode,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="shift = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.shift,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="create_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.createTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="update_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.updateTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into rcs_shift
+    (sport_id, user_code, shift, create_time, update_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.sportId,jdbcType=INTEGER}, #{item.userCode,jdbcType=VARCHAR}, #{item.shift,jdbcType=VARCHAR}, 
+        #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.RcsShift" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into rcs_shift
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      sport_id,
+      user_code,
+      shift,
+      create_time,
+      update_time,
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      #{sportId,jdbcType=INTEGER},
+      #{userCode,jdbcType=VARCHAR},
+      #{shift,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP},
+      #{updateTime,jdbcType=TIMESTAMP},
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      sport_id = #{sportId,jdbcType=INTEGER},
+      user_code = #{userCode,jdbcType=VARCHAR},
+      shift = #{shift,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+    </trim>
+  </insert>
+  <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.RcsShift" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into rcs_shift
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="sportId != null">
+        sport_id,
+      </if>
+      <if test="userCode != null">
+        user_code,
+      </if>
+      <if test="shift != null">
+        shift,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="sportId != null">
+        #{sportId,jdbcType=INTEGER},
+      </if>
+      <if test="userCode != null">
+        #{userCode,jdbcType=VARCHAR},
+      </if>
+      <if test="shift != null">
+        #{shift,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="sportId != null">
+        sport_id = #{sportId,jdbcType=INTEGER},
+      </if>
+      <if test="userCode != null">
+        user_code = #{userCode,jdbcType=VARCHAR},
+      </if>
+      <if test="shift != null">
+        shift = #{shift,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="shiftUserList" resultType="com.panda.sport.rcs.pojo.RcsShift">
+    SELECT su.id userId,s.user_code userCode,market_type marketType, s.shift ,s.sport_id sportId  FROM rcs_shift s
+    LEFT JOIN rcs_sys_user su  on su.user_code = s.user_code
+    <where>
+      su.enabled = 1 AND su.logic_delete = 0
+      <if test="bean !=null and bean.sportId != null">
+          and s.sport_id = #{bean.sportId}
+      </if>
+      and su.user_code in ( SELECT user_code from rcs_sys_user  WHERE user_flag ='1')
+        <if test="list!=null and list.size > 0">
+          and s.user_code IN
+          <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+          </foreach>
+        </if>
+    </where>
+    order by s.user_code asc
+ </select>
+
+  <insert id="batchInsertOrUpdate" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    insert into rcs_shift
+    (sport_id, user_code, shift,market_type)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.sportId,jdbcType=INTEGER}, #{item.userCode,jdbcType=VARCHAR}, #{item.shift,jdbcType=VARCHAR}, #{item.marketType})
+    </foreach>
+    on duplicate key update
+    <trim suffixOverrides=",">
+      sport_id = values (sport_id),
+      user_code = values (user_code),
+      shift = values (shift),
+      market_type = values (market_type),
+    </trim>
+  </insert>
+
+
+    <select id="noDesignateUserList" resultType="com.panda.sport.rcs.pojo.RcsShift">
+      SELECT su.id userId, su.user_code userCode from rcs_sys_user su
+        <where>
+            su.enabled = 1 AND su.logic_delete = 0 and su.user_code  not in (SELECT user_code from rcs_shift  WHERE shift is not null and shift != '' GROUP BY user_code)
+            and su.user_code in ( SELECT user_code from rcs_sys_user  WHERE user_flag ='1')
+            <if test="list != null and list.size > 0">
+                and su.user_code IN
+                <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by su.user_code asc
+    </select>
+    <select id="getShiftByUserId" resultType="integer">
+        SELECT t.sport_id FROM rcs_shift t JOIN rcs_sys_user u
+        WHERE t.user_code = u.user_code
+        AND u.id = #{userId};
+    </select>
+
+    <delete id="deleteByUserCode">
+        <if test="list != null and list.size > 0">
+        DELETE FROM  rcs_shift WHERE user_code in
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
+</mapper>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMatchCollectionMapper">
+
+    <!--定时删除收藏-->
+    <delete id="taskCleantaskCleanCollection">
+        <![CDATA[
+        DELETE rmc from rcs_match_collection rmc
+        LEFT JOIN standard_match_info smi ON smi.id = rmc.match_id
+        WHERE
+        rmc.type = 1 	AND (	rmc.`status` IN ( 3, 4, 5, 6, 7 ) 	OR ( UNIX_TIMESTAMP()* 1000 ) >= ( smi.begin_time + 14400000 ) and smi.sport_id =1);
+        ]]>
+    </delete>
+
+    <insert id="batchInsertOrUpdate" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into rcs_match_collection
+        (`type`, match_id, tournament_id, sport_id, user_id, `status`)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.type,jdbcType=INTEGER}, #{item.matchId,jdbcType=BIGINT}, #{item.tournamentId,jdbcType=BIGINT},
+            #{item.sportId,jdbcType=BIGINT},  #{item.userId,jdbcType=BIGINT}, #{item.status,jdbcType=INTEGER})
+        </foreach>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            `type` = VALUES (`type`),
+            match_id = VALUES (match_id),
+            tournament_id = VALUES (tournament_id),
+            sport_id = VALUES (sport_id),
+            update_time = VALUES (update_time),
+            user_id = VALUES (user_id),
+            `status` = VALUES (`status`),
+        </trim>
+    </insert>
+
+    <select id="selectListToCount" resultType="com.panda.sport.rcs.pojo.RcsMatchCollection">
+        <if test="bean.matchType == 1">
+            <![CDATA[
+			SELECT
+            *
+            FROM
+            rcs_match_collection rmc
+            LEFT JOIN standard_match_info smi ON smi.id = rmc.match_id
+            WHERE
+            rmc.type = 1
+            AND UNIX_TIMESTAMP() * 1000 < ( smi.begin_time + 4 * 60 * 60 * 1000 )  and rmc.sport_id =#{bean.sportId}  and rmc.user_id = #{bean.userId}
+            ]]>
+        </if>
+
+        <if test="bean.matchType == 2">
+            <![CDATA[
+            SELECT
+            *
+            FROM
+            rcs_match_collection rmc
+            LEFT JOIN standard_match_info smi ON smi.id = rmc.match_id
+            WHERE
+            type = 1
+		    AND smi.live_odd_business = 1
+		    AND UNIX_TIMESTAMP() * 1000 < (smi.begin_time + 4 * 60 * 60 * 1000 )
+		    and rmc.sport_id =#{bean.sportId}  and rmc.user_id = #{bean.userId}
+            ]]>
+        </if>
+        <if test="bean.tournamentId != null">
+            and rmc.tournament_id =#{bean.tournamentId}
+        </if>
+    </select>
+
+    <select id="selectListTotournament" resultType="com.panda.sport.rcs.pojo.RcsMatchCollection">
+        SELECT
+            *
+        FROM
+            rcs_match_collection rmc
+                LEFT JOIN standard_match_info smi ON smi.id = rmc.match_id
+        WHERE
+            rmc.type = 2 and rmc.sport_id =#{bean.sportId}  and rmc.user_id = #{bean.userId} and rmc.status = 1
+
+    </select>
+
+    <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.RcsMatchCollection" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into rcs_match_collection
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            `type`,
+            match_id,
+            tournament_id,
+            sport_id,
+            begin_time,
+            create_time,
+            update_time,
+            user_id,
+            `status`,
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            #{type,jdbcType=INTEGER},
+            #{matchId,jdbcType=BIGINT},
+            #{tournamentId,jdbcType=BIGINT},
+            #{sportId,jdbcType=BIGINT},
+            #{beginTime,jdbcType=BIGINT},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{updateTime,jdbcType=TIMESTAMP},
+            #{userId,jdbcType=BIGINT},
+            #{status,jdbcType=INTEGER},
+        </trim>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            `type` = #{type,jdbcType=INTEGER},
+            match_id = #{matchId,jdbcType=BIGINT},
+            tournament_id = #{tournamentId,jdbcType=BIGINT},
+            sport_id = #{sportId,jdbcType=BIGINT},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            user_id = #{userId,jdbcType=BIGINT},
+            `status` = #{status,jdbcType=INTEGER},
+        </trim>
+    </insert>
+
+    <select id="queryMatchColls" resultType="com.panda.sport.rcs.pojo.RcsMatchCollection">
+        SELECT
+        *
+        FROM
+        rcs_match_collection rmc
+        LEFT JOIN standard_match_info smi ON smi.id = rmc.match_id
+        WHERE
+        rmc.type = 1
+        <if test="bean.matchType == null">
+            AND  smi.match_status not IN (3)
+        </if>
+
+        <if test="bean.matchType == 1">
+            and ((smi.match_status IN ( 1, 2, 6,10 ) and #{bean.beginTime} &lt;= smi.begin_time+4*60*60*1000)
+            or (smi.match_status IN ( 0, 4,5, 6, 7, 8, 9 ) AND #{bean.beginTime} &lt;= smi.begin_time))
+            and rmc.sport_id =#{bean.sportId}  and rmc.user_id = #{bean.userId}
+        </if>
+        <if test="bean.matchType == 2">
+            AND smi.live_odd_business = 1
+            AND (
+            smi.match_status IN ( 1, 2, 6, 10 )
+            OR (smi.match_status IN ( 0,4, 5, 6, 7, 8, 9 ) AND UNIX_TIMESTAMP() * 1000 &lt;smi.begin_time
+            <choose>
+                <when test="bean.sportId == 2">
+                    AND (UNIX_TIMESTAMP()+60*30)*1000 &gt;= smi.begin_time )
+                </when>
+                <otherwise>
+                    AND (UNIX_TIMESTAMP()+60*15)*1000 &gt;= smi.begin_time )
+                </otherwise>
+            </choose>
+            )
+            and rmc.sport_id =#{bean.sportId}  and rmc.user_id = #{bean.userId}
+        </if>
+        <if test="bean.tournamentId != null">
+            and rmc.tournament_id =#{bean.tournamentId}
+        </if>
+    </select>
+
+    <update id="updateByMatchId">
+	    UPDATE
+        rcs_match_collection SET
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            `status` = #{status,jdbcType=INTEGER}
+          WHERE match_id = #{matchId,jdbcType=BIGINT} 
+	          AND user_id = #{userId,jdbcType=BIGINT} 
+	          AND `type` = #{type,jdbcType=INTEGER}
+    </update>
+    <update id="updateByTournamentId">
+	    UPDATE
+        rcs_match_collection SET
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            `status` = #{status,jdbcType=INTEGER}
+          WHERE tournament_id = #{tournamentId,jdbcType=BIGINT} 
+	          AND user_id = #{userId,jdbcType=BIGINT} 
+	          AND `type` = #{type,jdbcType=INTEGER}
+    </update>
+
+</mapper>

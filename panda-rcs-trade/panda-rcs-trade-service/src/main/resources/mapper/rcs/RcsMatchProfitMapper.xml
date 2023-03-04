@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMatchProfitMapper">
+    <select id="selectRcsMatchProfitByPlayId" resultType="com.panda.sport.rcs.vo.RcsMatchProfitVo">
+        SELECT play_id,market_id,SUM(profit_amount)profit_amount,match_type FROM rcs_match_profit WHERE match_id=#{matchId}  AND play_id  IN
+        <foreach close=")" collection="playIds" item="item" open="(" separator=", ">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+        <if test="matchType!=-1">
+            and match_type=#{matchType}
+        </if>
+        GROUP BY play_id,market_id
+    </select>
+
+    <select id="selectRcsMatchProfitByMatchId" resultType="java.math.BigDecimal">
+        SELECT
+            SUM( profit_amount ) profit_amount
+        FROM
+            rcs_match_profit
+        WHERE
+            match_id = #{matchId}
+
+    </select>
+</mapper>

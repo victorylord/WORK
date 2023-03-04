@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.rcs.warning.mapper.RcsMatchMonitorMqLicenseMapper">
+
+    <insert id="insertOrUpdate">
+       insert into rcs_match_monitor_mq_license(
+       match_id,
+       play_id,
+       event_time,
+       update_time,
+       match_type)
+       values (
+        #{matchId},
+        #{playId},
+        #{eventTime},
+        #{updateTime},
+        #{matchType}
+       ) on duplicate key update
+        update_time=#{updateTime}
+    </insert>
+</mapper>

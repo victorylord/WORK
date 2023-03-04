@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsPredictForecastMapper">
+
+    <select id="queryMatchForecast" resultType="com.panda.sport.rcs.vo.statistics.RcsPredictForecastVo">
+        SELECT t.sport_id as sportId,
+        t.match_id as matchId,
+        t.match_type as matchType,
+        f.begin_time as matchStartTime,
+        t.play_id as playId,
+        t.market_id as marketId,
+        t.odds_item as oddsItem,
+        t.bet_score as betScore,
+        t.forecast_score as forecastScore,
+        t.profit_amount as profitAmount,
+        t.market_value_complete as marketValueComplete,
+        t.market_value_current as marketValueCurrent
+        FROM rcs_predict_forecast t,(SELECT DISTINCT(t.match_id) as match_id,
+        i.begin_time as begin_time
+        FROM rcs_predict_forecast t
+        LEFT JOIN standard_match_info i ON t.match_id = i.id
+        WHERE t.match_id in
+        <foreach collection="forecast.matchIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        <if test="forecast.playPhaseType == null">
+            AND t.play_id in (2,4,18,19)
+        </if>
+        <if test="forecast.playPhaseType == 1">
+            AND t.play_id in (2,4)
+        </if>
+        <if test="forecast.playPhaseType == 2">
+            AND t.play_id in (18,19)
+        </if>
+        ORDER BY i.begin_time asc
+        LIMIT #{start,jdbcType=INTEGER},#{size,jdbcType=INTEGER}
+        ) f
+        WHERE t.match_id = f.match_id
+        <if test="forecast.playPhaseType == null">
+            AND t.play_id in (2,4,18,19)
+        </if>
+        <if test="forecast.playPhaseType == 1">
+            AND t.play_id in (2,4)
+        </if>
+        <if test="forecast.playPhaseType == 2">
+            AND t.play_id in (18,19)
+        </if>
+    </select>
+    <select id="queryMatchForecastCount" resultType="int">
+        SELECT count(DISTINCT(t.match_id)) as match_id
+        FROM rcs_predict_forecast t
+        WHERE t.match_id in
+        <foreach collection="forecast.matchIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        <if test="forecast.playPhaseType == null">
+            AND t.play_id in (2,4,18,19)
+        </if>
+        <if test="forecast.playPhaseType == 1">
+            AND t.play_id in (2,4)
+        </if>
+        <if test="forecast.playPhaseType == 2">
+            AND t.play_id in (18,19)
+        </if>
+    </select>
+</mapper>

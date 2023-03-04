@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.StandardSportTournamentMapper">
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.StandardSportTournament">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="sport_id" jdbcType="BIGINT" property="sportId"/>
+        <result column="third_tournament_id" jdbcType="BIGINT" property="sportId"/>
+        <result column="region_id" jdbcType="BIGINT" property="regionId"/>
+        <result column="tournament_level" jdbcType="BIGINT" property="tournamentLevel"/>
+        <result column="tournament_manager_id" jdbcType="BIGINT" property="tournamentManagerId"/>
+        <result column="third_tournament_source_id" jdbcType="VARCHAR" property="thirdTournamentSourceId"/>
+        <result column="name_code" jdbcType="BIGINT" property="nameCode"/>
+        <result column="data_source_code" jdbcType="VARCHAR" property="dataSourceCode"/>
+        <result column="logo_url" jdbcType="VARCHAR" property="logoUrl"/>
+        <result column="logo_url_thumb" jdbcType="VARCHAR" property="logoUrlThumb"/>
+        <result column="related_data_source_coder_num" jdbcType="BIGINT" property="relatedDataSourceCoderNum"/>
+        <result column="related_data_source_coder_list" jdbcType="VARCHAR" property="relatedDataSourceCoderList"/>
+        <result column="introduction" jdbcType="VARCHAR" property="introduction"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="modify_time" jdbcType="BIGINT" property="modifyTime"/>
+        <result column="name_spell" jdbcType="VARCHAR" property="nameSpell"/>
+        <result column="name" jdbcType="BIGINT" property="name"/>
+        <collection column="standard_tournament_id" property="standardMatchInfoList"
+                    ofType="com.panda.sport.rcs.pojo.StandardMatchInfo" javaType="ArrayList">
+            <id column="m_id" jdbcType="BIGINT" property="id"/>
+            <result column="m_sport_id" jdbcType="BIGINT" property="sportId"/>
+            <result column="m_standard_tournament_id" jdbcType="BIGINT" property="standardTournamentId"/>
+            <result column="m_third_match_id" jdbcType="BIGINT" property="thirdMatchId"/>
+            <result column="m_seconds_match_start" jdbcType="BIGINT" property="secondsMatchStart"/>
+            <result column="m_event_time" jdbcType="BIGINT" property="eventTime"/>
+            <result column="m_pre_match_business" jdbcType="BIGINT" property="preMatchBusiness"/>
+            <result column="m_live_odd_business" jdbcType="BIGINT" property="liveOddBusiness"/>
+            <result column="m_operate_match_status" jdbcType="BIGINT" property="operateMatchStatus"/>
+            <result column="m_begin_time" jdbcType="BIGINT" property="beginTime"/>
+            <result column="m_active" jdbcType="BIGINT" property="active"/>
+            <result column="m_pre_match_bet_status" jdbcType="BIGINT" property="preMatchBetStatus"/>
+            <result column="m_live_odds_bet_status" jdbcType="BIGINT" property="liveOddsBetStatus"/>
+            <result column="m_match_status" jdbcType="BIGINT" property="matchStatus"/>
+            <result column="m_neutral_ground" jdbcType="BIGINT" property="neutralGround"/>
+            <result column="m_match_manage_id" jdbcType="VARCHAR" property="matchManageId"/>
+            <result column="m_match_position_name" jdbcType="VARCHAR" property="matchPositionName"/>
+            <result column="m_match_position_name_code" jdbcType="BIGINT" property="matchPositionNameCode"/>
+            <result column="m_risk_manager_code" jdbcType="VARCHAR" property="riskManagerCode"/>
+            <result column="m_data_source_code" jdbcType="VARCHAR" property="dataSourceCode"/>
+            <result column="m_related_data_source_coder_list" jdbcType="VARCHAR" property="relatedDataSourceCoderList"/>
+            <result column="m_related_data_source_coder_num" jdbcType="VARCHAR" property="relatedDataSourceCoderNum"/>
+            <result column="m_match_data_provider_code" jdbcType="VARCHAR" property="matchDataProviderCode"/>
+            <result column="m_third_match_source_id" jdbcType="VARCHAR" property="thirdMatchSourceId"/>
+            <result column="m_home_away_info" jdbcType="VARCHAR" property="homeAwayInfo"/>
+            <result column="m_parent_id" jdbcType="BIGINT" property="parentId"/>
+            <result column="m_bet_status" jdbcType="BIGINT" property="betStatus"/>
+            <result column="m_team_name" jdbcType="VARCHAR" property="teamName"/>
+            <result column="m_team_manage_id" jdbcType="VARCHAR" property="teamManageId"/>
+            <result column="m_match_period_id" jdbcType="BIGINT" property="matchPeriodId"/>
+            <result column="m_remark" jdbcType="VARCHAR" property="remark"/>
+            <result column="m_create_time" jdbcType="BIGINT" property="createTime"/>
+            <result column="m_modify_time" jdbcType="BIGINT" property="modifyTime"/>
+            <collection column="r_match_id" property="rcsProfitRectangleList"
+                        ofType="com.panda.sport.rcs.pojo.statistics.RcsProfitRectangle" javaType="ArrayList">
+                <id column="r_match_id" jdbcType="BIGINT" property="matchId"/>
+                <id column="r_match_type" jdbcType="BIGINT" property="matchType"/>
+                <id column="r_play_id" jdbcType="BIGINT" property="playId"/>
+                <id column="r_score" jdbcType="BIGINT" property="score"/>
+                <result column="r_profit_value" jdbcType="DECIMAL" property="profitValue"/>
+                <result column="r_create_time" jdbcType="DATE" property="createTime"/>
+                <result column="r_update_time" jdbcType="DATE" property="updateTime"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="queryByIdsAndBeginDateAndEndDateAndMatchType" resultMap="BaseResultMap">
+        SELECT
+        t.id,
+        t.sport_id,
+        t.third_tournament_id,
+        t.region_id,
+        t.tournament_level,
+        t.tournament_manager_id,
+        t.third_tournament_source_id,
+        t.name_code,
+        t.data_source_code,
+        t.logo_url,
+        t.logo_url_thumb,
+        t.related_data_source_coder_num,
+        t.related_data_source_coder_list,
+        t.introduction,
+        t.remark,
+        t.create_time,
+        t.modify_time,
+        t.name_spell,
+        t.`name`,
+        t.update_time,
+        m.id m_id,
+        m.sport_id m_sport_id,
+        m.standard_tournament_id m_standard_tournament_id,
+        m.third_match_id m_third_match_id,
+        m.seconds_match_start m_seconds_match_start,
+        m.event_time,
+        m.pre_match_business,
+        m.live_odd_business,
+        m.operate_match_status,
+        m.begin_time,
+        m.active,
+        m.pre_match_bet_status,
+        m.live_odds_bet_status,
+        m.match_status,
+        m.neutral_ground,
+        m.match_manage_id,
+        m.match_position_name,
+        m.match_position_name_code,
+        m.risk_manager_code,
+        m.data_source_code m_data_source_code,
+        m.related_data_source_coder_list,
+        m.related_data_source_coder_num,
+        m.match_data_provider_code,
+        m.third_match_source_id,
+        m.home_away_info,
+        m.parent_id,
+        m.bet_status,
+        m.team_name,
+        m.team_manage_id,
+        m.match_period_id,
+        m.remark,
+        m.create_time,
+        m.modify_time,
+        m.update_time,
+        t.id t_id,
+        t.sport_id,
+        t.third_tournament_id,
+        t.region_id,
+        t.tournament_level,
+        t.tournament_manager_id,
+        t.third_tournament_source_id,
+        t.name_code,
+        t.data_source_code,
+        t.logo_url,
+        t.logo_url_thumb,
+        t.related_data_source_coder_num,
+        t.related_data_source_coder_list,
+        t.introduction,
+        t.remark,
+        t.create_time,
+        t.modify_time,
+        t.name_spell,
+        t.`name`,
+        t.update_time,
+        m.id m_id,
+        m.sport_id m_sport_id,
+        m.standard_tournament_id m_standard_tournament_id,
+        m.third_match_id m_third_match_id,
+        m.seconds_match_start m_seconds_match_start,
+        m.event_time m_event_time,
+        m.pre_match_business m_pre_match_business,
+        m.live_odd_business m_live_odd_business,
+        m.operate_match_status m_operate_match_status,
+        m.begin_time m_begin_time,
+        m.active m_active,
+        m.pre_match_bet_status m_pre_match_bet_status,
+        m.live_odds_bet_status m_live_odds_bet_status,
+        m.match_status m_match_status,
+        m.neutral_ground m_neutral_ground,
+        m.match_manage_id m_match_manage_id,
+        m.match_position_name m_match_position_name,
+        m.match_position_name_code m_match_position_name_code,
+        m.risk_manager_code m_risk_manager_code,
+        m.data_source_code m_data_source_code,
+        m.related_data_source_coder_list m_related_data_source_coder_list,
+        m.related_data_source_coder_num m_related_data_source_coder_num,
+        m.match_data_provider_code m_match_data_provider_code,
+        m.third_match_source_id m_third_match_source_id,
+        m.home_away_info m_home_away_info,
+        m.parent_id m_parent_id,
+        m.bet_status m_bet_status,
+        m.team_name m_team_name,
+        m.team_manage_id m_team_manage_id,
+        m.match_period_id m_match_period_id,
+        m.remark m_remark,
+        m.create_time m_create_time,
+        m.modify_time m_modify_time,
+        m.update_time m_update_time,
+        r.match_id r_match_id,
+        r.match_type r_match_type,
+        r.play_id r_play_id,
+        r.score r_score,
+        r.profit_value r_profit_value,
+        r.create_time r_create_time,
+        r.update_time r_update_time
+        FROM
+        standard_sport_tournament AS t
+        inner JOIN standard_match_info AS m ON t.id = m.standard_tournament_id
+        inner JOIN rcs_standard_sport_market_sell AS s ON s.match_info_id = m.id
+        LEFT JOIN rcs_profit_rectangle AS r ON m.id = r.match_id
+        WHERE
+        1=1
+        <if test="beginDate!=null ">
+            and m.begin_time>=#{beginDate}
+        </if>
+        <if test="endDate!=null and otherMorningMarke != 1">
+            and m.begin_time&lt;= #{endDate}
+        </if>
+        <if test="tournamentIds!=null and  tournamentIds.size() > 0">
+            and t.id in
+            <foreach collection="tournamentIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="matchType == 2">
+            and match_status in (1,2,10) and m.live_odd_business=1
+        </if>
+        <if test="matchType == 1">
+            and match_status=0 and m.pre_match_business=1
+        </if>
+        ORDER BY
+        if(t.tournament_level=0,9999,t.tournament_level) asc,
+        m.begin_time asc
+    </select>
+
+
+    <select id="queryTournamentByName" resultType="com.panda.sport.rcs.pojo.StandardSportTournament">
+        SELECT
+	        DISTINCT t.id,
+	        t.tournament_level,
+	        JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.en')) name
+	        FROM
+	        standard_sport_tournament t,
+	        rcs_language_internation l
+        WHERE
+	        t.name_code = l.name_code
+	        AND t.has_relation = 1
+	        AND t.sport_id = #{sportId}
+	        AND lower(JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.en'))) LIKE lower(concat('%' , #{tournamentName} , '%'))
+	        
+	    UNION ALL
+	        
+        SELECT
+	        DISTINCT t.id,
+	        t.tournament_level,
+	        JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')) name
+	        FROM
+	        standard_sport_tournament t,
+	        rcs_language_internation l
+        WHERE
+	        t.name_code = l.name_code
+	        AND t.has_relation = 1
+	        AND t.sport_id = #{sportId}
+	        AND lower(JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs'))) LIKE lower(concat('%' , #{tournamentName} , '%'))
+    </select>
+
+    <select id="selectTournamentByVagueName" resultType="com.panda.sport.rcs.vo.TournamentVagueVo">
+        SELECT DISTINCT
+            t.id,
+            JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.en')) name
+        FROM
+            standard_sport_tournament t
+            LEFT JOIN rcs_language_internation l ON l.name_code = t.name_code
+            RIGHT JOIN ( SELECT DISTINCT tournament_id FROM rcs_standard_sport_market_sell ) s ON s.tournament_id = t.id
+        WHERE
+         t.sport_id = #{sportId}
+        AND JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.en')) LIKE concat('%' , ${tournamentName} , '%')
+        
+        UNION ALL
+        
+        SELECT DISTINCT
+            t.id,
+            JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')) name
+        FROM
+            standard_sport_tournament t
+            LEFT JOIN rcs_language_internation l ON l.name_code = t.name_code
+            RIGHT JOIN ( SELECT DISTINCT tournament_id FROM rcs_standard_sport_market_sell ) s ON s.tournament_id = t.id
+        WHERE
+         t.sport_id = #{sportId}
+        AND JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')) LIKE concat('%' , ${tournamentName} , '%')
+    </select>
+
+    <insert id="insertTournamentLevelUpdateLog" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.TournamentLevelTemporaryLog" useGeneratedKeys="true">
+        insert into tournament_level_temporary_log (id, tournament_id, req_param)
+        values (#{id,jdbcType=BIGINT}, #{tournamentId,jdbcType=BIGINT}, #{reqParam,jdbcType=VARCHAR})
+    </insert>
+</mapper>

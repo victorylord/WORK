@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMarketOddsConfigMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsMarketOddsConfig">
+    <!--@mbg.generated-->
+    <!--@Table rcs_market_odds_config-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="sport_id" jdbcType="BIGINT" property="sportId" />
+    <result column="match_id" jdbcType="BIGINT" property="matchId" />
+    <result column="market_category_id" jdbcType="BIGINT" property="marketCategoryId" />
+    <result column="match_market_id" jdbcType="BIGINT" property="matchMarketId" />
+    <result column="market_odds_id" jdbcType="BIGINT" property="marketOddsId" />
+    <result column="bet_order_num" jdbcType="DECIMAL" property="betOrderNum" />
+    <result column="bet_amount" jdbcType="DECIMAL" property="betAmount" />
+    <result column="profit_value" jdbcType="DECIMAL" property="profitValue" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, sport_id, match_id, market_category_id, match_market_id, market_odds_id,
+    bet_order_num, bet_amount, profit_value
+  </sql>
+
+
+  <insert id="insertOrUpdate" parameterType="com.panda.sport.rcs.pojo.RcsMarketOddsConfig">
+    insert into rcs_market_odds_config (sport_id, match_id, market_category_id, match_market_id, market_odds_id,
+      bet_order_num, bet_amount, profit_value,match_type,standard_tournament_id,paid_amount) values (#{sportId}, #{matchId}, #{marketCategoryId}, #{matchMarketId}, #{marketOddsId},
+      #{betOrderNum},#{betAmount} ,#{profitValue},#{matchType},#{standardTournamentId},#{paidAmount})
+    ON DUPLICATE KEY UPDATE
+       bet_order_num=#{betOrderNum},
+       bet_amount=#{betAmount},
+       profit_value=#{profitValue},
+       paid_amount=#{paidAmount}
+  </insert>
+
+  <insert id="batchInsertOrUpdate" keyColumn="id" keyProperty="id" parameterType="list" useGeneratedKeys="true">
+    insert into rcs_market_odds_config (sport_id, match_id, market_category_id, match_market_id, market_odds_id,
+      bet_order_num, bet_amount, profit_value,match_type,standard_tournament_id,paid_amount) values
+    <foreach collection="list" item="item" separator=",">
+        (#{item.sportId}, #{item.matchId}, #{item.marketCategoryId}, #{item.matchMarketId}, #{item.marketOddsId},
+        #{item.betOrderNum},#{item.betAmount} ,#{item.profitValue},#{item.matchType},#{item.standardTournamentId},#{item.paidAmount}
+        )
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+       bet_order_num=VALUES(bet_order_num),
+       bet_amount=VALUES(bet_amount),
+       profit_value=VALUES(profit_value),
+       paid_amount=VALUES(paid_amount)
+  </insert>
+
+
+  <select id="queryListByTime" parameterType="Map" resultType="com.panda.sport.rcs.pojo.RcsMarketOddsConfig">
+  	SELECT * FROM rcs_market_odds_config WHERE modify_time &lt;= #{END_TIME}
+  	<if test="START_TIME != null and START_TIME != ''">
+  		and modify_time >= #{START_TIME}
+  	</if>
+  </select>
+
+  <select id="queryMarketStatByMarketId" resultType="com.panda.sport.rcs.vo.OrderDetailStatReportVo">
+    SELECT
+        a.profit_value as profitValue,
+        b.odds_type as oddsType,
+        TRUNCATE(b.odds_value / 100000,2) as oddsValue
+    FROM
+        rcs_market_odds_config a
+        LEFT JOIN standard_sport_market_odds b ON a.market_odds_id = b.id
+    WHERE
+        b.market_id = #{marketId}
+    order by b.odds_type desc
+  </select>
+
+    <select id="queryBetNums" resultType="com.panda.sport.rcs.pojo.RcsMarketOddsConfig">
+        SELECT
+        s.*
+        FROM
+        rcs_market_odds_config s
+        LEFT JOIN standard_match_info i ON i.id = s.match_id
+        WHERE
+        CASE
+        WHEN i.match_status IN ( 1, 2, 10 ) THEN
+        s.match_type = 2 ELSE s.match_type = 1
+        END
+        <if test="matchId != null ">
+            and s.match_id = #{matchId}
+        </if>
+    </select>
+
+
+    <select id="queryMathBetNums" resultType="com.panda.sport.rcs.pojo.RcsMarketOddsConfig">
+        SELECT
+        s.*
+        FROM
+        rcs_market_odds_config s
+        LEFT JOIN standard_match_info i ON i.id = s.match_id
+        WHERE
+        CASE
+        WHEN i.match_status IN ( 1, 2, 10 ) THEN
+        s.match_type = 2 ELSE s.match_type = 1
+        END
+        <if test="matchIds != null and matchIds.size() != 0">
+            and s.match_id in
+            <foreach collection="matchIds" item="mId" index="index"
+                     open="(" close=")" separator=",">
+                #{mId}
+            </foreach>
+        </if>
+    </select>
+</mapper>

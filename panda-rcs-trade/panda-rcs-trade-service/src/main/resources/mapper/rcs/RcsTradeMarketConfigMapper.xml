@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsTradeMarketConfigMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsTradeMarketConfig">
+        <id column="config_id" property="configId" />
+        <result column="level" property="level" />
+        <result column="targetId" property="targetId" />
+        <result column="active" property="active" />
+        <result column="market_status" property="marketStatus" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="source_system" property="sourceSystem" />
+        <result column="addition1" property="addition1" />
+        <result column="addition2" property="addition2" />
+        <result column="addition3" property="addition3" />
+    </resultMap>
+
+</mapper>

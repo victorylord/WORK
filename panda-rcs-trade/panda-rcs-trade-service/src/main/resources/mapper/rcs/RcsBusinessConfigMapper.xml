@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsBusinessConfigMapper">
+
+	<select id="queryBusDayConifgList" parameterType="Map" resultType="com.panda.sport.rcs.pojo.RcsBusinessDayPaidConfig">
+		SELECT business_id,business_name,stop_rate,FLOOR(stop_val * 100) stop_val,warn_level_1_rate,FLOOR(warn_level_1_val * 100) warn_level_1_val,warn_level_2_rate,
+		FLOOR(warn_level_2_val  * 100) warn_level_2_val,STATUS,expire_time expireTime
+		FROM rcs_business_day_paid_config WHERE STATUS IN (5,6,7)
+	</select>
+	
+	<select id="queryBusMatchConifgList" parameterType="Map" resultType="com.panda.sport.rcs.pojo.RcsBusinessMatchPaidConfig">
+		SELECT id, business_id,sport_id,tournament_level,match_max_pay_rate,FLOOR(match_max_pay_val   * 100) match_max_pay_val,status,
+		FLOOR(match_max_con_pay_val   * 100) match_max_con_pay_val
+		FROM rcs_business_match_paid_config WHERE STATUS = 1
+	</select>
+	
+	<select id="queryBusPlayConifgList" parameterType="Map" resultType="com.panda.sport.rcs.pojo.RcsBusinessPlayPaidConfig">
+		SELECT id, business_id,sport_id,match_type,play_type,play_id,order_max_rate,play_max_rate,FLOOR(order_max_pay  * 100) order_max_pay,
+		floor(play_max_pay * 100 ) play_max_pay,status
+		FROM rcs_business_play_paid_config WHERE STATUS = 1
+	</select>
+	
+	<select id="queryBusUserConifgList" parameterType="Map" resultType="com.panda.sport.rcs.pojo.RcsBusinessUserPaidConfig">
+		SELECT id,business_id,user_id,user_day_pay_rate,floor(user_day_pay_val   * 100) user_day_pay_val,user_match_pay_rate,
+		FLOOR(user_match_pay_val  * 100) user_match_pay_val,status
+		FROM rcs_business_user_paid_config WHERE STATUS = 1
+	</select>
+	
+	<select id="queryAllPlayList" parameterType="Map" resultType="com.panda.sport.rcs.pojo.StandardSportMarketCategory">
+		SELECT c.id,r.scope_id theirTime,r.sport_id sportId FROM standard_sport_market_category c
+		LEFT JOIN standard_sport_market_category_ref r ON r.category_id = c.id
+		WHERE  c.status = 1 AND r.`status` =  1 group by c.id,r.sport_id,r.scope_id
+	</select>
+	<!-- <select id="queryAllPlayList" parameterType="Map" resultType="com.panda.sport.rcs.pojo.StandardSportMarketCategory">
+		select id,their_time theirTime from standard_sport_market_category
+		where status = 3
+	</select> -->
+
+
+	<select id="queryBusSingleBetConfigList" parameterType="Map" resultType="com.panda.sport.rcs.pojo.RcsBusinessSingleBetConfig">
+		SELECT c.id,c.business_id,c.sport_id,c.match_type,c.time_period,c.play_id,c.tournament_level,
+		floor(order_max_value * 100 ) order_max_value
+		FROM rcs_business_single_bet_config c WHERE STATUS = 1
+	</select>
+
+	<select id="queryBusConPlayConifgList" parameterType="Map" resultType="com.panda.sport.rcs.pojo.RcsBusinessConPlayConfig">
+		SELECT * FROM rcs_business_con_play_config  WHERE STATUS = 1
+	</select>
+
+</mapper>

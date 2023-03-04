@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.tourTemplate.RcsTournamentTemplateEventMapper">
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplateEvent">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="template_id" jdbcType="INTEGER" property="templateId"/>
+        <result column="event_code" jdbcType="VARCHAR" property="eventCode"/>
+        <result column="event_desc" jdbcType="VARCHAR" property="eventDesc"/>
+        <result column="event_handle_time" jdbcType="INTEGER" property="eventHandleTime"/>
+        <result column="settle_handle_time" jdbcType="INTEGER" property="settleHandleTime"/>
+        <result column="sort_no" jdbcType="INTEGER" property="sortNo"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <insert id="insertBatch" keyColumn="id" keyProperty="id" parameterType="list" useGeneratedKeys="true">
+        insert into rcs_tournament_template_event (template_id, event_code, event_desc,event_handle_time,
+        settle_handle_time, sort_no,create_time,update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.templateId,jdbcType=INTEGER},#{item.eventCode,jdbcType=VARCHAR},#{item.eventDesc,jdbcType=VARCHAR},#{item.eventHandleTime,jdbcType=INTEGER},#{item.settleHandleTime,jdbcType=INTEGER},
+            #{item.sortNo,jdbcType=INTEGER},now(),now())
+        </foreach>
+    </insert>
+
+    <select id="getTournamentTemplateEventList" resultMap="BaseResultMap">
+        SELECT
+        t.id,
+        t.template_id,
+        case when t.event_code is null then e.event_code else t.event_code end event_code,
+        case when t.event_desc is null then e.template_text else t.event_desc end event_desc,
+        case when t.sort_no is null then e.order_no else t.sort_no end sort_no,
+        case when t.event_handle_time is null then e.audit_time else t.event_handle_time end event_handle_time,
+        case when t.settle_handle_time is null then e.bill_time else t.settle_handle_time end settle_handle_time,
+        case when t.create_time is null then now() else t.create_time end create_time,
+        case when t.update_time is null then now() else t.update_time end update_time
+        FROM
+        rcs_tournament_event_template e
+        LEFT JOIN ( SELECT * FROM rcs_tournament_template_event WHERE template_id = #{templateId} ) t
+        ON e.event_code = t.event_code
+        WHERE
+        e.sport_id = #{sportId}
+        order by sort_no asc
+    </select>
+
+    <update id="updateTemplateEventById"
+            parameterType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplateEvent">
+        update rcs_tournament_template_event
+        <trim prefix="set" suffixOverrides=",">
+            <if test="eventHandleTime != null">
+                event_handle_time = #{eventHandleTime,jdbcType=INTEGER},
+            </if>
+            <if test="settleHandleTime != null">
+                settle_handle_time = #{settleHandleTime,jdbcType=INTEGER},
+            </if>
+        </trim>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

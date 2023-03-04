@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.TTagMarketMapper">
+    <select id="getTagMarketList" resultType="com.panda.sport.rcs.pojo.TTagMarketReqVo">
+        select
+        t.id as id,
+        ut.tag_id as tagId,
+        ut.tag_name as tagName,
+        l.id as levelId,
+        l.level_name as levelName,
+        l.odds_value as oddsValue,
+        t.create_time as createTime,
+        t.update_time as updateTime
+        from t_tag_market t
+        left join t_tag_market_level l on l.id = t.level_id
+        left join t_user_tag ut on ut.tag_id = t.tag_id
+    </select>
+</mapper>

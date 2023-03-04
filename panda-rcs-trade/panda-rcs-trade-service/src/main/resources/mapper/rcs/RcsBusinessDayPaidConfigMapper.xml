@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsBusinessDayPaidConfigMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsBusinessDayPaidConfig">
+        <id column="business_id" property="businessId" />
+        <result column="business_name" property="businessName" />
+        <result column="stop_rate" property="stopRate" />
+        <result column="stop_val" property="stopVal" />
+        <result column="warn_level_1_rate" property="warnLevel1Rate" />
+        <result column="warn_level_1_val" property="warnLevel1Val" />
+        <result column="warn_level_2_rate" property="warnLevel2Rate" />
+        <result column="warn_level_2_val" property="warnLevel2Val" />
+        <result column="crt_time" property="crtTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="status" property="status" />
+    </resultMap>
+
+    <select id="queryBusDayConifgs" resultMap="BaseResultMap">
+        SELECT  business_id,business_name,stop_rate,stop_val,warn_level_1_rate,warn_level_1_val,warn_level_2_rate,warn_level_2_val,status  FROM rcs_business_day_paid_config
+    </select>
+
+    <select id="selectOneDayPaid" resultMap="BaseResultMap">
+        SELECT  business_id,business_name,stop_rate,stop_val,warn_level_1_rate,warn_level_1_val,warn_level_2_rate,warn_level_2_val,status  FROM rcs_business_day_paid_config WHERE business_id = #{businessId}
+    </select>
+
+    <update id="updateRcsBusinessDayPaidConfig">
+            UPDATE rcs_business_day_paid_config SET  stop_rate=#{dayPaid.stopRate}, stop_val=#{dayPaid.stopVal}, warn_level_1_rate=#{dayPaid.warnLevel1Rate}, warn_level_1_val=#{dayPaid.warnLevel1Val}, warn_level_2_rate=#{dayPaid.warnLevel2Rate}, warn_level_2_val=#{dayPaid.warnLevel2Val}, status=#{dayPaid.status}, expire_time=#{dayPaid.expireTime} WHERE business_id = #{dayPaid.businessId}
+    </update>
+</mapper>

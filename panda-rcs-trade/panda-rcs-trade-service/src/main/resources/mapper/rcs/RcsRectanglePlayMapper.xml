@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsRectanglePlayMapper">
+
+	<select id="queryPlayListByMatch" parameterType="Map" resultType="String">
+		select FLOOR(IFNULL(sum(current_paid),0)) current_paid from (
+		SELECT sum(current_paid) current_paid FROM (
+		SELECT handicap,select_id,SUM(current_paid) current_paid FROM (
+		SELECT p.current_play_type play_id,p.handicap ,p.option_id select_id, p.paid_money current_paid FROM rcs_rectangle_play p
+		WHERE p.business_id = #{busId} AND p.sport_id = #{sportId} AND p.date_expect = #{dateExpect} and match_type = #{matchType}
+		AND p.`type` = #{type} AND p.type_value = #{typeValue} AND p.match_id = #{matchId} AND p.current_play_type = #{playId} and play_type = #{playType}
+		UNION ALL
+		SELECT #{playId} play_id,#{handicap} handicap,#{selectId} select_id,#{paidMoney} current_paid FROM dual
+		) t GROUP BY handicap,select_id
+		) t1 GROUP BY handicap
+		) t2
+	</select>
+	
+	<select id="queryMatchNoScorePlay" parameterType="Map" resultType="String">
+		SELECT FLOOR(IFNULL(SUM(current_paid),0)) current_paid FROM (
+				SELECT play_id,handicap,sum(current_paid) current_paid FROM (
+				SELECT play_id,handicap,select_id,sum(current_paid) current_paid FROM (
+				SELECT play_id,handicap,select_id,match_type,play_type,sum(current_paid) current_paid FROM (
+				SELECT p.play_id,p.handicap ,p.option_id select_id, match_type,play_type ,p.paid_money current_paid,rec_type FROM rcs_rectangle_play p
+				WHERE  p.rec_type = 1 and p.business_id = #{busId} AND p.sport_id = #{sportId} AND p.date_expect = #{dateExpect}
+				AND p.`type` = #{type} AND p.type_value = #{typeValue} AND p.match_id = #{matchId}
+				UNION ALL
+				SELECT #{playId} play_id,#{handicap} handicap,#{selectId} select_id,#{matchType} match_type , #{playType} play_type,#{paidMoney} current_paid,#{recType} rec_type FROM dual			
+				) t WHERE rec_type = '1' GROUP BY play_id,handicap,select_id,match_type,play_type
+				) t1 GROUP BY play_id,handicap,select_id
+				) t2 GROUP BY play_id,handicap
+				) t3  
+	</select>
+
+
+	<select id="queryAllUserMatchNoScorePlay" parameterType="Map" resultType="String">
+		SELECT FLOOR(IFNULL(SUM(current_paid),0)) current_paid FROM (
+		SELECT play_id,handicap,sum(current_paid) current_paid FROM (
+		SELECT play_id,handicap,select_id,sum(current_paid) current_paid FROM (
+		SELECT play_id,handicap,select_id,match_type,play_type,sum(current_paid) current_paid FROM (
+		SELECT p.play_id,p.handicap ,p.option_id select_id, match_type,play_type ,p.paid_money current_paid,rec_type FROM rcs_rectangle_play p
+		WHERE  p.rec_type = 1 and p.business_id = #{busId} AND p.sport_id = #{sportId} AND p.date_expect = #{dateExpect}
+		AND p.`type` = #{type}  AND p.match_id = #{matchId}
+		UNION ALL
+		SELECT #{playId} play_id,#{handicap} handicap,#{selectId} select_id,#{matchType} match_type , #{playType} play_type,#{paidMoney} current_paid,#{recType} rec_type FROM dual
+		) t WHERE rec_type = '1' GROUP BY play_id,handicap,select_id,match_type,play_type
+		) t1 GROUP BY play_id,handicap,select_id
+		) t2 GROUP BY play_id,handicap
+		) t3
+	</select>
+	
+	<select id="queryAllMatchNoScorePlay" parameterType="Map" resultType="String">
+		SELECT FLOOR(IFNULL(SUM(current_paid),0)) current_paid FROM (
+				SELECT match_id,play_id,handicap,sum(current_paid) current_paid FROM (
+				SELECT match_id,play_id,handicap,select_id,SUM(current_paid) current_paid FROM (
+				SELECT match_id,play_id,handicap,select_id,match_type,play_type,SUM(current_paid) current_paid FROM (
+				SELECT p.match_id,p.play_id,p.handicap ,p.option_id select_id, match_type,play_type,p.paid_money current_paid,rec_type FROM rcs_rectangle_play p
+				WHERE  p.rec_type = 1 and p.business_id = #{busId} AND p.sport_id = #{sportId} AND p.date_expect = #{dateExpect}
+				AND p.`type` = #{type} AND p.type_value = #{typeValue} 
+				UNION ALL
+				SELECT #{matchId} match_id,#{playId} play_id,#{handicap} handicap,#{selectId} select_id,#{matchType} match_type , #{playType} play_type,#{paidMoney} current_paid,#{recType} rec_type FROM dual
+				) t WHERE rec_type = '1' GROUP BY match_id,play_id,handicap,select_id,match_type,play_type
+				) t1 GROUP BY match_id,play_id,handicap,select_id
+				) t2 GROUP BY match_id,play_id,handicap
+				) t3
+	</select>
+
+
+	<select id="queryMatchInfo" parameterType="Map" resultType="Map">
+		SELECT
+			i.standard_tournament_id,
+			i.sport_id,
+			i.third_match_source_id,
+			i.begin_time,
+			i.data_source_code,
+			t.tournament_level,
+			match_manage_id,
+			CASE
+			WHEN (SELECT JSON_UNQUOTE(JSON_EXTRACT(n.text, '$.zs')) text FROM rcs_language_internation n WHERE n.name_code = t.name_code) IS NULL THEN
+				(SELECT JSON_UNQUOTE(JSON_EXTRACT(n.text, '$.en')) text FROM rcs_language_internation n WHERE n.name_code = t.name_code)
+			ELSE
+				(SELECT JSON_UNQUOTE(JSON_EXTRACT(n.text, '$.zs')) text FROM rcs_language_internation n WHERE n.name_code = t.name_code)
+			END text
+		FROM standard_match_info i
+		LEFT JOIN standard_sport_tournament t ON t.id = i.standard_tournament_id
+		WHERE i.id = #{matchId}
+	</select>
+
+	<select id="queryOutrightMatchInfo" parameterType="Map" resultType="Map">
+		SELECT
+		i.standard_tournament_id,
+		i.sport_id,
+		i.third_outright_match_source_id,
+		i.standrd_outright_match_begion_time,
+		i.data_source_code,
+		t.tournament_level,
+		CASE
+		WHEN (SELECT JSON_UNQUOTE(JSON_EXTRACT(n.text, '$.zs')) text FROM rcs_language_internation n WHERE n.name_code = t.name_code) IS NULL THEN
+			(SELECT JSON_UNQUOTE(JSON_EXTRACT(n.text, '$.en')) text FROM rcs_language_internation n WHERE n.name_code = t.name_code)
+		ELSE
+			(SELECT JSON_UNQUOTE(JSON_EXTRACT(n.text, '$.zs')) text FROM rcs_language_internation n WHERE n.name_code = t.name_code)
+		END as text
+		FROM rcs_standard_outright_match_info i
+		LEFT JOIN standard_sport_tournament t ON t.id = i.standard_tournament_id
+		WHERE i.id = #{matchId}
+	</select>
+
+	<update id="insertAndUpdate" parameterType="com.panda.sport.data.rcs.dto.ExtendBean">
+		insert into rcs_rectangle_play (business_id,sport_id,date_expect,type,type_value,match_id,play_id,handicap,option_id,match_type,play_type,rec_type,order_money,paid_money,current_play_type)
+	  	values (#{busId},#{sportId},#{dateExpect},#{dimeType},#{dimeVal},#{matchId},#{playId},#{handicap},#{selectId},#{isScroll},#{playType},#{recType},#{orderMoney},#{currentMaxPaid},#{currentPlayType})
+	  	on duplicate key update order_money = order_money + values(order_money),paid_money = paid_money + values(paid_money)
+	</update>
+	
+	<update id="updatePlayHandicapAllOption" parameterType="com.panda.sport.data.rcs.dto.ExtendBean">
+		update rcs_rectangle_play set paid_money = paid_money + #{profit}
+		where business_id = #{busId} and sport_id = #{sportId} and date_expect = #{dateExpect} and type = #{dimeType} 
+		and type_value = #{dimeVal} and match_id = #{matchId} and play_id = #{playId} and handicap = #{handicap}
+		and match_type = #{isScroll} and play_type = #{playType}
+	</update>
+</mapper>

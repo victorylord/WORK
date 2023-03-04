@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsUserSpecialBetLimitConfigMapper">
+    <select id="selectByBasketballAndFootball" resultType="com.panda.sport.rcs.vo.UserReferenceLimitVo">
+        SELECT
+            sport_id sportId,
+            MAX( order_single_pay_val ) user_single_limit,
+            MAX( user_match_pay_val ) user_match_limit
+        FROM
+            rcs_tournament_template t
+            LEFT JOIN rcs_tournament_template_play_margain m ON t.id = m.template_id
+            LEFT JOIN rcs_tournament_template_play_margain_ref f ON m.id = f.margain_id
+        WHERE
+            t.type = 1
+            AND t.type_val = 1
+        GROUP BY
+            t.sport_id
+    </select>
+
+    <select id="selectSingeOrderByOther" resultType="com.panda.sport.rcs.vo.UserReferenceLimitVo">
+        SELECT MAX(single_bet_limit) user_single_limit FROM `rcs_quota_user_single_note`
+    </select>
+
+    <select id="selectSingeMatchByOther" resultType="com.panda.sport.rcs.vo.UserReferenceLimitVo">
+             SELECT MAX(IF(early_user_single_site_quota >live_user_single_site_quota ,early_user_single_site_quota ,live_user_single_site_quota)) user_match_limit
+          FROM `rcs_quota_user_single_site_quota`
+    </select>
+
+    <select id="selectUserQuotaRatio" resultType="java.math.BigDecimal" >
+        SELECT
+            l.user_quota_ratio
+        FROM
+            rcs_quota_business_limit l
+            LEFT JOIN rcs_operate_merchants_set s ON l.business_id = s.merchants_id
+            LEFT JOIN t_user u ON s.merchants_code = u.merchant_code
+        WHERE
+            u.uid = #{userId}
+    </select>
+
+    <select id="selectSserQuotaCrossLimit" resultType="java.math.BigDecimal">
+        SELECT
+            MAX( quota ) userQuotaCrossLimit
+        FROM
+            `rcs_quota_cross_border_limit`
+        WHERE
+            series_connection_type = 7
+    </select>
+
+    <update id="updateRcsUserSpecialBetLimitConfigStatus">
+        UPDATE rcs_user_special_bet_limit_config SET `status`=0 WHERE user_id=#{userId}
+    </update>
+    
+    <update id="insertOrUpdateUserSpecialBetLimitConfig">
+        <foreach  collection="rcsUserSpecialBetLimitConfigList" item="item"  separator=";">
+            INSERT INTO rcs_user_special_bet_limit_config (
+            <if test="item.id!=null">
+                id,
+            </if>
+            user_id, special_betting_limit_type, order_type, sport_id, single_note_claim_limit, single_game_claim_limit, percentage_limit, status )
+            VALUES
+            (
+            <if test="item.id!=null">
+                #{item.id},
+            </if>
+            #{item.userId},#{item.specialBettingLimitType},#{item.orderType},#{item.sportId},#{item.singleNoteClaimLimit},#{item.singleGameClaimLimit},#{item.percentageLimit},#{item.status})
+            ON DUPLICATE KEY UPDATE
+            user_id=#{item.userId},
+            special_betting_limit_type=#{item.specialBettingLimitType},
+            sport_id=#{item.sportId},
+            order_type=#{item.orderType},
+            single_note_claim_limit=#{item.singleNoteClaimLimit},
+            single_game_claim_limit=#{item.singleGameClaimLimit},
+            percentage_limit=#{item.percentageLimit},
+            status=#{item.status}
+        </foreach>
+    </update>
+
+    <select id="selectCrossDayCompensation" resultType="java.math.BigDecimal">
+        SELECT
+            cross_day_compensation
+        FROM
+            rcs_quota_user_daily_quota
+        WHERE
+            sport_id =0
+    </select>
+
+    <update id="updateUserSpecialBetLimitConfigBy" parameterType="com.panda.sport.rcs.pojo.RcsUserSpecialBetLimitConfig">
+        update rcs_user_special_bet_limit_config
+        set percentage_limit = #{percentageLimit}
+        where user_id=#{userId}
+        and special_betting_limit_type=#{specialBettingLimitType}
+        and status = 1
+    </update>
+</mapper>

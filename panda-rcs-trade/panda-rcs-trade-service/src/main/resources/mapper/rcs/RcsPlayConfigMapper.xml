@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsPlayConfigMapper">
+
+    <select id="updateOrInsertRcsPlayConfigList">
+        <foreach collection="playIdList" index="index" item="item" separator=";">
+            INSERT INTO `panda_rcs`.`rcs_play_config` ( `match_id`, `play_id`, `status`, `data_source` )
+            VALUES
+            (#{matchId}, #{item}, #{status}, #{dataSource}) ON DUPLICATE KEY UPDATE
+            status=#{status}
+            <if test="dataSource!=null">
+                ,data_source = #{dataSource}
+            </if>
+
+        </foreach>
+    </select>
+
+</mapper>

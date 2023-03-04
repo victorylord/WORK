@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.MatchPeriodMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.MatchPeriod">
+    <!--@mbg.generated-->
+    <!--@Table match_period-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="standard_match_id" jdbcType="BIGINT" property="standardMatchId" />
+    <result column="period" jdbcType="TINYINT" property="period" />
+    <result column="score" jdbcType="VARCHAR" property="score" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="modify_time" jdbcType="BIGINT" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, standard_match_id, period, score, `type`, create_time, modify_time
+  </sql>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into match_period
+    (standard_match_id, period, score, `type`, create_time, modify_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.standardMatchId,jdbcType=BIGINT}, #{item.period,jdbcType=TINYINT}, #{item.score,jdbcType=VARCHAR}, 
+        #{item.type,jdbcType=TINYINT}, #{item.createTime,jdbcType=BIGINT}, #{item.modifyTime,jdbcType=BIGINT}
+        )
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.MatchPeriod" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into match_period
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      standard_match_id,
+      period,
+      score,
+      `type`,
+      create_time,
+      modify_time,
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      #{standardMatchId,jdbcType=BIGINT},
+      #{period,jdbcType=TINYINT},
+      #{score,jdbcType=VARCHAR},
+      #{type,jdbcType=TINYINT},
+      #{createTime,jdbcType=BIGINT},
+      #{modifyTime,jdbcType=BIGINT},
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      standard_match_id = #{standardMatchId,jdbcType=BIGINT},
+      period = #{period,jdbcType=TINYINT},
+      score = #{score,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=TINYINT},
+      modify_time = now(),
+    </trim>
+  </insert>
+</mapper>

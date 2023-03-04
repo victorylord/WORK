@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.StandardSportMarketOddsMapper">
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.dto.odds.RcsStandardMarketDTO">
+        <!--@mbg.generated-->
+        <!--@Table t_order-->
+        <result column="place_num" jdbcType="INTEGER" property="placeNum" />
+        <result column="m_market_category_id" jdbcType="BIGINT" property="marketCategoryId" />
+        <result column="m_child_market_category_id" jdbcType="BIGINT" property="childStandardCategoryId" />
+        <result column="id" jdbcType="VARCHAR" property="id" />
+        <result column="m_addition1" jdbcType="VARCHAR" property="addition1" />
+        <result column="m_addition2" jdbcType="VARCHAR" property="addition2" />
+        <result column="m_addition5" jdbcType="VARCHAR" property="addition5" />
+        <result column="m_market_type" jdbcType="INTEGER" property="marketType" />
+        <result column="m_odds_value" jdbcType="VARCHAR" property="oddsValue" />
+        <result column="m_odds_name" jdbcType="VARCHAR" property="oddsName" />
+        <result column="m_market_head_gap" jdbcType="VARCHAR" property="marketHeadGap" />
+        <result column="m_data_source_code" jdbcType="VARCHAR" property="dataSourceCode" />
+        <result column="m_status" jdbcType="INTEGER" property="status" />
+        <result column="m_pa_status" jdbcType="INTEGER" property="paStatus" />
+        <result column="m_third_market_source_status" jdbcType="INTEGER" property="thirdMarketSourceStatus" />
+        <collection column="id" property="marketOddsList" ofType="com.panda.merge.dto.StandardMarketOddsDTO" select="queryMarketOddsList"/>
+    </resultMap>
+    <select id="selectSportMarketOddsList" resultType="com.panda.sport.rcs.vo.SportMarketOddsQueryVo">
+        SELECT
+        ssm.sport_id,
+        ssm.standard_tournament_id,
+        ssm.standard_match_info_id,
+        ssm.market_category_id,
+        ssm.market_type,
+        ssmc.name_code,
+        ssm.odds_name,
+        ssm.data_source_code,
+        ssm.manager_confirm_prize,
+        ssm.third_market_source_id,
+        ssm.addition1,
+        ssm.addition2,
+        ssm.addition3,
+        ssm.addition4,
+        ssm.addition5,
+        ssm.status,
+        ssm.scope_id,
+        ssm.i18n_names,
+        ssm.create_time,
+        ssm.modify_time,
+
+        ssmo.id market_odds_id,
+        ssmo.active,
+        ssmo.market_id,
+        ssmo.odds_fields_templet_id,
+        ssoft.name_code market_odds_name_code,
+        ssmo.name market_odds_name,
+        ssmo.name_expression_value,
+        ssmo.odds_value,
+        ssmo.target_side,
+        ssmo.order_odds,
+        ssmo.data_source_code market_odds_data_source_code,
+        ssmo.third_odds_field_source_id,
+        ssmo.manager_confirm_prize market_odds_manager_confirm_prize,
+
+        ssmo.addition1 market_odds_addition1,
+        ssmo.addition2 market_odds_addition2,
+        ssmo.addition3 market_odds_addition3,
+        ssmo.addition4 market_odds_addition4,
+        ssmo.addition5 market_odds_addition5,
+        ssmo.i18n_names market_odds_i18nNames,
+
+        ssmo.create_time market_odds_create_time,
+        ssmo.modify_time market_odds_modify_time,
+        ssoft.order_no odds_templet_order_no,
+        ssoft.name_code odds_templet_name_code,
+        ssmc.order_no market_templet_order_no,
+        ssmc.name_code market_templet_name_code,
+        ssmo.odds_type,
+
+        rmoc.bet_order_num,
+        rmoc.bet_amount,
+        rmoc.profit_value
+        FROM standard_sport_market ssm
+        JOIN standard_sport_market_odds ssmo on ssmo.market_id = ssm.id
+        LEFT JOIN rcs_market_odds_config rmoc on ssmo.id = rmoc.market_odds_id
+        JOIN standard_sport_market_category ssmc on ssmc.id=ssm.market_category_id
+        JOIN standard_sport_odds_fields_templet ssoft on ssoft.id=ssmo.odds_fields_templet_id
+        WHERE ssm.standard_match_info_id=#{param1.standardMatchInfoId} and ssm.status in (0,1,11)
+        <if test="param2 != null and param2.size() != 0">
+            and ssmc.id IN
+            <foreach item="item" index="index" collection="param2" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+
+    <update id="updateMarketOddsInfo" parameterType="com.panda.sport.rcs.pojo.StandardSportMarketOdds">
+        update standard_sport_market_odds set active = 0
+        where id = #{id}
+    </update>
+
+    <insert id="batchSaveOrUpdate" keyColumn="id" keyProperty="id"
+            parameterType="com.panda.sport.rcs.pojo.StandardSportMarketOdds" useGeneratedKeys="true">
+        insert into standard_sport_market_odds
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            market_id,
+            odds_fields_templet_id,
+            settlement_result_text,
+            settlement_result,
+            bet_settlement_certainty,
+            odds_type,
+            active,
+            addition1,
+            addition2,
+            addition3,
+            addition4,
+            addition5,
+            name_code,
+            `name`,
+            name_expression_value,
+            odds_value,
+            previous_odds_value,
+            original_odds_value,
+            target_side,
+            order_odds,
+            data_source_code,
+            third_odds_field_source_id,
+            manager_confirm_prize,
+            i18n_names,
+            remark,
+            create_time,
+            modify_time,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id,jdbcType=BIGINT},#{item.marketId,jdbcType=BIGINT}, #{item.oddsFieldsTempletId,jdbcType=BIGINT},
+            #{item.settlementResultText,jdbcType=VARCHAR},
+            #{item.settlementResult,jdbcType=VARCHAR}, #{item.betSettlementCertainty,jdbcType=VARCHAR},
+            #{item.oddsType,jdbcType=VARCHAR}, #{item.active,jdbcType=TINYINT}, #{item.addition1,jdbcType=VARCHAR},
+            #{item.addition2,jdbcType=VARCHAR}, #{item.addition3,jdbcType=VARCHAR}, #{item.addition4,jdbcType=VARCHAR},
+            #{item.addition5,jdbcType=VARCHAR}, #{item.nameCode,jdbcType=BIGINT}, #{item.name,jdbcType=VARCHAR},
+            #{item.nameExpressionValue,jdbcType=VARCHAR}, #{item.oddsValue,jdbcType=INTEGER},
+            #{item.previousOddsValue,jdbcType=INTEGER}, #{item.originalOddsValue,jdbcType=INTEGER},
+            #{item.targetSide,jdbcType=VARCHAR}, #{item.orderOdds,jdbcType=INTEGER},
+            #{item.dataSourceCode,jdbcType=VARCHAR},
+            #{item.thirdOddsFieldSourceId,jdbcType=VARCHAR}, #{item.managerConfirmPrize,jdbcType=TINYINT},
+            #{item.i18nNames,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR}, #{item.createTime,jdbcType=BIGINT},
+            #{item.modifyTime,jdbcType=BIGINT})
+        </foreach>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            market_id = VALUES(market_id),
+            odds_fields_templet_id = VALUES(odds_fields_templet_id),
+            settlement_result_text = VALUES(settlement_result_text),
+            settlement_result = VALUES(settlement_result),
+            bet_settlement_certainty = VALUES(bet_settlement_certainty),
+            odds_type = VALUES(odds_type),
+            active = VALUES(active),
+            addition1 = VALUES(addition1),
+            addition2 = VALUES(addition2),
+            addition3 = VALUES(addition3),
+            addition4 = VALUES(addition4),
+            addition5 = VALUES(addition5),
+            name_code = VALUES(name_code),
+            `name` = VALUES(`name`),
+            name_expression_value = VALUES(name_expression_value),
+            odds_value = VALUES(odds_value),
+            previous_odds_value = VALUES(previous_odds_value),
+            original_odds_value = VALUES(original_odds_value),
+            target_side = VALUES(target_side),
+            order_odds = VALUES(order_odds),
+            data_source_code = VALUES(data_source_code),
+            third_odds_field_source_id = VALUES(third_odds_field_source_id),
+            manager_confirm_prize = VALUES(manager_confirm_prize),
+            i18n_names = VALUES(i18n_names),
+            remark = VALUES(remark),
+            create_time = VALUES(remark),
+            modify_time = VALUES(modify_time),
+        </trim>
+    </insert>
+
+    <select id="queryMarketInfoAndOdds" resultType="com.panda.sport.rcs.pojo.StandardSportMarketOdds">
+		SELECT s.name_expression_value as nameExpressionValue,
+             s.odds_type as oddsType,
+             IFNULL(s.original_odds_value,s.odds_value) as originalOddsValue,
+             s.odds_value as oddsValue,
+             s.market_diff_value as marketDiffValue,
+             s.anchor as anchor,
+             s.probability_odds as probabilityOdds,
+             s.probability as probability,
+             s.margin_probability_odds  as marginProbabilityOdds,
+             s.active as active,
+             s.margin as margin,
+             s.data_source_code as dataSourceCode,
+             m.addition1 as addition1,
+             IF(m.third_market_source_status = 0 , m.pa_status, m.third_market_source_status) as orderOdds
+		FROM  standard_sport_market m
+		JOIN standard_sport_market_odds s ON m.id = s.market_id
+		WHERE m.id = #{config.marketId,jdbcType=BIGINT}
+		order by s.odds_type desc
+	</select>
+
+    <select id="queryMarketInfoAndOddsByMarketId" resultMap="BaseResultMap">
+		SELECT  m.id as id,
+				m.market_category_id as m_market_category_id,
+				m.addition1 as m_addition1,
+				m.addition2 as m_addition2,
+				m.addition5 as m_addition5,
+				m.market_type as m_market_type,
+				m.odds_value as m_odds_value,
+				m.odds_name as m_odds_name,
+				m.market_head_gap as m_market_head_gap,
+				m.data_source_code as m_data_source_code,
+				m.`status` as m_status,
+				m.`pa_status` as m_pa_status,
+				m.child_market_category_id as m_child_market_category_id,
+				m.third_market_source_status as m_third_market_source_status
+		from standard_sport_market m
+		WHERE m.id = #{config.marketId,jdbcType=BIGINT}
+		AND m.third_market_source_status in (0,1)
+	</select>
+    <select id="queryMarketOddsList" resultType="com.panda.merge.dto.StandardMarketOddsDTO">
+        SELECT  o.settlement_result_text as settlementResultText,
+				o.settlement_result as settlementResult,
+				o.bet_settlement_certainty as betSettlementCertainty,
+				o.odds_type as oddsType,
+				o.addition1 as addition1,
+				o.addition2 as addition2,
+				o.addition3 as addition3,
+				o.addition4 as addition4,
+				o.addition5 as addition5,
+				o.market_diff_value as marketDiffValue,
+				o.`name` as name,
+				o.name_expression_value as nameExpressionValue,
+				o.odds_value as oddsValue,
+				o.odds_fields_templet_id as oddsFieldsTemplateId,
+				IFNULL(o.original_odds_value,o.odds_value) as originalOddsValue,
+				o.target_side as targetSide,
+				o.order_odds as orderOdds,
+				o.active  as 		active,
+				o.margin  as 		margin,
+				o.probability  as 		probability,
+				o.anchor  as 		anchor,
+				o.probability_odds  as 		probabilityOdds,
+				o.margin_probability_odds  as marginProbabilityOdds,
+				o.data_source_code as dataSourceCode
+		from standard_sport_market_odds o
+		WHERE o.market_id = #{id}
+	</select>
+
+    <select id="queryStandardSportMarketOdds" resultType="com.panda.sport.rcs.pojo.StandardSportMarketOdds">
+		SELECT
+			o.*
+		FROM
+			rcs_standard_place_ref r
+			LEFT JOIN standard_sport_market_odds o ON r.market_id = o.market_id
+		WHERE
+			r.standard_match_info_id = #{matchId}
+			AND r.market_category_id = #{playId}
+			AND r.place_num = #{placeNum}
+			AND r.child_market_category_id = #{subPlayId}
+			AND r.market_id IS NOT NULL
+	</select>
+</mapper>

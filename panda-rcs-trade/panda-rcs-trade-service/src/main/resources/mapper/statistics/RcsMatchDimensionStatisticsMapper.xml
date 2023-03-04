@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.statistics.RcsMatchDimensionStatisticsMapper">
+    <update id="updateByOrderHandle" >
+        update rcs_match_dimension_statistics set
+            total_value = #{totalValue},
+            total_order_nums = #{totalOrderNums},
+            where match_id = #{matchId}
+    </update>
+
+    <insert id="insertOrSave" parameterType="com.panda.sport.rcs.pojo.statistics.RcsMatchDimensionStatistics">
+        insert rcs_match_dimension_statistics (`match_id`, `total_value`, `total_order_nums`, `settled_real_time_value`, `settled_profit_value`, `create_time`,  `modify_time`)
+            values (#{matchId},#{totalValue},#{totalOrderNums},#{settledRealTimeValue},#{settledProfitValue},#{createTime},#{modifyTime})
+        ON DUPLICATE KEY UPDATE
+        		total_value=  #{totalValue} ,
+        		total_order_nums=  #{totalOrderNums} ,
+                settled_real_time_value= #{settledRealTimeValue},
+                settled_profit_value= #{settledProfitValue},
+                modify_time=#{modifyTime}
+    </insert>
+
+    <update id="updateBySettledHandle">
+        update rcs_match_dimension_statistics set
+            settled_realTime_value = #{settledRealTimeValue},
+            settled_profit_value = #{settledProfitValue}
+            where match_id = #{matchId}
+    </update>
+    <!-- 近一时货量统计-->
+    <select id="searchNearlyOneHourRealTimeValue" resultType="com.panda.sport.rcs.vo.statistics.RcsMatchDimensionStatisticsVo">
+        select match_id,sum(bet_amount  * volume_percentage )/100 as realTimeValue from t_order_detail d  left join t_order o on o.order_no=d.order_no
+            where d.validate_result=1 AND o.series_type=1
+        <if test="matchId!=null">
+            And d.match_id =#{matchId}
+        </if>
+        <if test="orderDetailId!=null">
+            AND d.id >= #{orderDetailId}
+        </if>
+    </select>
+
+</mapper>

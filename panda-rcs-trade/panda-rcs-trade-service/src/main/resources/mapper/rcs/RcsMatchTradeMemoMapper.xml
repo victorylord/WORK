@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMatchTradeMemoMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsMatchTradeMemo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="standard_match_id" jdbcType="BIGINT" property="standardMatchId" />
+    <result column="sport_id" jdbcType="BIGINT" property="sportId" />
+    <result column="begin_time" jdbcType="BIGINT" property="beginTime" />
+    <result column="match_period_id" jdbcType="BIGINT" property="matchPeriodId" />
+    <result column="seconds_match_start" jdbcType="INTEGER" property="secondsMatchStart" />
+    <result column="tournament_name" jdbcType="VARCHAR" property="tournamentName" />
+    <result column="home" jdbcType="VARCHAR" property="home" />
+    <result column="away" jdbcType="VARCHAR" property="away" />
+    <result column="home_score" jdbcType="INTEGER" property="homeScore" />
+    <result column="away_score" jdbcType="INTEGER" property="awayScore" />
+    <result column="operate_stage" jdbcType="TINYINT" property="operateStage" />
+    <result column="trader_id" jdbcType="VARCHAR" property="traderId" />
+    <result column="trader_name" jdbcType="VARCHAR" property="traderName" />
+    <result column="browse_count" jdbcType="INTEGER" property="browseCount" />
+    <result column="browse_history" jdbcType="VARCHAR" property="browseHistory" />
+    <result column="record_time" jdbcType="BIGINT" property="recordTime" />
+    <result column="modify_time" jdbcType="BIGINT" property="modifyTime" />
+    <result column="text" jdbcType="LONGVARCHAR" property="text" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+    id, sport_id, standard_match_id, begin_time, match_period_id, seconds_match_start, tournament_name,
+    home, away, home_score, away_score, operate_stage, trader_id, trader_name, browse_count, 
+    browse_history, text, record_time, modify_time
+  </sql>
+
+
+</mapper>

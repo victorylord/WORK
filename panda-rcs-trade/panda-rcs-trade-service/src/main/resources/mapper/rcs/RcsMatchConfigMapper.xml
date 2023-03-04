@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMatchConfigMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsMatchConfig">
+    <!--@mbg.generated-->
+    <!--@Table rcs_match_config-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="match_id" jdbcType="INTEGER" property="matchId" />
+    <result column="operate_match_status" jdbcType="INTEGER" property="operateMatchStatus" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="modify_user" jdbcType="VARCHAR" property="modifyUser" />
+    <result column="pre_risk_manager_code" jdbcType="VARCHAR" property="preRiskManagerCode"/>
+    <result column="live_risk_manager_code" jdbcType="VARCHAR" property="liveRiskManagerCode"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, match_id, operate_match_status, modify_time, modify_user,pre_risk_manager_code,live_risk_manager_code
+  </sql>
+
+  <select id="selectMatchConfigByMatchIds" resultType="com.panda.sport.rcs.pojo.RcsMatchConfig">
+    select * from rcs_match_config
+    where
+    match_id in
+    <foreach collection="idList" item="id" open="(" separator="," close=")">   <!-- 使用Map封装，key是List123 -->
+      #{id}
+    </foreach>
+  </select>
+
+  <select id="selectMatchByMatchId" resultType="com.panda.sport.rcs.vo.RcsMatchConfigVo">
+      SELECT match_id id,trade_type data_source FROM rcs_match_config WHERE match_id = #{matchId}
+  </select>
+
+  <select id="selectMatchPlayByMatchId" resultType="com.panda.sport.rcs.vo.RcsMatchConfigVo">
+      SELECT play_id id,data_source FROM rcs_match_play_config WHERE match_id = #{matchId}
+  </select>
+
+  <select id="selectPlayByMatchId" resultType="com.panda.sport.rcs.vo.RcsMatchConfigVo">
+ SELECT play_id id,data_source FROM rcs_play_config WHERE match_id=#{matchId} AND data_source is not NULL
+  </select>
+
+  <select id="updateOrInsert">
+        INSERT INTO `rcs_match_config` ( `match_id`, `price_adjustment_parameters`,pre_risk_manager_code,live_risk_manager_code) VALUES
+            ( #{matchId}, #{priceAdjustmentParameters},#{preRiskManagerCode},#{liveRiskManagerCode})
+            ON DUPLICATE KEY UPDATE
+                price_adjustment_parameters=#{priceAdjustmentParameters},
+                pre_risk_manager_code=#{preRiskManagerCode},
+                live_risk_manager_code=#{liveRiskManagerCode}
+  </select>
+  <select id="updateRiskManagerCode">
+      INSERT INTO `rcs_match_config` ( `match_id`,
+      <if test="preRiskManagerCode!=null">
+      pre_risk_manager_code
+      </if>
+      <if test="liveRiskManagerCode!=null">
+      live_risk_manager_code
+      </if>
+      ) VALUES
+      ( #{matchId},
+      <if test="preRiskManagerCode!=null">
+      #{preRiskManagerCode}
+      </if>
+      <if test="liveRiskManagerCode!=null">
+      #{liveRiskManagerCode}
+      </if>
+      )
+      ON DUPLICATE KEY UPDATE
+      <if test="preRiskManagerCode!=null">
+      pre_risk_manager_code=#{preRiskManagerCode}
+      </if>
+      <if test="liveRiskManagerCode!=null">
+      live_risk_manager_code=#{liveRiskManagerCode}
+      </if>
+  </select>
+</mapper>

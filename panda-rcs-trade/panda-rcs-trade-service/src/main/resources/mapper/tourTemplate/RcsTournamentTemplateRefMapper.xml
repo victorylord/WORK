@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.tourTemplate.RcsTournamentTemplateRefMapper">
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplateRef">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="tournament_id" jdbcType="BIGINT" property="tournamentId"/>
+        <result column="template_id" jdbcType="BIGINT" property="templateId"/>
+        <result column="live_template_id" jdbcType="BIGINT" property="liveTemplateId"/>
+        <result column="is_popular" jdbcType="INTEGER" property="isPopular"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <insert id="insertOrUpdate" keyColumn="id" keyProperty="id"
+            parameterType="com.panda.sport.rcs.pojo.tourTemplate.RcsTournamentTemplateRef" useGeneratedKeys="true">
+        insert into rcs_tournament_template_ref
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tournamentId != null">
+                tournament_id,
+            </if>
+            <if test="templateId != null">
+                template_id,
+            </if>
+            <if test="liveTemplateId != null">
+                live_template_id,
+            </if>
+            <if test="isPopular != null">
+                is_popular,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="orderDelayTime != null">
+                order_delay_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tournamentId != null">
+                #{tournamentId,jdbcType=BIGINT},
+            </if>
+            <if test="templateId != null">
+                #{templateId,jdbcType=BIGINT},
+            </if>
+            <if test="liveTemplateId != null">
+                #{liveTemplateId,jdbcType=BIGINT},
+            </if>
+            <if test="isPopular != null">
+                #{isPopular,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="orderDelayTime != null">
+                #{orderDelayTime,jdbcType=INTEGER},
+            </if>
+        </trim>
+        ON DUPLICATE KEY UPDATE
+        <if test="templateId != null">
+            template_id = #{templateId},
+        </if>
+        <if test="liveTemplateId != null">
+            live_template_id = #{liveTemplateId},
+        </if>
+        <if test="isPopular != null">
+            is_popular = #{isPopular},
+        </if>
+        <if test="orderDelayTime != null">
+            order_delay_time = #{orderDelayTime},
+        </if>
+        update_time = now(),
+        tournament_id = #{tournamentId}
+    </insert>
+
+    <select id="selectTemplateByTournamentId"
+            resultType="com.panda.sport.rcs.pojo.dto.tourTemplate.TournamentTemplateRefDto">
+        SELECT
+            ref.tournament_id,
+            ref.template_id,
+            ref.live_template_id,
+            temp1.template_name as preTemplateName,
+            temp2.template_name as liveTemplateName
+        FROM
+            rcs_tournament_template_ref ref
+            LEFT JOIN rcs_tournament_template temp1 ON  ref.template_id = temp1.id
+            LEFT JOIN rcs_tournament_template temp2 ON  ref.live_template_id = temp2.id
+        WHERE
+            ref.tournament_id IN
+        <foreach collection="list" separator="," item="item" open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

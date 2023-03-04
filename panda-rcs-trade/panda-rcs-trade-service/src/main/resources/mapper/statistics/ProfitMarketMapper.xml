@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.statistics.RcsProfitMarketMapper">
+    <update id="update" parameterType="com.panda.sport.rcs.pojo.statistics.RcsProfitMarket">
+        update rcs_profit_market set addition1=#{addition1},addition2=#{addition2},profit_value=#{profitValue},update_time=#{updateTime}
+            where match_id = #{matchId} and play_id = #{playId} and market_value=#{marketValue} and match_type=#{matchType}
+    </update>
+
+    <insert id="insertOrUpdate" parameterType="com.panda.sport.rcs.pojo.statistics.RcsProfitMarket">
+        insert rcs_profit_market (`match_id`, `play_id`, `market_value`, `match_type`, `addition1`, `addition2`, `profit_value`, `create_time`, `update_time`)
+            values (#{matchId},#{playId},#{marketValue},#{matchType},#{addition1},#{addition2},#{profitValue},#{createTime},#{updateTime})
+        ON DUPLICATE KEY UPDATE
+        		profit_value= addition1 + #{addition1} + addition2 + #{addition2},
+                addition1= addition1 + #{addition1},addition2= addition2 + #{addition2},
+                update_time=#{updateTime}
+    </insert>
+    <!--获取初始化值-->
+    <select id="getInitProfitMarket" resultType="com.panda.sport.rcs.pojo.statistics.RcsProfitMarket" >
+        SELECT
+            match_id,
+            play_id,
+            market_value,
+            match_type,
+            bet_amount - addition1 AS addition1,
+            bet_amount - addition2 AS addition2,
+            bet_amount - addition1 + bet_amount - addition2 AS profit_value
+        FROM
+            (
+            SELECT
+                d.match_id,
+                d.play_id,
+                d.market_value,
+                d.match_type,
+                sum( d.bet_amount / 100 ) AS bet_amount,
+                sum( CASE WHEN d.play_options = 'Over' OR d.play_options = 1 THEN d.bet_amount / 100 * d.odds_value ELSE 0 END ) AS addition1,
+                sum( CASE WHEN d.play_options = 'Under' OR d.play_options = 2 THEN d.bet_amount / 100 * d.odds_value ELSE 0 END ) AS addition2
+            FROM
+                (
+                    SELECT order_no,
+                        CASE WHEN market_value_new IS NULL THEN market_value ELSE market_value_new END market_value,
+                        match_id,
+                        play_id,
+                        match_type,
+                        bet_amount,
+                        odds_value,
+                        play_options FROM t_order_detail ) d
+                    LEFT JOIN t_order o ON o.order_no = d.order_no
+            WHERE
+                d.match_id = #{profitMarket.matchId}
+                AND d.play_id=#{profitMarket.playId}
+                AND o.order_status = 1
+                AND d.match_type = #{profitMarket.matchType}
+                AND d.market_value = #{profitMarket.marketValue}
+                AND o.order_no != #{orderNo}
+            GROUP BY
+                match_id,
+                match_type,
+                play_id,
+                market_value
+            ORDER BY
+                match_id,
+                play_id
+            ) a;
+    </select>
+
+    <select id="get" resultType="com.panda.sport.rcs.pojo.statistics.RcsProfitMarket">
+        select * from rcs_profit_market where match_id=#{matchId} and play_id=#{playId} and market_value=#{marketValue} and match_type=#{matchType}
+    </select>
+</mapper>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsOrderStatisticMatchTimeMapper">
+    <delete id="deleteInfoByDate">
+        delete from rcs_order_statistic_match_time where match_date >= #{startDate}
+    </delete>
+    <insert id="updateRcsOrderStatisticMatchTime" parameterType="java.util.List">
+        <foreach collection="list" index="index" item="item" separator=";">
+            INSERT INTO `panda_rcs`.`rcs_order_statistic_match_time`(
+            `match_date`,
+            `sport_id`,
+            `tournament_id`,
+            `match_type`,
+            `play_id`,
+            `order_status`,
+            `order_amount_sum`,
+            `order_count`,
+            `customer_count`,
+            `amount_gtten_thousand_count`,
+            `amount_gtfive_thousand_count`,
+            `amount_gttwo_thousand_count`,
+            `amount_gtone_thousand_count`,
+            `amount_ltone_thousand_count`,
+            `amount_profit`
+            )
+            VALUES (
+            #{item.matchDate,jdbcType=TIMESTAMP},
+            #{item.sportId},
+            #{item.tournamentId},
+            #{item.matchType},
+            #{item.playId},
+            #{item.orderStatus},
+            #{item.orderAmountSum},
+            #{item.orderCount},
+            #{item.customerCount},
+            #{item.amountGttenThousandCount},
+            #{item.amountGtfiveThousandCount},
+            #{item.amountGttwoThousandCount},
+            #{item.amountGtoneThousandCount},
+            #{item.amountLtoneThousandCount},
+            #{item.amountProfit}
+            )
+            ON DUPLICATE KEY UPDATE
+            order_amount_sum=order_amount_sum + #{item.orderAmountSum},
+            order_count=order_count + #{item.orderCount},
+            amount_gtten_thousand_count=amount_gtten_thousand_count + #{item.amountGttenThousandCount},
+            amount_gtfive_thousand_count=amount_gtfive_thousand_count + #{item.amountGtfiveThousandCount},
+            amount_gttwo_thousand_count=amount_gttwo_thousand_count + #{item.amountGttwoThousandCount},
+            amount_gtone_thousand_count=amount_gtone_thousand_count + #{item.amountGtoneThousandCount},
+            amount_ltone_thousand_count=amount_ltone_thousand_count + #{item.amountLtoneThousandCount},
+            amount_profit=amount_profit + #{item.amountProfit}
+        </foreach>
+    </insert>
+    <insert id="updateRcsOrderStatisticMatch">
+            INSERT INTO `panda_rcs`.`rcs_order_statistic_match_time`(
+            `match_date`,
+            `sport_id`,
+            `tournament_id`,
+            `match_type`,
+            `play_id`,
+            `order_status`,
+            `order_amount_sum`,
+            `order_count`,
+            `customer_count`,
+            `amount_gtten_thousand_count`,
+            `amount_gtfive_thousand_count`,
+            `amount_gttwo_thousand_count`,
+            `amount_gtone_thousand_count`,
+            `amount_ltone_thousand_count`,
+            `amount_profit`
+            )
+            VALUES (
+            #{item.matchDate,jdbcType=TIMESTAMP},
+            #{item.sportId},
+            #{item.tournamentId},
+            #{item.matchType},
+            #{item.playId},
+            #{item.orderStatus},
+            #{item.orderAmountSum},
+            #{item.orderCount},
+            #{item.customerCount},
+            #{item.amountGttenThousandCount},
+            #{item.amountGtfiveThousandCount},
+            #{item.amountGttwoThousandCount},
+            #{item.amountGtoneThousandCount},
+            #{item.amountLtoneThousandCount},
+            #{item.amountProfit}
+            )
+            ON DUPLICATE KEY UPDATE
+            order_amount_sum=order_amount_sum + #{item.orderAmountSum},
+            order_count=order_count + #{item.orderCount},
+            amount_gtten_thousand_count=amount_gtten_thousand_count + #{item.amountGttenThousandCount},
+            amount_gtfive_thousand_count=amount_gtfive_thousand_count + #{item.amountGtfiveThousandCount},
+            amount_gttwo_thousand_count=amount_gttwo_thousand_count + #{item.amountGttwoThousandCount},
+            amount_gtone_thousand_count=amount_gtone_thousand_count + #{item.amountGtoneThousandCount},
+            amount_ltone_thousand_count=amount_ltone_thousand_count + #{item.amountLtoneThousandCount},
+            amount_profit=amount_profit + #{item.amountProfit}
+    </insert>
+
+    <select id="selectBaseOrders" resultType="com.panda.sport.rcs.vo.BaseRcsOrderStatisticTimeVo">
+    SELECT
+        sport_id,
+        tournament_id,
+        match_type,
+        play_id,
+        order_status,
+        sum( order_amount_sum ) order_amount_sum,
+        sum( order_count ) order_count,
+        sum( customer_count ) customer_count,
+        sum( amount_per_order_count ) amount_per_order_count,
+        sum( order_count_per_customer ) order_count_per_customer,
+        sum( amount_per_customer ) amount_per_customer,
+        sum( amount_gtten_thousand_count ) amount_gtten_thousand_count,
+        sum( amount_gtfive_thousand_count ) amount_gtfive_thousand_count,
+        sum( amount_gttwo_thousand_count ) amount_gttwo_thousand_count,
+        sum( amount_gtone_thousand_count ) amount_gtone_thousand_count,
+        sum( amount_profit ) amount_profit,
+        IFNULL((sum( amount_profit )/sum( order_amount_sum )),0) amount_profit_per_order_count
+    FROM
+
+	    rcs_order_statistic_bet_time
+    GROUP BY
+        sport_id,
+        tournament_id,
+        match_type,
+        play_id
+    </select>
+</mapper>

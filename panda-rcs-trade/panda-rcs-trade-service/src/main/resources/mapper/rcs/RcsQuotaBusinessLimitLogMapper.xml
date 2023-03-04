@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsQuotaBusinessLimitLogMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsQuotaBusinessLimitLog">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="operate_category" jdbcType="VARCHAR" property="operateCategory" />
+    <result column="object_id" jdbcType="VARCHAR" property="objectId" />
+    <result column="object_name" jdbcType="VARCHAR" property="objectName" />
+    <result column="ext_object_id" jdbcType="VARCHAR" property="extObjectId" />
+    <result column="ext_object_name" jdbcType="VARCHAR" property="extObjectName" />
+    <result column="operate_type" jdbcType="VARCHAR" property="operateType" />
+    <result column="param_name" jdbcType="VARCHAR" property="paramName" />
+    <result column="before_val" jdbcType="VARCHAR" property="beforeVal" />
+    <result column="after_val" jdbcType="VARCHAR" property="afterVal" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, operate_category, object_id, object_name, ext_object_id, ext_object_name, operate_type, 
+    param_name, before_val, after_val, user_id, user_name, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from rcs_quota_business_limit_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="queryByPage" parameterType="com.panda.sport.rcs.pojo.vo.RcsQuotaBusinessLimitLogReqVo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from rcs_quota_business_limit_log
+    where 1 = 1
+    <if test="reqVo.id != null and reqVo.id != ''">
+      AND id = #{reqVo.id}
+    </if>
+    <if test="reqVo.operateCategory != null and reqVo.operateCategory != ''">
+      AND operate_category = #{reqVo.operateCategory}
+    </if>
+    <if test="reqVo.objectId != null and reqVo.objectId != ''">
+      AND object_id = #{reqVo.objectId}
+    </if>
+    <if test="reqVo.objectName != null and reqVo.objectName != ''">
+      AND object_name = #{reqVo.objectName}
+    </if>
+    <if test="reqVo.extObjectId != null and reqVo.extObjectId != ''">
+      AND ext_object_id = #{reqVo.extObjectId}
+    </if>
+    <if test="reqVo.extObjectName != null and reqVo.extObjectName != ''">
+      AND ext_object_name = #{reqVo.extObjectName}
+    </if>
+    <if test="reqVo.operateType != null and reqVo.operateType != ''">
+      AND operate_type = #{reqVo.operateType}
+    </if>
+    <if test="reqVo.paramName != null and reqVo.paramName != ''">
+      AND param_name = #{reqVo.paramName}
+    </if>
+    <if test="reqVo.userName != null and reqVo.userName != ''">
+      AND user_name = #{reqVo.userName}
+    </if>
+    <if test="reqVo.startTime != null and reqVo.startTime != ''">
+      AND create_time >= #{reqVo.startTime}
+    </if>
+    <if test="reqVo.endTime != null and reqVo.endTime != ''">
+      AND create_time <![CDATA[ <= ]]> #{reqVo.endTime}
+    </if>
+    order by create_time desc
+  </select>
+
+  <insert id="bathInserts" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.RcsQuotaBusinessLimitLog" useGeneratedKeys="true">
+    INSERT INTO `rcs_quota_business_limit_log`
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      `operate_category`,
+      `object_id`,
+      `object_name`,
+      `ext_object_id`,
+      `ext_object_name`,
+      `operate_type`,
+      `param_name`,
+      `before_val`,
+      `after_val`,
+      `user_id`,
+      `user_name`
+    </trim>
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+      (
+      #{item.operateCategory},
+      #{item.objectId},
+      #{item.objectName},
+      #{item.extObjectId},
+      #{item.extObjectName},
+      #{item.operateType},
+      #{item.paramName},
+      #{item.beforeVal},
+      #{item.afterVal},
+      #{item.userId},
+      #{item.userName}
+      )
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+    `before_val` = VALUES(before_val),
+    `after_val` = VALUES(after_val)
+  </insert>
+</mapper>

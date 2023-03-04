@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsLanguageInternationMapper">
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsLanguageInternation">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name_code" jdbcType="VARCHAR" property="nameCode"/>
+        <result column="text" jdbcType="VARCHAR" property="text"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, name_code, `text`, create_time, update_time
+    </sql>
+    
+    <!-- 开启本mapper所在namespace的二级缓存 5分钟 = 60 * 1000 * 5-->
+	<cache eviction="FIFO" flushInterval="300000" size="1024" readOnly="true"/>
+
+    <insert id="batchInsertOrUpdate" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into rcs_language_internation
+        (name_code, `text`)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.nameCode,jdbcType=VARCHAR}, #{item.text,jdbcType=VARCHAR})
+        </foreach>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            `text` = values (`text`),
+        </trim>
+    </insert>
+
+    <select id="getPlayLanguage" resultType="String">
+        SELECT
+            l.text
+        FROM
+            standard_sport_market_category p
+            LEFT JOIN standard_sport_market_category_ref r ON r.category_id = p.id
+            LEFT JOIN rcs_language_internation l ON r.name_code = l.name_code
+        WHERE
+            p.id = #{playId,jdbcType=BIGINT}
+            AND r.sport_id = #{sportId,jdbcType=INTEGER}
+    </select>
+
+    <select id="getPlayLanguageByNamecode" resultType="String">
+        SELECT
+            text
+        FROM
+            rcs_language_internation
+        WHERE name_code=#{nameCode}
+    </select>
+    
+    <select id="getCategoryLanguage" resultType="String">
+        SELECT text FROM rcs_language_internation WHERE name_code = (SELECT name_Code FROM standard_sport_market_category_ref WHERE category_Id = #{categoryId} AND sport_id = #{sportId}) LIMIT 1
+    </select>
+    
+    <select id="getByMultilingualism" resultType="com.panda.sport.rcs.pojo.dto.PlayLanguageInternation">
+        SELECT l.id,c.play_id,l.name_code,l.text,UNIX_TIMESTAMP(l.create_time) AS create_time,UNIX_TIMESTAMP(l.update_time) AS update_time,c.* FROM rcs_language_internation l RIGHT JOIN  (SELECT DISTINCT category_id play_id ,name_code,sport_id FROM standard_sport_market_category_ref)   c ON c.name_code=l.name_code
+        <if test="sportId != null">
+            WHERE sport_id = #{sportId}
+        </if>
+    </select>
+
+
+    <select id="getAllRefMultilingualism" resultType="com.panda.sport.rcs.pojo.dto.PlayLanguageInternation">
+        SELECT c.sport_id,c.category_id,l.text  FROM rcs_language_internation l RIGHT JOIN
+            standard_sport_market_category_ref   c
+        ON c.name_code=l.name_code
+    </select>
+    
+    <select id="getStandardSportMarketCategoryList" resultType="com.panda.sport.rcs.pojo.LanguageInternation">
+     	SELECT id,REPLACE(JSON_EXTRACT(text, '$[0].zs'),'"','') text, name_code, 'zs' languageType FROM Rcs_Language_Internation WHERE name_Code IN (SELECT DISTINCT name_code FROM standard_sport_market_category)
+    </select>
+    
+    
+    <select id="getTournamentList" resultType="com.panda.sport.rcs.vo.TournamentConditionVo">
+        SELECT
+        li.name_code,
+        sst.id,
+        'zs' language_type,
+        replace(JSON_EXTRACT(ll.text, '$[0].zs'),'"','') text,
+        sst.sport_id,
+        ssr.id region_id ,
+        ssr.introduction,
+        ssr.spell,
+        ssr.visible
+        FROM
+        standard_sport_tournament sst
+        LEFT JOIN Rcs_Language_Internation li ON li.name_code = sst.name_code
+        LEFT JOIN standard_sport_region ssr ON sst.region_id = ssr.id
+        WHERE
+        ssr.visible = 1
+        <if test="sportId != null">
+            and sst.sport_id = #{sportId}
+        </if>
+        GROUP BY
+        li.name_code
+        ORDER BY
+        ssr.spell
+    </select>
+    
+    
+    <select id="getMarketCategoryList" resultType="com.panda.sport.rcs.vo.ConditionVo">
+        <if test="sportIds != null and sportIds.size() > 0">
+            SELECT	DISTINCT li.name_code,ssmc.id,#{lang} language_type,r.sport_id,
+            JSON_UNQUOTE(JSON_EXTRACT(li.text, CONCAT('$.',#{lang}))) text		
+            FROM standard_sport_market_category ssmc
+            JOIN standard_sport_market_category_ref r ON r.category_id= ssmc.id
+            LEFT JOIN rcs_language_internation li ON li.name_code = r.name_code
+            <if test="playSetIds != null and playSetIds.size() > 0">
+                JOIN rcs_market_category_set_relation t on t.market_category_id=r.category_id and t.market_category_set_id
+                in
+                <foreach item="item" index="index" collection="playSetIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            WHERE r.sport_id in
+            <foreach item="item" index="index" collection="sportIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+
+            <if test="playSetIds != null and playSetIds.size() > 0">
+                <if test="playSetIds.contains(-1L)">
+                    UNION
+                    SELECT	DISTINCT li.name_code,ssmc.id,#{lang} language_type,r.sport_id,
+                    JSON_UNQUOTE(JSON_EXTRACT(li.text, CONCAT('$.',#{lang}))) text
+                    FROM	standard_sport_market_category ssmc
+                    JOIN standard_sport_market_category_ref r ON r.category_id= ssmc.id and r.status=1 and r.category_id not in(
+	                    SELECT
+	                    t.market_category_id
+	                    FROM
+	                    rcs_market_category_set_relation t,
+	                    rcs_market_category_set s
+	                    WHERE
+	                    t.market_category_set_id = s.id
+	                    and s.sport_id in
+	                    <foreach item="item" index="index" collection="sportIds" open="(" separator="," close=")">
+	                        #{item}
+	                    </foreach>
+	                    and s.type= 1
+	                    and s.`status`= 2
+                    )
+                    LEFT JOIN rcs_language_internation li ON li.name_code = r.name_code
+                    WHERE r.sport_id in
+                    <foreach item="item" index="index" collection="sportIds" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </if>
+            </if>
+        </if>
+
+        <if test="sportIds == null or sportIds.size() == 0">
+            SELECT
+            DISTINCT li.name_code,ssmc.id,#{lang} language_type,r.sport_id,
+            JSON_UNQUOTE(JSON_EXTRACT(li.text, CONCAT('$.',#{lang}))) text
+            FROM
+            standard_sport_market_category ssmc
+            JOIN standard_sport_market_category_ref r ON r.category_id= ssmc.id
+            LEFT JOIN rcs_language_internation li ON li.name_code = r.name_code
+        </if>
+    </select>
+    
+    <select id="getLanguageInternationByTournamentId" resultType="com.panda.sport.rcs.vo.TournamentBeanVo">
+	 	 SELECT
+	        li.id,
+	        li.name_code,
+	        'zs' language_type,
+	        JSON_UNQUOTE(JSON_EXTRACT ( li.text, '$.zs' )) text,
+	        CASE
+	        WHEN sst.tournament_level = 0 THEN
+	        99 ELSE sst.tournament_level
+	        END tournament_level
+	        FROM
+	        standard_sport_tournament sst
+	        LEFT JOIN rcs_language_internation li ON li.name_code = sst.name_code
+	        WHERE
+	        sst.id = #{tournamentId}
+	        GROUP BY li.name_code
+    </select>
+    
+    
+    <select id="getLanguageInternationByCategoryId" resultType="com.panda.sport.rcs.pojo.LanguageInternation">
+        SELECT
+        li.id,li.name_code,'zs' language_type,JSON_UNQUOTE(JSON_EXTRACT ( li.text, '$.zs' )) text
+        FROM
+        rcs_language_internation li
+        LEFT JOIN standard_sport_market_category ssmc ON li.name_code = ssmc.name_code
+        WHERE
+        ssmc.id = #{categoryId}
+        GROUP BY li.name_code
+    </select>
+    
+   <select id="getLanguageNameCodes" resultType="com.panda.sport.rcs.pojo.LanguageInternation">
+        SELECT 
+			'en' languageType,
+			JSON_UNQUOTE(JSON_EXTRACT ( text, '$.en' )) text,
+			name_code,
+			id
+		FROM rcs_language_internation  WHERE name_code IN 
+		<foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+		UNION ALL
+		SELECT 
+			'zs' languageType,
+			JSON_UNQUOTE(JSON_EXTRACT ( `text`, '$.zs' )) text,
+			name_code,
+			id
+		FROM rcs_language_internation WHERE name_code IN 
+		<foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+       </foreach>
+    </select>
+    
+       <select id="queryTeamNameByMatchId" resultType="java.util.Map">
+		SELECT  tr.match_position as matchPosition,
+				JSON_UNQUOTE(JSON_EXTRACT ( i.text, '$.en' )) text,
+		       'en' languageType,
+		        concat(t.begin_time,"") as beginTime,
+		        t.seconds_match_start as secondsMatchStart,
+		        t.match_status as matchStatus
+		FROM standard_match_info t
+		LEFT JOIN standard_match_team_relation tr ON t.id = tr.standard_match_id
+		LEFT JOIN standard_sport_team team ON team.id = tr.standard_team_id
+		LEFT JOIN rcs_language_internation i ON i.name_code = team.name_code
+		WHERE t.id = #{matchId}
+		UNION ALL
+		SELECT  tr.match_position as matchPosition,
+				JSON_UNQUOTE(JSON_EXTRACT ( i.text, '$.zs' )) text,
+		        'zs' languageType,
+		        concat(t.begin_time,"") as beginTime,
+		        t.seconds_match_start as secondsMatchStart,
+		        t.match_status as matchStatus
+		FROM standard_match_info t
+		LEFT JOIN standard_match_team_relation tr ON t.id = tr.standard_match_id
+		LEFT JOIN standard_sport_team team ON team.id = tr.standard_team_id
+		LEFT JOIN rcs_language_internation i ON i.name_code = team.name_code
+		WHERE t.id = #{matchId}
+    </select>
+    
+   	<select id="queryTournamentNameByMatchId" resultType="java.util.Map">
+		SELECT JSON_UNQUOTE(JSON_EXTRACT ( li.text, '$.en' )) as text,
+		       'en'  as languageType
+		FROM standard_match_info t
+		LEFT JOIN standard_sport_tournament st ON t.standard_tournament_id = st.id
+		LEFT JOIN rcs_language_internation li ON li.name_code = st.name_code
+		WHERE t.id = #{matchId}
+		 UNION all
+
+		SELECT JSON_UNQUOTE(JSON_EXTRACT ( li.text, '$.zs' )) as text,
+		       'zs' as languageType
+		FROM standard_match_info t
+		LEFT JOIN standard_sport_tournament st ON t.standard_tournament_id = st.id
+		LEFT JOIN rcs_language_internation li ON li.name_code = st.name_code
+		WHERE t.id = #{matchId}
+    </select>
+    
+    <select id="queryTournamentNameByMatchId" resultType="java.util.Map">
+		SELECT JSON_UNQUOTE(JSON_EXTRACT ( li.text, '$.en' )) text,
+		         'en' languageType
+		FROM standard_match_info t
+		LEFT JOIN standard_sport_tournament st ON t.standard_tournament_id = st.id
+		LEFT JOIN rcs_language_internation li ON li.name_code = st.name_code
+		WHERE t.id = #{matchId}
+		
+		UNION ALL
+		
+		SELECT JSON_UNQUOTE(JSON_EXTRACT ( li.text, '$.zs' )) text,
+		    	'zs' languageType
+		FROM standard_match_info t
+		LEFT JOIN standard_sport_tournament st ON t.standard_tournament_id = st.id
+		LEFT JOIN rcs_language_internation li ON li.name_code = st.name_code
+		WHERE t.id = #{matchId}
+    </select>
+    
+ 	<select id="getPlayNameByCategoryIdAndSportId" resultType="com.panda.sport.rcs.pojo.LanguageInternation">
+        SELECT li.id,
+               li.name_code,
+               'zs' languageType,
+               JSON_UNQUOTE(JSON_EXTRACT ( li.text, '$.zs' )) text
+        FROM rcs_language_internation li
+        LEFT JOIN standard_sport_market_category_ref ssmcr ON li.name_code = ssmcr.name_code
+        WHERE ssmcr.category_id = #{playId}
+          AND ssmcr.sport_id = #{sportId}
+        GROUP BY li.name_code
+    </select>
+    
+   <select id="getPlayNameByPlayIds" resultType="com.panda.sport.rcs.pojo.LanguageInternation">
+          SELECT  li.id,
+                  li.name_code,
+                  'zs' language_type,
+                  JSON_UNQUOTE(JSON_EXTRACT ( li.text, '$.zs' )) text
+            FROM rcs_language_internation li
+        LEFT JOIN standard_sport_market_category_ref ssmcr ON li.name_code = ssmcr.name_code
+        WHERE ssmcr.sport_id = #{sportId}
+        <if test="playIds != null">
+            AND ssmcr.category_id in
+            <foreach collection="playIds" item="playId" open="(" separator="," close=")">
+                #{playId}
+            </foreach>
+        </if>
+    </select>
+    
+   <select id="getTournamentNameByIdAndSprotId" resultType="com.panda.sport.rcs.pojo.LanguageInternation">
+        SELECT li.id,
+               li.name_code,
+               'zs' languageType,
+               JSON_UNQUOTE(JSON_EXTRACT ( li.text, '$.zs' )) text
+        FROM rcs_language_internation li
+  		LEFT JOIN standard_sport_tournament sst ON li.name_code = sst.name_code
+        WHERE sst.id = #{tournamentId}
+        AND sst.sport_id = #{sportId}
+    </select>
+    
+    <select id="getByNameCodeDeprecated" resultType="com.panda.sport.rcs.pojo.LanguageInternation">
+        SELECT
+            id,name_code,
+            'en' languageType,
+            JSON_UNQUOTE(JSON_EXTRACT ( li.text, '$.en' )) text
+        FROM
+            rcs_language_internation li
+        WHERE name_code  IN
+            <foreach collection="nameCodes" item="nameCode" open="(" separator="," close=")">
+                #{nameCode}
+            </foreach>
+            
+        UNION all
+        
+        SELECT
+            id,name_code,
+            'zs' languageType,
+            JSON_UNQUOTE(JSON_EXTRACT ( li.text, '$.zs' )) text
+        FROM
+            rcs_language_internation li
+        WHERE name_code  IN
+            <foreach collection="nameCodes" item="nameCode" open="(" separator="," close=")">
+                #{nameCode}
+            </foreach>
+    </select>
+    
+</mapper>

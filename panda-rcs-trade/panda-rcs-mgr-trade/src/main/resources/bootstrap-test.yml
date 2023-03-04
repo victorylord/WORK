@@ -1,0 +1,15 @@
+#启动配置
+spring:
+  application:
+    name: panda-rcs-trade
+  cloud:
+    nacos:
+      config:
+        server-addr: 172.18.178.238:8848
+        file-extension: properties
+        namespace: 9385a036-b48c-4dde-97d7-c5e1872f2852
+  profiles:
+    active: test
+
+spring.cloud.nacos.discovery.serverAddr: ${spring.cloud.nacos.config.server-addr}
+spring.cloud.nacos.discovery.namespace: ${spring.cloud.nacos.config.namespace}

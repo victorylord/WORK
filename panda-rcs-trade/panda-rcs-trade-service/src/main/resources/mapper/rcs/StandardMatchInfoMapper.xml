@@ -1,0 +1,980 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.StandardMatchInfoMapper">
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.StandardMatchInfo">
+        <!--@mbg.generated-->
+        <!--@Table standard_match_info-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="sport_id" jdbcType="BIGINT" property="sportId"/>
+        <result column="standard_tournament_id" jdbcType="BIGINT" property="standardTournamentId"/>
+        <result column="third_match_id" jdbcType="INTEGER" property="thirdMatchId"/>
+        <result column="seconds_match_start" jdbcType="INTEGER" property="secondsMatchStart"/>
+        <result column="pre_match_business" jdbcType="TINYINT" property="preMatchBusiness"/>
+        <result column="live_odd_business" jdbcType="TINYINT" property="liveOddBusiness"/>
+        <result column="operate_match_status" jdbcType="TINYINT" property="operateMatchStatus"/>
+        <result column="begin_time" jdbcType="BIGINT" property="beginTime"/>
+        <result column="active" jdbcType="TINYINT" property="active"/>
+        <result column="pre_match_bet_status" jdbcType="TINYINT" property="preMatchBetStatus"/>
+        <result column="live_odds_bet_status" jdbcType="TINYINT" property="liveOddsBetStatus"/>
+        <result column="match_status" jdbcType="TINYINT" property="matchStatus"/>
+        <result column="neutral_ground" jdbcType="TINYINT" property="neutralGround"/>
+        <result column="match_manage_id" jdbcType="BIGINT" property="matchManageId"/>
+        <result column="match_position_name" jdbcType="VARCHAR" property="matchPositionName"/>
+        <result column="match_position_name_code" jdbcType="BIGINT" property="matchPositionNameCode"/>
+        <result column="risk_manager_code" jdbcType="VARCHAR" property="riskManagerCode"/>
+        <result column="data_source_code" jdbcType="VARCHAR" property="dataSourceCode"/>
+        <result column="related_data_source_coder_list" jdbcType="VARCHAR" property="relatedDataSourceCoderList"/>
+        <result column="related_data_source_coder_num" jdbcType="INTEGER" property="relatedDataSourceCoderNum"/>
+        <result column="match_data_provider_code" jdbcType="VARCHAR" property="matchDataProviderCode"/>
+        <result column="third_match_source_id" jdbcType="VARCHAR" property="thirdMatchSourceId"/>
+        <result column="home_away_info" jdbcType="VARCHAR" property="homeAwayInfo"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="bet_status" jdbcType="TINYINT" property="betStatus"/>
+        <result column="team_name" jdbcType="OTHER" property="teamName"/>
+        <result column="team_manage_id" jdbcType="OTHER" property="teamManageId"/>
+        <result column="match_period_id" jdbcType="BIGINT" property="matchPeriodId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="modify_time" jdbcType="BIGINT" property="modifyTime"/>
+        <result column="pre_risk_manager_code" jdbcType="VARCHAR" property="preRiskManagerCode"/>
+        <result column="live_risk_manager_code" jdbcType="VARCHAR" property="liveRiskManagerCode"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, sport_id, standard_tournament_id, third_match_id, seconds_match_start, pre_match_business,
+        live_odd_business, operate_match_status, begin_time, active, pre_match_bet_status,
+        live_odds_bet_status, match_status, neutral_ground, match_manage_id, match_position_name,
+        match_position_name_code, risk_manager_code, data_source_code, related_data_source_coder_list,
+        related_data_source_coder_num, match_data_provider_code, third_match_source_id, home_away_info,
+        parent_id, bet_status, team_name, team_manage_id, match_period_id, remark, create_time,
+        modify_time,pre_risk_manager_code,live_risk_manager_code
+    </sql>
+
+    <select id="selectPageByConditionV2" resultType="com.panda.sport.rcs.pojo.StandardMatchInfo">
+        select
+        smi.id, smi.sport_id, smi.standard_tournament_id, smi.third_match_id, smi.seconds_match_start,
+        sst.name_code nameCode,sst.tournament_level tournamentLevel,'0' is_delete,smi.event_time,
+        smi.pre_match_business pre_match_business,
+        smi.live_odd_business live_odd_business,
+        case when smi.operate_match_status = 2 or rmc.status = 2 then 2
+        when smi.operate_match_status = 3 or rmc.status = 1 then 3
+        when smi.operate_match_status = 0 then 0 else 1 end operate_match_status,
+        smi.begin_time, active, smi.pre_match_bet_status,
+        smi.live_odds_bet_status, IFNULL(smi.match_status,0) match_status, smi.neutral_ground, smi.match_manage_id,
+        smi.match_position_name,
+        smi.match_position_name_code, smi.risk_manager_code, smi.data_source_code, smi.related_data_source_coder_list,
+        smi.related_data_source_coder_num, smi.match_data_provider_code, smi.third_match_source_id, smi.home_away_info,
+        smi.parent_id, smi.bet_status, smi.team_name, smi.team_manage_id, smi.match_period_id, smi.remark,
+        smi.create_time,smi.pre_risk_manager_code,smi.live_risk_manager_code
+        from standard_match_info smi
+        LEFT JOIN standard_sport_tournament sst on smi.standard_tournament_id = sst .id
+        LEFT JOIN (SELECT s.match_id,s.status,s.update_time,s.data_source FROM
+        ( SELECT match_id, STATUS, data_source, update_time FROM rcs_trade_config WHERE trader_level = 1 and status is not null ORDER BY update_time DESC limit 100000000 ) s GROUP BY s.match_id) rmc ON rmc.match_id = smi.id
+        LEFT JOIN rcs_match_collection rmn ON rmn.match_id = smi.id
+        where 1=1
+        and #{obj.currentTimeMillis,jdbcType=BIGINT} &lt;= (smi.begin_time+14400000)
+        AND (UNIX_TIMESTAMP(smi.update_time)*1000 >= #{obj.updateTimeMillis,jdbcType=BIGINT} or
+        sst.modify_time >= #{obj.updateTimeMillis,jdbcType=BIGINT} or
+        UNIX_TIMESTAMP(rmc.update_time)*1000 >= #{obj.updateTimeMillis,jdbcType=BIGINT})
+        order by begin_time asc
+    </select>
+
+
+    <select id="selectMatchs" resultType="com.panda.sport.rcs.pojo.StandardMatchInfo">
+        select
+        smi.id, smi.sport_id, smi.standard_tournament_id, smi.third_match_id, smi.seconds_match_start,
+        smi.pre_match_business,sst.name_code nameCode,sst.tournament_level tournamentLevel,
+        smi.live_odd_business,
+        case when smi.operate_match_status = 2 or rmc.operate_match_status = 2 then 2
+        when smi.operate_match_status = 3 or rmc.operate_match_status = 3 then 3
+        when smi.operate_match_status = 0 then 0 else 1 end operate_match_status,
+        smi.begin_time, active, smi.pre_match_bet_status,
+        smi.live_odds_bet_status, IFNULL(smi.match_status,0) match_status, smi.neutral_ground, smi.match_manage_id,
+        smi.match_position_name,
+        smi.match_position_name_code, smi.risk_manager_code, smi.data_source_code, smi.related_data_source_coder_list,
+        smi.related_data_source_coder_num, smi.match_data_provider_code, smi.third_match_source_id, smi.home_away_info,
+        smi.parent_id, smi.bet_status, smi.team_name, smi.team_manage_id, smi.match_period_id, smi.remark,
+        smi.create_time,IFNULL(rmc.trade_type,0) trade_type,smi.pre_risk_manager_code,smi.live_risk_manager_code
+        from standard_match_info smi
+        left join standard_sport_tournament sst on smi.standard_tournament_id = sst .id
+        LEFT JOIN rcs_match_config rmc ON rmc.match_id = smi.id
+        LEFT JOIN rcs_match_collection rmn ON rmn.match_id = smi.id
+        where 1=1 AND smi.live_odd_business = 1
+        and (smi.begin_time+14400000)>=(unix_timestamp(now())*1000)
+        and (smi.modify_time >= #{obj.updateTimeMillis,jdbcType=BIGINT} or sst.modify_time >=
+        #{obj.updateTimeMillis,jdbcType=BIGINT} or UNIX_TIMESTAMP(rmc.modify_time)*1000 >=
+        #{obj.updateTimeMillis,jdbcType=BIGINT})
+        order by begin_time asc
+    </select>
+
+    <select id="selectPageByCondition" resultType="com.panda.sport.rcs.pojo.StandardMatchInfo">
+        select
+        smi.id, smi.sport_id, smi.standard_tournament_id, smi.third_match_id, smi.seconds_match_start,
+        smi.pre_match_business,sst.name_code nameCode,sst.tournament_level tournamentLevel,
+        smi.live_odd_business,
+        case when smi.operate_match_status = 2 or rmc.operate_match_status = 2 then 2
+        when smi.operate_match_status = 3 or rmc.operate_match_status = 3 then 3
+        when smi.operate_match_status = 0 then 0 else 1 end operate_match_status,
+        smi.begin_time, active, smi.pre_match_bet_status,
+        smi.live_odds_bet_status, smi.match_status, smi.neutral_ground, smi.match_manage_id, smi.match_position_name,
+        smi.match_position_name_code, smi.risk_manager_code, smi.data_source_code, smi.related_data_source_coder_list,
+        smi.related_data_source_coder_num, smi.match_data_provider_code, smi.third_match_source_id, smi.home_away_info,
+        smi.parent_id, smi.bet_status, smi.team_name, smi.team_manage_id, smi.match_period_id, smi.remark,
+        smi.create_time,IFNULL(rmc.trade_type,0) trade_type,smi.pre_risk_manager_code,smi.live_risk_manager_code
+        from standard_match_info smi
+        left join standard_sport_tournament sst on smi.standard_tournament_id = sst .id
+        LEFT JOIN rcs_match_config rmc ON rmc.match_id = smi.id
+        LEFT JOIN rcs_match_collection rmn ON rmn.match_id = smi.id
+        <where>
+            <if test="obj.liveOddBusiness == 1">
+                <if test="obj.currentTimeMillis != null">
+                    <![CDATA[ and #{obj.currentTimeMillis,jdbcType=BIGINT} >= smi.begin_time]]>
+                </if>
+                and smi.match_status =1 and smi.live_odd_business =1
+            </if>
+            <if test="obj.currentTimeMillis != null">
+                <![CDATA[and #{obj.currentTimeMillis,jdbcType=BIGINT} <= (smi.begin_time+14400000)  ]]>
+            </if>
+            <if test="obj.liveOddBusiness == null">
+                and (smi.match_status = 0 or smi.match_status is null) and smi.pre_match_business = 1
+            </if>
+            <if test="obj.beginTimeMillis!=null">
+                <![CDATA[ and smi.begin_time >=  #{obj.beginTimeMillis,jdbcType=BIGINT}  ]]>
+            </if>
+            <if test="obj.endTimeMillis!=null">
+                <![CDATA[ and smi.begin_time <=  #{obj.endTimeMillis,jdbcType=BIGINT}  ]]>
+            </if>
+            <if test="obj.tournamentLevel !=null ">
+                and sst.tournament_level = #{obj.tournamentLevel}
+            </if>
+            <if test="obj.matchId != null">
+                and smi.id = #{obj.matchId,jdbcType=BIGINT}
+            </if>
+            <if test="obj.matchManageId != null and obj.matchManageId != ''">
+                and smi.match_manage_id = #{obj.matchManageId,jdbcType=VARCHAR}
+            </if>
+            <if test="obj.operateMatchStatus != null">
+                and smi.operate_match_status = #{obj.operateMatchStatus,jdbcType=INTEGER}
+            </if>
+            <if test="obj.sportId != null">
+                and smi.sport_id = #{obj.sportId,jdbcType=BIGINT}
+            </if>
+            <if test="obj.updateTimeMillis != null">
+                and (smi.modify_time >= #{obj.updateTimeMillis,jdbcType=BIGINT} or sst.modify_time >=
+                #{obj.updateTimeMillis,jdbcType=BIGINT} or UNIX_TIMESTAMP(rmc.modify_time)*1000 >=
+                #{obj.updateTimeMillis,jdbcType=BIGINT} or rmn.update_time >=
+                #{obj.updateTimeMillis,jdbcType=BIGINT})
+            </if>
+            <if test="obj.tradeType != null">
+                <if test="obj.tradeType == 1">
+                    and rmc.trade_type = 1
+                </if>
+                <if test="obj.tradeType == 0">
+                    and (rmc.trade_type is null or rmc.trade_type = 0)
+                </if>
+            </if>
+            <if test="obj.matchCollectStatus != null">
+                <if test="obj.matchCollectStatus == true ">
+                    and rmn.user_id = #{obj.tradeId,jdbcType=BIGINT} and rmn.status = 1
+                </if>
+            </if>
+            <if test="obj.standardTournamentId != null">
+                and smi.standard_tournament_id = #{obj.standardTournamentId,jdbcType=BIGINT}
+            </if>
+        </where>
+        order by begin_time asc
+    </select>
+
+    <select id="selectTournamentsByCondition" resultType="com.panda.sport.rcs.pojo.StandardMatchInfo">
+        select smi.standard_tournament_id,name_code
+        from standard_match_info smi
+        left join standard_sport_tournament sst on smi.standard_tournament_id = sst .id
+        <where>
+            <if test="obj.liveOddBusiness == 1">
+                <if test="obj.currentTimeMillis != null">
+                    <![CDATA[ and smi.begin_time  <= #{obj.currentTimeMillis,jdbcType=BIGINT} + 300*1000 ]]>
+                </if>
+                and smi.match_status =1 and smi.live_odd_business =1
+            </if>
+            <if test="obj.currentTimeMillis != null">
+                <![CDATA[and smi.begin_time > = #{obj.currentTimeMillis,jdbcType=BIGINT} - 14400000  ]]>
+            </if>
+            <if test="obj.liveOddBusiness == null">
+                and (smi.match_status = 0 or smi.match_status is null) and smi.pre_match_business = 1
+            </if>
+            <if test="obj.beginTimeMillis!=null">
+                <![CDATA[ and smi.begin_time >=  #{obj.beginTimeMillis,jdbcType=BIGINT}  ]]>
+            </if>
+            <if test="obj.endTimeMillis!=null">
+                <![CDATA[ and smi.begin_time <=  #{obj.endTimeMillis,jdbcType=BIGINT}  ]]>
+            </if>
+            <if test="obj.tournamentLevel !=null ">
+                and sst.tournament_level = #{obj.tournamentLevel}
+            </if>
+            <if test="obj.matchId != null">
+                and smi.id = #{obj.matchId,jdbcType=BIGINT}
+            </if>
+            <if test="obj.matchManageId != null and obj.matchManageId != ''">
+                and smi.match_manage_id = #{obj.matchManageId,jdbcType=VARCHAR}
+            </if>
+            <if test="obj.operateMatchStatus != null">
+                and smi.operate_match_status = #{obj.operateMatchStatus,jdbcType=INTEGER}
+            </if>
+            <if test="obj.sportId != null">
+                and smi.sport_id = #{obj.sportId,jdbcType=BIGINT}
+            </if>
+            <if test="obj.updateTimeMillis != null">
+                and (smi.modify_time >= #{obj.updateTimeMillis,jdbcType=BIGINT} or sst.modify_time >=
+                #{obj.updateTimeMillis,jdbcType=BIGINT} or UNIX_TIMESTAMP(rmc.modify_time)*1000 >=
+                #{obj.updateTimeMillis,jdbcType=BIGINT} or rmn.update_time >=
+                #{obj.updateTimeMillis,jdbcType=BIGINT})
+            </if>
+            <if test="obj.tradeType != null">
+                <if test="obj.tradeType == 1">
+                    and rmc.trade_type = 1
+                </if>
+                <if test="obj.tradeType == 0">
+                    and (rmc.trade_type is null or rmc.trade_type = 0)
+                </if>
+            </if>
+            <if test="obj.matchCollectStatus != null">
+                <if test="obj.matchCollectStatus == true ">
+                    and rmn.user_id = #{obj.tradeId,jdbcType=BIGINT} and rmn.status = 1
+                </if>
+            </if>
+            <if test="obj.standardTournamentId != null">
+                and smi.standard_tournament_id = #{obj.standardTournamentId,jdbcType=BIGINT}
+            </if>
+        </where>
+        GROUP BY smi.standard_tournament_id
+    </select>
+
+    <select id="selectConditionById" resultType="com.panda.sport.rcs.vo.TraderConditionVo">
+        SELECT
+        smi.id,
+        smi.begin_time,
+        smi.live_odd_business,
+        sst.tournament_level,
+        smi.sport_id,
+        smi.begin_time
+        FROM
+        standard_match_info smi
+        LEFT JOIN standard_sport_tournament sst ON smi.standard_tournament_id = sst.id
+        WHERE
+        smi.id = #{id}
+    </select>
+    <select id="queryTimeOutMatch" resultType="com.panda.sport.rcs.pojo.StandardMatchInfo">
+        SELECT t.id
+        FROM standard_match_info t
+        WHERE t.id = #{id}
+        AND( t.event_code = 'time_start_0' OR t.event_code = 'timeout')
+    </select>
+
+
+    <select id="selectMacthInfo" resultType="com.panda.sport.rcs.vo.TournamentMatchInfoVo">
+        SELECT
+        smi.match_period_id period,
+        smi.*,
+        rmds.total_value,
+        rmds.total_order_nums,
+        rmds.settled_real_time_value,
+        rmds.settled_profit_value,
+        CONCAT(m.t1 , ':' , m.t2) score,
+        smi.seconds_match_start secondsMatchStart,
+        (SELECT score FROM match_period p WHERE p.standard_match_id = smi.id AND p.period = 6 LIMIT 1 ) set1Score
+        FROM
+        standard_match_info smi
+        LEFT JOIN rcs_standard_sport_market_sell s ON s.match_info_id = smi.id
+        LEFT JOIN rcs_match_dimension_statistics rmds ON smi.id = rmds.match_id
+		LEFT JOIN match_statistics_info_detail m ON smi.id = m.standard_match_id  AND m.`code` = "match_score"
+        WHERE
+        smi.standard_tournament_id = #{tournamentId}
+        AND smi.risk_manager_code IS NOT NULL
+        AND IFNULL(smi.match_status,-1) NOT IN(3)
+        AND ( s.pre_match_sell_status = 'Sold' OR s.live_match_sell_status = 'Sold' )
+        AND FROM_UNIXTIME( smi.begin_time / 1000-60*60*12, '%Y-%m-%d' ) = #{dateTime}
+        ORDER BY
+        smi.begin_time
+    </select>
+
+    <select id="selectMatchPositionByOptionId" parameterType="java.lang.Long" resultType="java.lang.String">
+        <!--@mbg.generated-->
+        SELECT
+        d.match_position
+        FROM
+        standard_sport_odds_fields_templet ae
+        LEFT JOIN standard_sport_market_odds a ON ae.id = a.odds_fields_templet_id
+        LEFT JOIN standard_sport_market b ON a.market_id = b.id
+        LEFT JOIN standard_match_info c ON b.standard_match_info_id = c.id
+        LEFT JOIN standard_match_team_relation d ON c.id = d.standard_match_id
+        WHERE ae.addition1=d.standard_team_id and ae.id = #{id,jdbcType=BIGINT}
+    </select>
+
+
+    <select id="selectMatchsByStandardTournamentId" resultType="com.panda.sport.rcs.vo.TournamentNameVo">
+        SELECT
+	        s.id,
+	        IFNULL(JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')), JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.en'))) text,
+	        s.begin_time,
+	        s.standard_tournament_id,
+	        s.match_manage_id,
+	        s.seconds_match_start,
+	        m.t1,
+	        m.t2,
+	        s.match_period_id period,
+	        s.match_status,
+	        s.event_time,
+	        s.live_odd_business
+        FROM
+        standard_match_info s
+        LEFT JOIN standard_sport_tournament t ON s.standard_tournament_id = t.id
+        LEFT JOIN rcs_language_internation l ON l.name_code = t.name_code
+        LEFT JOIN match_statistics_info_detail m ON s.id = m.standard_match_id  AND m.`code`="match_score"
+        WHERE
+        s.sport_id = #{sportId}
+        <if test="standardTournamentId != null">
+            and s.standard_tournament_id = #{standardTournamentId}
+        </if>
+        and s.begin_time between #{beginTime} and #{endTime}
+        AND IFNULL( s.match_status,-1) NOT IN(3)
+        AND ( s.pre_match_business = 1 OR s.live_odd_business = 1 )
+        GROUP BY s.id
+        ORDER BY
+        s.begin_time
+    </select>
+
+    <select id="selectTeamNameByStandardTournamentId" resultType="com.panda.sport.rcs.vo.TeamVo">
+        SELECT
+        i.id,
+        IFNULL(JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')), JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.en'))) text,
+        r.match_position,
+        t.id team_id
+        FROM
+        standard_match_info i
+        LEFT JOIN standard_match_team_relation r ON r.standard_match_id = i.id
+        LEFT JOIN standard_sport_team t ON t.id = r.standard_team_id
+        LEFT JOIN rcs_language_internation l ON l.name_code = t.name_code
+        WHERE
+        i.sport_id = #{sportId}
+        <if test="standardTournamentId != null">
+            and i.standard_tournament_id = #{standardTournamentId}
+        </if>
+        and i.begin_time between #{beginTime} and #{endTime}
+        AND IFNULL(i .match_status,-1) NOT IN(3)
+        AND ( i.pre_match_business = 1 OR i.live_odd_business = 1 )
+    </select>
+
+
+    <select id="selectTeamNameByStandardTournamentIds" resultType="com.panda.sport.rcs.vo.TeamVo">
+        SELECT
+        i.id,
+        IFNULL(JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')), JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.en'))) text,
+        r.match_position,
+        t.id team_id
+        FROM
+        standard_match_info i
+        LEFT JOIN standard_match_team_relation r ON r.standard_match_id = i.id
+        LEFT JOIN standard_sport_team t ON t.id = r.standard_team_id
+        LEFT JOIN rcs_language_internation l ON l.name_code = t.name_code
+        LEFT JOIN rcs_standard_sport_market_sell sell ON sell.match_info_id = i.id
+        WHERE
+        i.sport_id = #{sportId}
+        <if test="tournamentIds != null and tournamentIds.size() != 0">
+            AND smi.standard_tournament_id in
+            <foreach collection="tournamentIds" item="tId" index="index"
+                     open="(" close=")" separator=",">
+                #{tId}
+            </foreach>
+        </if>
+        and i.begin_time between #{beginTime} and #{endTime}
+        AND IFNULL(i .match_status,-1) NOT IN(3)
+        AND ( sell.pre_match_sell_status = 'Sold' OR sell.live_match_sell_status = 'Sold' )
+    </select>
+
+
+    <select id="selectTournamentNameById" resultType="com.panda.sport.rcs.vo.TournamentNameVo">
+        SELECT
+	        s.id,
+	        IFNULL(JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')), JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.en'))) text,
+	        s.begin_time,
+	        s.standard_tournament_id,
+	        s.match_manage_id,
+	        s.seconds_match_start,
+	        s.id,
+	        m.t1,
+			m.t2,
+	        s.match_period_id period
+        FROM
+        standard_match_info s
+        LEFT JOIN standard_sport_tournament t ON s.standard_tournament_id = t.id
+        LEFT JOIN rcs_language_internation l ON l.name_code = t.name_code
+        LEFT JOIN match_statistics_info_detail m ON s.id = m.standard_match_id AND m.`code`="match_score"
+        WHERE
+        s.match_manage_id = #{id}
+    </select>
+
+
+    <select id="selectTeamNameById" resultType="com.panda.sport.rcs.vo.TeamVo">
+        SELECT
+        i.id,
+        IFNULL(JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')), JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.en'))) text,
+        r.match_position,
+        t.id team_id
+        FROM
+        standard_match_info i
+        LEFT JOIN standard_match_team_relation r ON r.standard_match_id = i.id
+        LEFT JOIN standard_sport_team t ON t.id = r.standard_team_id
+        LEFT JOIN rcs_language_internation l ON l.name_code = t.name_code
+        WHERE
+        i.match_manage_id = #{id}
+    </select>
+
+
+    <select id="getTournamentList" resultType="com.panda.sport.rcs.vo.TournamentVoBySport">
+        SELECT DISTINCT
+        s.standard_tournament_id,
+        t.name_code,
+        JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')) text,
+        'zs' language_type
+        FROM
+        standard_match_info s
+        LEFT JOIN standard_sport_tournament t ON s.standard_tournament_id = t.id
+        LEFT JOIN rcs_language_internation l ON l.name_code = t.name_code
+        LEFT JOIN rcs_standard_sport_market_sell sell ON sell.match_info_id = s.id
+        WHERE
+        s.sport_id = #{sportId}
+        <if test="type == 0">
+        AND ( sell.pre_match_sell_status = 'Sold' OR sell.live_match_sell_status = 'Sold' )
+        AND IFNULL( s.match_status,- 1 ) NOT IN ( 3 )
+        </if>
+        AND s.begin_time BETWEEN  #{beginTime}  AND  #{endTime}
+    </select>
+
+
+    <select id="selectTournamentCount" resultType="com.panda.sport.rcs.pojo.StandardMatchInfo">
+        SELECT *
+        FROM standard_match_info smi
+        WHERE
+        <if test="matchType == 1">
+            ((
+            smi.match_status IN ( 0, 1, 2, 10 )
+            AND smi.live_odd_business = 0
+            )
+            OR (
+            smi.match_status IN ( 0 ))
+            AND smi.live_odd_business = 1
+            )
+        </if>
+        <if test="matchType == 2">
+            smi.match_status IN (1, 2, 10)
+            AND smi.live_odd_business = 1
+        </if>
+        <if test="tournamentIds != null and tournamentIds.size() != 0">
+            AND smi.standard_tournament_id in
+            <foreach collection="tournamentIds" item="tId" index="index"
+                     open="(" close=")" separator=",">
+                #{tId}
+            </foreach>
+        </if>
+        <if test="matchIds != null and matchIds.size() != 0">
+            AND smi.id not in
+            <foreach collection="matchIds" item="mId" index="index"
+                     open="(" close=")" separator=",">
+                #{mId}
+            </foreach>
+        </if>
+        <![CDATA[and ( UNIX_TIMESTAMP()-(60*60*4)<=smi.begin_time/1000 and smi.sport_id in (1,2) ) ]]>
+    </select>
+
+    <select id="selectTeamNameByMatchId" resultType="com.panda.sport.rcs.vo.TeamVo">
+        SELECT
+        IFNULL(JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')), JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.en'))) text,
+        r.match_position
+        FROM
+        standard_match_info s
+        LEFT JOIN standard_match_team_relation r ON r.standard_match_id = s.id
+        LEFT JOIN standard_sport_team t ON t.id = r.standard_team_id
+        LEFT JOIN rcs_language_internation l ON l.name_code = t.name_code
+        WHERE
+        s.id = #{matchId}
+    </select>
+
+    <select id="getGrounderNumber" resultType="java.lang.Integer">
+        SELECT  COUNT(*) FROM standard_match_info WHERE  match_status=1 AND live_odd_business=1
+    </select>
+    
+    <select id="queryTournamentList" resultType="com.panda.sport.rcs.vo.BaseMatchInfoVo">
+        SELECT
+        IFNULL(JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')), JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.en'))) standardTournamentName,
+        t.id as standardTournamentId,
+        t.tournament_level,
+        t.name_code
+        FROM
+        standard_match_info s
+        JOIN standard_sport_tournament t ON s.standard_tournament_id = t.id
+        JOIN rcs_language_internation l ON l.name_code = t.name_code
+        WHERE s.sport_id in (${sportId})
+        AND (s.pre_match_business = 1 OR s.live_odd_business = 1)
+        AND ((s.pre_match_business = 1 AND s.match_status = 0 AND s.begin_time > ((unix_timestamp(NOW())) *1000) )
+        OR (s.live_odd_business = 1 AND s.match_status IN (1,2,10)))
+        AND EXISTS (SELECT 1 FROM standard_sport_market m WHERE m.standard_match_info_id = s.id)
+        <if test="startDate != null">
+            AND s.begin_time >= #{startDate}
+        </if>
+        
+        <if test="endDate != null">
+            AND s.begin_time &lt; #{endDate}
+        </if>
+
+        <if test="matchType != null">
+            <if test="matchType == 0">
+                AND (s.match_status in (0,1,2,10) or s.match_status is null)
+            </if>
+            <if test="matchType == 1">
+                AND (s.match_status = 0 or s.match_status is null)
+            </if>
+            <if test="matchType == 2">
+                AND s.match_status in (1,2,10)
+            </if>
+            <!--14400 = 4 * 60 *60 比赛开始前4小时 -->
+            AND s.begin_time &gt; ((unix_timestamp(NOW()) - 14400) *1000)
+        </if>
+        GROUP BY t.id
+    </select>
+
+    <select id="selectMarketIdByState" resultType="java.lang.Long">
+        SELECT
+        id
+        FROM
+        standard_sport_market
+        WHERE
+        standard_match_info_id = #{matchId}
+        AND market_category_id IN ( SELECT child_key FROM rcs_code WHERE father_key = 'play_phase' AND remark = #{state}
+        )
+    </select>
+
+    <select id="queryOrderNoByMatchId" resultType="String">
+        SELECT t.order_no
+        FROM t_order_detail_ext t
+        WHERE t.match_id = #{matchId}
+        AND t.order_status = 0
+        AND t.`mode` = 1
+        AND t.handle_status = 0
+        AND t.bet_time >= ((unix_timestamp(NOW()) - 30) *1000)
+    </select>
+
+    <select id="queryMatchEndIds" parameterType="Map" resultType="String">
+    	SELECT id FROM standard_match_info i 
+		WHERE i.sport_id = 1 AND i.begin_time >= UNIX_TIMESTAMP() * 1000 - 2 * 24 * 60 * 60 * 1000
+		AND i.begin_time &lt;= UNIX_TIMESTAMP() * 1000 - 4 * 60 * 60 * 1000
+		AND i.match_status IN (3,4)
+    </select>
+
+    <select id="getAllSellMatchList" resultType="com.panda.sport.rcs.vo.StandardMatchAllSellVo">
+        SELECT t2.*,ifnull(c2.STATUS,0) operateMatchStatus FROM (
+        SELECT matchInfoId , sportId,beginTime ,matchManageId,preMatchBusiness,liveOddBusiness , preRiskManagerCode ,
+        liveRiskManagerCode,tournamentLevel,
+        operateMatchStatus1 ,matchStatus,homeNameCode ,
+        awayNameCode,tournamentCode,touConcat,matchConcat,standard_tournament_id,MAX(c1.id) tradeConfigId FROM (
+        SELECT concat(i.id,'') matchInfoId , i.sport_id sportId,i.begin_time beginTime ,i.match_manage_id
+        matchManageId,i.pre_match_business preMatchBusiness,
+        i.live_odd_business liveOddBusiness , i.pre_risk_manager_code preRiskManagerCode , i.live_risk_manager_code
+        liveRiskManagerCode,
+        i.operate_match_status operateMatchStatus1 ,t.tournament_level tournamentLevel,t.name_concat
+        touConcat,i.name_concat matchConcat,i.standard_tournament_id,
+        i.match_status matchStatus,t1.name_code homeNameCode , t2.name_code awayNameCode,
+        t.name_code tournamentCode
+        FROM standard_match_info i
+        LEFT JOIN standard_match_team_relation r1 ON r1.standard_match_id = i.id AND r1.match_position = 'home'
+        LEFT JOIN standard_match_team_relation r2 ON r2.standard_match_id = i.id AND r2.match_position = 'away'
+        LEFT JOIN standard_sport_team t1 ON t1.id = r1.standard_team_id
+        LEFT JOIN standard_sport_team t2 ON t2.id = r2.standard_team_id
+        LEFT JOIN standard_sport_tournament t ON t.id = i.standard_tournament_id
+        WHERE (i.pre_match_business = 1 OR i.live_odd_business = 1)
+        <if test="marketLiveOddsQueryVo.beginTimeMillis != null and marketLiveOddsQueryVo.beginTimeMillis != ''">
+            AND i.begin_time >= #{marketLiveOddsQueryVo.beginTimeMillis} AND i.begin_time &lt;
+            #{marketLiveOddsQueryVo.endTimeMillis}
+        </if>
+        <if test="marketLiveOddsQueryVo.matchManageId != null and marketLiveOddsQueryVo.matchManageId != ''">
+            and
+            <foreach item="item" index="index" collection="marketLiveOddsQueryVo.matchManageId.split(',')" open="("
+                     separator=" or " close=")">
+                i.match_manage_id = '${item}'
+            </foreach>
+        </if>
+        and (
+        <include refid="foodball_basketball"/>
+        OR (
+        <include refid="pingpong"/>
+        )
+        OR (
+        <include refid="volleyball"/>
+        )
+        OR (
+        <include refid="badminton"/>
+        )
+        OR (
+        <include refid="snnoker"/>
+        )
+        OR (
+        <include refid="tennis"/>
+        )
+        OR (
+        <include refid="baseball"/>
+        )
+        OR (
+        <include refid="rule_out"/>
+        )
+        )
+        AND i.sport_id = #{marketLiveOddsQueryVo.sportId}
+        order by i.begin_time,t.tournament_level
+        ) t
+        LEFT JOIN rcs_trade_config c1 ON c1.match_id = t.matchInfoId AND c1.trader_level = 1 AND c1.`status` IS NOT NULL
+        GROUP BY matchInfoId , sportId,beginTime ,matchManageId,preMatchBusiness,liveOddBusiness , preRiskManagerCode ,
+        liveRiskManagerCode,
+        operateMatchStatus1 ,matchStatus,homeNameCode ,
+        awayNameCode,touConcat,matchConcat,standard_tournament_id,tournamentLevel
+        ) t2
+        LEFT JOIN rcs_trade_config c2 ON c2.id = t2.tradeConfigId
+        order by beginTime,IF(tournamentLevel = 0 , 100 ,tournamentLevel),touConcat,standard_tournament_id,matchConcat
+    </select>
+
+    <!--足球、篮球-->
+    <sql id="foodball_basketball">
+        (i.sport_id in (1,2) and i.match_status not in (1,2,10,3,4) and i.pre_risk_manager_code = 'MTS' AND i.begin_time >= UNIX_TIMESTAMP() * 1000 AND i.pre_match_business = 1)
+        or (i.sport_id in (1,2) and i.match_status in (1,2,10) and i.live_risk_manager_code = 'MTS' AND  i.begin_time >= UNIX_TIMESTAMP() * 1000 - 4 * 60 * 60 * 1000 AND i.live_odd_business = 1)
+    </sql>
+    <!--乒乓球-->
+    <sql id="pingpong">
+        (i.sport_id in (8) AND i.match_status not IN (1,2,10,3,4) and i.pre_risk_manager_code = 'MTS' AND i.begin_time >= UNIX_TIMESTAMP() * 1000 AND i.pre_match_business = 1)
+        or (i.sport_id in (8) AND i.match_status IN (1,2,10) and i.live_risk_manager_code = 'MTS' AND  i.begin_time >= UNIX_TIMESTAMP() * 1000 - 4 * 60 * 60 * 1000 AND i.live_odd_business = 1)
+    </sql>
+    <!--排球-->
+    <sql id="volleyball">
+        (i.sport_id in (9) AND i.match_status not IN (1,2,10,3,4) and i.pre_risk_manager_code = 'MTS' AND i.begin_time >= UNIX_TIMESTAMP() * 1000 AND i.pre_match_business = 1)
+        or (i.sport_id in (9) AND i.match_status IN (1,2,10) and i.live_risk_manager_code = 'MTS' AND  i.begin_time >= UNIX_TIMESTAMP() * 1000 - 4 * 60 * 60 * 1000 AND i.live_odd_business = 1)
+    </sql>
+    <!--羽毛球-->
+    <sql id="badminton">
+        (i.sport_id in (10) AND i.match_status not IN (1,2,10,3,4) and i.pre_risk_manager_code = 'MTS' AND
+            i.begin_time >= UNIX_TIMESTAMP() * 1000 AND i.pre_match_business = 1)
+        or (i.sport_id in (10)AND i.match_status IN (1,2,10) and i.live_risk_manager_code = 'MTS' AND i.begin_time >=
+        UNIX_TIMESTAMP() * 1000 - 24 * 60 * 60 * 1000 AND i.live_odd_business = 1)
+    </sql>
+    <!--斯诺克-->
+    <sql id="snnoker">
+        (i.sport_id = 7 AND i.match_status not IN (1,2,10,3,4) AND i.pre_risk_manager_code = 'MTS'  AND i.begin_time >= UNIX_TIMESTAMP() * 1000 AND
+            i.pre_match_business = 1)
+        or (i.sport_id = 7 AND i.match_status IN (1,2,10) AND i.live_risk_manager_code = 'MTS' AND i.begin_time >= UNIX_TIMESTAMP() * 1000 - 7 * 24 * 60 * 60
+        * 1000 AND i.live_odd_business = 1)
+    </sql>
+    <!--    网球-->
+    <sql id="tennis">
+        (i.sport_id in (5) AND i.match_status not IN (1,2,10,3,4) and i.pre_risk_manager_code = 'MTS' AND
+            i.begin_time >= UNIX_TIMESTAMP() * 1000 AND i.pre_match_business = 1)
+        or (i.sport_id in (5)AND i.match_status IN (1,2,10) and i.live_risk_manager_code = 'MTS' AND i.begin_time >=
+        UNIX_TIMESTAMP() * 1000 - 24 * 60 * 60 * 1000 AND i.live_odd_business = 1)
+    </sql>
+    <sql id="baseball">
+        (i.sport_id in (3) AND i.match_status not IN (1,2,10,3,4) and i.pre_risk_manager_code = 'MTS' AND
+            i.begin_time >= UNIX_TIMESTAMP() * 1000 AND i.pre_match_business = 1)
+        or (i.sport_id in (3)AND i.match_status IN (1,2,10) and i.live_risk_manager_code = 'MTS' AND i.begin_time >=
+        UNIX_TIMESTAMP() * 1000 - 24 * 60 * 60 * 1000 AND i.live_odd_business = 1)
+    </sql>
+    <!--not in -->
+    <sql id="rule_out">
+        (i.sport_id not in (1,2,3,5,7,8,9,10) AND i.match_status not IN (1,2,10,3,4) AND i.begin_time >=
+            UNIX_TIMESTAMP() * 1000 - 24 * 60 * 60 * 1000 AND i.pre_match_business = 1)
+        or (i.sport_id not in (1,2,3,5,7,8,9,10)AND i.match_status IN (1,2,10) AND i.begin_time >= UNIX_TIMESTAMP() * 1000
+        - 24 * 60 * 60 * 1000 AND i.live_odd_business = 1)
+    </sql>
+
+    <select id="selectMatchIds" resultType="java.lang.Long">
+        SELECT
+        smi.id
+        FROM
+        standard_match_info smi
+        LEFT JOIN rcs_standard_sport_market_sell rssms ON smi.id = rssms.match_info_id
+        WHERE smi.match_status not IN (3)
+
+        <if test="traderId != null and traderId != ''">
+            and  (rssms.pre_trader_id != #{traderId} or rssms.live_trader_id != #{traderId})
+        </if>
+
+        <if test="tournamentIds != null and tournamentIds.size() != 0">
+            AND smi.standard_tournament_id in
+            <foreach collection="tournamentIds" item="tId" index="index"
+                     open="(" close=")" separator=",">
+                #{tId}
+            </foreach>
+        </if>
+        <if test="matchIds != null and matchIds.size() != 0">
+            AND smi.id not in
+            <foreach collection="matchIds" item="mId" index="index"
+                     open="(" close=")" separator=",">
+                #{mId}
+            </foreach>
+        </if>
+        <if test="time != null and time != ''">
+            and ((smi.match_status IN ( 1, 2, 6,10 ))
+            or (smi.match_status IN ( 0, 4,5, 6, 7, 8, 9 ) AND #{time} &lt;= smi.begin_time))
+        </if>
+    </select>
+
+
+    <select id="getSportId" resultType="java.lang.Integer">
+        SELECT sport_id FROM standard_match_info WHERE id=(SELECT extends_field from rcs_broad_cast WHERE id=#{broadId} )
+    </select>
+    <select id="selectMatchStatusById" resultType="java.lang.Integer">
+        SELECT match_status FROM standard_match_info WHERE id=#{id}
+    </select>
+    <select id="selectStandardMatchInfoBaseByMatchId" resultType="com.panda.sport.rcs.vo.StandardMatchInfoVo">
+        SELECT
+            *
+        FROM
+            standard_match_info s
+            LEFT JOIN match_statistics_info i ON s.id = i.standard_match_id
+        WHERE
+            s.id = #{matchId}
+    </select>
+    <select id="getMatrixMatchInfo" resultType="com.panda.sport.rcs.matrix.MatrixMatchInfoVo">
+        SELECT
+            i.id match_id,
+            i.match_manage_id,
+            i.match_status,
+            i.begin_time,
+            i.match_period_id,
+            i.pre_risk_manager_code,
+            i.live_risk_manager_code,
+            s.pre_trader_id,
+            s.pre_trader,
+            s.live_trader_id,
+            s.live_trader
+        FROM
+            standard_match_info i
+            LEFT JOIN rcs_standard_sport_market_sell s ON s.match_info_id = i.id
+            LEFT JOIN standard_sport_tournament t on i.standard_tournament_id = t.id
+            LEFT JOIN rcs_match_dimension_statistics d on d.match_id = i.id
+        WHERE
+            i.sport_id = #{param.sportId}
+            <if test="param.matchType == null">
+                AND
+                (
+                    (
+                        i.match_status IN ( 1, 2, 10 )
+                        AND i.live_odd_business = 1
+                        <!-- 比赛开始后4小时 -->
+                        AND i.begin_time &gt;= ( ( unix_timestamp( NOW( ) ) - 14400 ) * 1000 )
+                    )
+                    OR
+                    (
+                        i.match_status NOT IN ( 1, 2, 10, 3, 4 )
+                        AND i.pre_match_business = 1
+                        AND i.begin_time &gt;= #{param.startTime}
+                        AND i.begin_time &lt;= #{param.endTime}
+                    )
+                )
+            </if>
+            <if test="param.matchType != null">
+                <if test="param.matchType == 0">
+                    AND i.match_status IN ( 1, 2, 10 )
+                    AND i.live_odd_business = 1
+                    <!-- 比赛开始后4小时 -->
+                    AND i.begin_time &gt;= ( ( unix_timestamp( NOW( ) ) - 14400 ) * 1000 )
+                </if>
+                <if test="param.matchType == 1">
+                    AND i.match_status NOT IN ( 1, 2, 10, 3, 4 )
+                    AND i.pre_match_business = 1
+                    AND i.begin_time &gt;= #{param.startTime}
+                    AND i.begin_time &lt;= #{param.endTime}
+                </if>
+            </if>
+            <if test="param.tournamentIdList != null and param.tournamentIdList.size > 0">
+                AND i.standard_tournament_id IN
+                <foreach collection="param.tournamentIdList" item="tournamentId" open="(" separator="," close=")">
+                    #{tournamentId}
+                </foreach>
+            </if>
+            <if test="param.traderIdList != null and param.traderIdList.size > 0">
+                AND (
+                s.pre_trader_id IN
+                <foreach collection="param.traderIdList" item="traderId" open="(" separator="," close=")">#{traderId}</foreach>
+                OR
+                s.live_trader_id IN
+                <foreach collection="param.traderIdList" item="traderId" open="(" separator="," close=")">#{traderId}</foreach>
+                )
+            </if>
+
+        <if test="param.sortName == 1">
+            ORDER BY FIELD(t.tournament_level,0),t.tournament_level,t.name_concat,i.begin_time
+        </if>
+
+        <if test="param.sortName == 2">
+            ORDER BY i.begin_time
+        </if>
+
+        <if test="param.sortName == 3">
+            ORDER BY d.total_value desc
+        </if>
+    </select>
+
+    <select id="getForecastMatchInfo" resultType="com.panda.sport.rcs.matrix.ForecastInfoVo">
+        SELECT
+        i.id match_id,
+        i.match_manage_id,
+        i.match_status,
+        i.begin_time,
+        i.match_period_id,
+        i.pre_risk_manager_code,
+        i.live_risk_manager_code,
+        s.pre_trader_id,
+        s.pre_trader,
+        s.live_trader_id,
+        s.live_trader,
+        t.id as tournamentId,
+        t.name_code as tournamentNameCode,
+        concat(id.t1, ":", id.t2) as score,
+        i.live_odd_business as liveOddBusiness
+        FROM
+        standard_match_info i
+        LEFT JOIN (select * from match_statistics_info_detail where code="match_score") id ON id.standard_match_id = i.id
+        LEFT JOIN rcs_standard_sport_market_sell s ON s.match_info_id = i.id
+        LEFT JOIN standard_sport_tournament t on i.standard_tournament_id = t.id
+        LEFT JOIN rcs_match_dimension_statistics d on d.match_id = i.id
+        WHERE
+        i.sport_id = #{param.sportId}
+        <if test="param.matchIds != null and param.matchIds.size > 0">
+             AND i.id in
+            <foreach collection="param.matchIds" item="matchId" open="(" separator="," close=")">#{matchId}</foreach>
+        </if>
+        <if test="param.matchType == null">
+            AND
+            (
+            (
+            i.match_status IN ( 1, 2, 10 )
+            AND i.live_odd_business = 1
+            <!-- 比赛开始后4小时 -->
+            AND i.begin_time &gt;= ( ( unix_timestamp( NOW( ) ) - 14400 ) * 1000 )
+            )
+            OR
+            (
+            i.match_status NOT IN ( 1, 2, 10, 3, 4 )
+            AND i.pre_match_business = 1
+            AND i.begin_time &gt;= #{param.startTime}
+            AND i.begin_time &lt;= #{param.endTime}
+            )
+            )
+        </if>
+        <if test="param.matchType != null">
+            <if test="param.matchType == 0">
+                AND i.match_status IN ( 1, 2, 10 )
+                AND i.live_odd_business = 1
+                <!-- 比赛开始后4小时 -->
+                AND i.begin_time &gt;= ( ( unix_timestamp( NOW( ) ) - 14400 ) * 1000 )
+            </if>
+            <if test="param.matchType == 1">
+                AND i.match_status NOT IN ( 1, 2, 10, 3, 4 )
+                AND i.pre_match_business = 1
+                AND i.begin_time &gt;= #{param.startTime}
+                AND i.begin_time &lt;= #{param.endTime}
+            </if>
+        </if>
+        <if test="param.tournamentIdList != null and param.tournamentIdList.size > 0">
+            AND i.standard_tournament_id IN
+            <foreach collection="param.tournamentIdList" item="tournamentId" open="(" separator="," close=")">
+                #{tournamentId}
+            </foreach>
+        </if>
+        <if test="param.traderIdList != null and param.traderIdList.size > 0">
+            AND (
+            s.pre_trader_id IN
+            <foreach collection="param.traderIdList" item="traderId" open="(" separator="," close=")">#{traderId}</foreach>
+            OR
+            s.live_trader_id IN
+            <foreach collection="param.traderIdList" item="traderId" open="(" separator="," close=")">#{traderId}</foreach>
+            )
+        </if>
+
+        <if test="param.sortName == 1">
+            ORDER BY FIELD(t.tournament_level,0),t.tournament_level,t.name_concat,i.begin_time
+        </if>
+
+        <if test="param.sortName == 2">
+            ORDER BY i.begin_time
+        </if>
+
+        <if test="param.sortName == 3">
+            ORDER BY d.total_value desc
+        </if>
+
+    </select>
+
+    <select id="selectForecastPlayList" resultType="com.panda.sport.rcs.mongo.PredictForecastVo">
+        SELECT  t.match_id as matchId,
+                t.match_type as matchType,
+                t.play_id as playId,
+                t.score as score,
+                t.profit_value as profitValue
+        FROM rcs_predict_forecast_play t
+        WHERE t.match_id = #{matchId}
+        AND t.match_type = #{matchType}
+        AND t.data_type = 1
+
+        <if test="type == 1">
+            AND t.play_id in (2,18)
+            ORDER BY t.score ASC
+        </if>
+        <if test="type == 2">
+            AND t.play_id in (4,19)
+            ORDER BY t.score DESC
+        </if>
+    </select>
+
+    <select id="selectMatchInfoLanguage"  resultType="com.panda.sport.rcs.vo.MatchInfoLanguageVo">
+        SELECT
+            r.match_position,
+            'en' language_type,
+            JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.en')) text
+        FROM
+            standard_match_team_relation r
+            LEFT JOIN standard_sport_team t ON t.id=r.standard_team_id
+            LEFT JOIN rcs_language_internation l ON l.name_code=t.name_code
+        WHERE
+            r.standard_match_id = #{matchId}
+            
+        UNION ALL
+        
+      	SELECT
+            r.match_position,
+            'zs' language_type,
+            JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')) text
+        FROM
+            standard_match_team_relation r
+            LEFT JOIN standard_sport_team t ON t.id=r.standard_team_id
+            LEFT JOIN rcs_language_internation l ON l.name_code=t.name_code
+        WHERE
+            r.standard_match_id = #{matchId}
+    </select>
+
+    <select id="getAllPreMatchIds"  resultType="java.lang.Long">
+        SELECT * FROM `standard_match_info` WHERE sport_id = 1 and pre_match_business = 1 and begin_time &lt;= now()
+    </select>
+
+
+    <select id="getSuportCategoryMatchIds"  resultType="java.lang.Long">
+        SELECT
+            DISTINCT( standard_match_info_id )
+        FROM
+            standard_sport_market
+        where
+            pa_status = 0 and end_ed_status = 0
+            <if test="marketType != null">
+                AND market_type = #{marketType}
+            </if>
+            and  standard_match_info_id in
+                <foreach collection="matchIds" item="matchId" open="(" separator="," close=")">#{matchId}</foreach>
+            and market_category_id in
+                <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">#{categoryId}</foreach>
+    </select>
+
+</mapper>

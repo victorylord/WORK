@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.statistics.RcsPredictBetOddsMapper">
+
+    <select id="queryBetOdds" resultType="com.panda.sport.rcs.pojo.statistics.RcsPredictBetOdds">
+        SELECT
+        	s.*
+        FROM
+        rcs_predict_bet_odds s
+        LEFT JOIN standard_match_info i ON i.id = s.match_id
+        WHERE
+        CASE
+        WHEN i.match_status IN ( 1, 2, 10 ) THEN
+        s.match_type = 2 ELSE s.match_type = 1
+        END
+        <if test="dataType != null ">
+            and s.data_type = #{dataType}
+        </if>
+        <if test="seriesType != null ">
+            and s.series_type  = #{seriesType}
+        </if>
+
+        <if test="matchIds != null and matchIds.size() != 0">
+            and s.match_id in
+            <foreach collection="matchIds" item="mId" index="index"
+                     open="(" close=")" separator=",">
+                #{mId}
+            </foreach>
+        </if>
+        and s.hash_unique is not null
+    </select>
+</mapper>

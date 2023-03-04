@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsCurrencyRateMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsCurrencyRate">
+    <!--@mbg.generated-->
+    <!--@Table rcs_currency_rate-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="currency_code" jdbcType="VARCHAR" property="currencyCode" />
+    <result column="rate" jdbcType="DECIMAL" property="rate" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="modify_time" jdbcType="BIGINT" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, currency_code, rate, create_time, modify_time
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update rcs_currency_rate
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="currency_code = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.currencyCode,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="rate = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.rate,jdbcType=DECIMAL}
+        </foreach>
+      </trim>
+      <trim prefix="create_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.createTime,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="modify_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.modifyTime,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into rcs_currency_rate
+    (id, currency_code, rate, create_time, modify_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.currencyCode,jdbcType=VARCHAR}, #{item.rate,jdbcType=DECIMAL}, 
+        #{item.createTime,jdbcType=BIGINT}, #{item.modifyTime,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="com.panda.sport.rcs.pojo.RcsCurrencyRate">
+    <!--@mbg.generated-->
+    insert into rcs_currency_rate
+    (id, currency_code, rate, create_time, modify_time)
+    values
+    (#{id,jdbcType=BIGINT}, #{currencyCode,jdbcType=VARCHAR}, #{rate,jdbcType=DECIMAL}, 
+      #{createTime,jdbcType=BIGINT}, #{modifyTime,jdbcType=BIGINT})
+    on duplicate key update 
+    id = #{id,jdbcType=BIGINT}, 
+    currency_code = #{currencyCode,jdbcType=VARCHAR}, 
+    rate = #{rate,jdbcType=DECIMAL}, 
+    create_time = #{createTime,jdbcType=BIGINT}, 
+    modify_time = #{modifyTime,jdbcType=BIGINT}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="com.panda.sport.rcs.pojo.RcsCurrencyRate">
+    <!--@mbg.generated-->
+    insert into rcs_currency_rate
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="currencyCode != null">
+        currency_code,
+      </if>
+      <if test="rate != null">
+        rate,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="modifyTime != null">
+        modify_time,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="currencyCode != null">
+        #{currencyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="rate != null">
+        #{rate,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="modifyTime != null">
+        #{modifyTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="currencyCode != null">
+        currency_code = #{currencyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="rate != null">
+        rate = #{rate,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="modifyTime != null">
+        modify_time = #{modifyTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+  <insert id="batchSaveOrUpdate" keyColumn="id" keyProperty="id"
+          parameterType="com.panda.sport.rcs.pojo.RcsCurrencyRate" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into rcs_currency_rate
+    (currency_code, rate, create_time, modify_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.currencyCode,jdbcType=VARCHAR}, #{item.rate,jdbcType=DECIMAL},
+      #{item.createTime,jdbcType=BIGINT}, #{item.modifyTime,jdbcType=BIGINT})
+    </foreach>
+    on duplicate key update
+    <trim suffixOverrides=",">
+      currency_code = VALUES(currency_code),
+      rate = VALUES(rate),
+      modify_time = VALUES(modify_time),
+    </trim>
+  </insert>
+</mapper>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsSysUserMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsSysUser">
+    <!--@mbg.generated-->
+    <!--@Table rcs_sys_user-->
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_code" jdbcType="VARCHAR" property="userCode" />
+    <result column="work_code" jdbcType="VARCHAR" property="workCode" />
+    <result column="enabled" jdbcType="INTEGER" property="enabled" />
+    <result column="logic_delete" jdbcType="INTEGER" property="logicDelete" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, user_code, work_code, enabled, logic_delete, create_time, update_time
+  </sql>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into rcs_sys_user
+    (id, user_code, work_code, enabled, logic_delete, create_time, update_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.userCode,jdbcType=VARCHAR}, #{item.workCode,jdbcType=VARCHAR}, 
+        #{item.enabled,jdbcType=INTEGER}, #{item.logicDelete,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, 
+        #{item.updateTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="com.panda.sport.rcs.pojo.RcsSysUser">
+    <!--@mbg.generated-->
+    insert into rcs_sys_user
+    (id, user_code, work_code, enabled, logic_delete, create_time, update_time)
+    values
+    (#{id,jdbcType=BIGINT}, #{userCode,jdbcType=VARCHAR}, #{workCode,jdbcType=VARCHAR}, 
+      #{enabled,jdbcType=INTEGER}, #{logicDelete,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+    on duplicate key update 
+    id = #{id,jdbcType=BIGINT}, 
+    user_code = #{userCode,jdbcType=VARCHAR}, 
+    work_code = #{workCode,jdbcType=VARCHAR}, 
+    enabled = #{enabled,jdbcType=INTEGER}, 
+    logic_delete = #{logicDelete,jdbcType=INTEGER}, 
+    create_time = #{createTime,jdbcType=TIMESTAMP}, 
+    update_time = #{updateTime,jdbcType=TIMESTAMP}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="com.panda.sport.rcs.pojo.RcsSysUser">
+    <!--@mbg.generated-->
+    insert into rcs_sys_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userCode != null">
+        user_code,
+      </if>
+      <if test="workCode != null">
+        work_code,
+      </if>
+      <if test="enabled != null">
+        enabled,
+      </if>
+      <if test="logicDelete != null">
+        logic_delete,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userCode != null">
+        #{userCode,jdbcType=VARCHAR},
+      </if>
+      <if test="workCode != null">
+        #{workCode,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null">
+        #{enabled,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null">
+        #{logicDelete,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userCode != null">
+        user_code = #{userCode,jdbcType=VARCHAR},
+      </if>
+      <if test="workCode != null">
+        work_code = #{workCode,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null">
+        enabled = #{enabled,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null">
+        logic_delete = #{logicDelete,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="associatingUserName" resultType="java.lang.String">
+        SELECT user_code userCode from rcs_sys_user  WHERE user_code LIKE CONCAT('%',#{userName},'%') and enabled = 1 AND logic_delete = 0
+        and user_code in ( SELECT user_code from rcs_sys_user  WHERE user_flag ='1')
+        limit 20;
+  </select>
+</mapper>

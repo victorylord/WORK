@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.statistics.RcsProfitRectangleMapper">
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="list" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into rcs_profit_rectangle
+        (match_id, play_id,match_type, score, profit_value, create_time, update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.matchId,jdbcType=BIGINT}, #{item.playId,jdbcType=BIGINT}, #{item.matchType,jdbcType=CHAR},
+             #{item.score,jdbcType=INTEGER}, #{item.profitValue,jdbcType=DECIMAL}, #{item.createTime,jdbcType=TIMESTAMP},
+             #{item.updateTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+            profit_value =  VALUES(profit_value),
+            update_time = now()
+    </insert>
+
+    <delete id="deleteByMatchIdAndPlayId">
+        delete from rcs_profit_rectangle where
+            match_id = #{matchId} and
+            play_id = #{playId}
+    </delete>
+
+
+    <select id="queryByIdsAndBeginDateAndEndDateAndMatchType" resultType="com.panda.sport.rcs.pojo.statistics.RcsProfitRectangle">
+        SELECT
+            r.*
+        FROM
+            rcs_profit_rectangle r
+            INNER JOIN standard_match_info m on m.id=r.match_id
+            INNER JOIN rcs_standard_sport_market_sell s on s.match_info_id=m.id
+            INNER JOIN standard_sport_tournament t on t.id=m.standard_tournament_id
+        WHERE
+            match_type=#{matchType}
+            and (((r.play_id = 4 or r.play_id=19) AND r.score >- 4 AND r.score &lt;= 3 ) OR ( (r.play_id = 2 or r.play_id=18) AND r.score >= 0 AND r.score &lt;= 6))
+
+            <if test="beginDate!=null ">
+        and m.begin_time>=#{beginDate}
+    </if>
+        <if test="endDate!=null and otherMorningMarke=0">
+            and m.begin_time&lt;= #{endDate}
+        </if>
+        <if test="tournamentIds!=null">
+            and t.id in
+            <foreach collection="tournamentIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+                </foreach>
+            </if>
+            <if test="matchType == 2">
+                and match_status in (1,2,10) and live_match_sell_status='Sold'
+            </if>
+            <if test="matchType == 1">
+                and match_status=0 and pre_match_sell_status='Sold'
+            </if>
+        ORDER BY
+            t.tournament_level,
+            m.begin_time,
+            match_id,
+            play_id,
+            score asc
+    </select>
+</mapper>

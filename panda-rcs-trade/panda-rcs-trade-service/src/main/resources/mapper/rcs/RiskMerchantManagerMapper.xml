@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RiskMerchantManagerMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RiskMerchantManager">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="user_name" property="userName" />
+        <result column="merchant_code" property="merchantCode" />
+        <result column="type" property="type" />
+        <result column="recommend_value" property="recommendValue" />
+        <result column="merchant_show_value" property="merchantShowValue" />
+        <result column="supplement_explain" property="supplementExplain" />
+        <result column="risk_operator" property="riskOperator" />
+        <result column="recommend_time" property="recommendTime" />
+        <result column="process_time" property="processTime" />
+        <result column="create_by" property="createBy" />
+        <result column="merchant_remark" property="merchantRemark" />
+        <result column="status" property="status" />
+        <result column="request_data" property="requestData" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+
+
+
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.rcs.warning.mapper.RcsLanguageInternationMapper">
+    <resultMap id="BaseResultMap" type="com.panda.rcs.warning.vo.RcsLanguageInternation">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name_code" jdbcType="VARCHAR" property="nameCode"/>
+        <result column="text" jdbcType="VARCHAR" property="text"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, name_code, `text`, create_time, update_time
+    </sql>
+    
+   <select id="selectByLanguageTypeAndNameCodes" resultType="com.panda.rcs.warning.vo.LanguageInternation">
+        SELECT li.id,
+               li.name_code,
+               #{lang} languageType,
+               JSON_UNQUOTE(JSON_EXTRACT(li.text, CONCAT('$.',#{lang}))) text		
+        FROM rcs_language_internation li
+        WHERE name_code  IN
+            <foreach collection="nameCodeList" item="nameCode" open="(" separator="," close=")">
+                #{nameCode}
+            </foreach>
+    </select>
+    
+    
+</mapper>

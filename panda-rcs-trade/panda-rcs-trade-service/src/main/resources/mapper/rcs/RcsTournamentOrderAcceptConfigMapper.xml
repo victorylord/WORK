@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsTournamentOrderAcceptConfigMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsTournamentOrderAcceptConfig">
+    <!--@mbg.generated-->
+    <!--@Table rcs_tournament_order_accept_config-->
+    <id column="match_id" jdbcType="BIGINT" property="matchId" />
+    <result column="data_source" jdbcType="SMALLINT" property="dataSource" />
+    <result column="min_wait" jdbcType="SMALLINT" property="minWait" />
+    <result column="max_wait" jdbcType="SMALLINT" property="maxWait" />
+    <result column="mode" jdbcType="TINYINT" property="mode" />
+    <result column="half_time" jdbcType="TINYINT" property="halfTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    match_id, data_source, min_wait, max_wait, `mode`, half_time
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update rcs_tournament_order_accept_config
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="data_source = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when match_id = #{item.matchId,jdbcType=BIGINT} then #{item.dataSource,jdbcType=SMALLINT}
+        </foreach>
+      </trim>
+      <trim prefix="min_wait = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when match_id = #{item.matchId,jdbcType=BIGINT} then #{item.minWait,jdbcType=SMALLINT}
+        </foreach>
+      </trim>
+      <trim prefix="max_wait = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when match_id = #{item.matchId,jdbcType=BIGINT} then #{item.maxWait,jdbcType=SMALLINT}
+        </foreach>
+      </trim>
+      <trim prefix="`mode` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when match_id = #{item.matchId,jdbcType=BIGINT} then #{item.mode,jdbcType=OTHER}
+        </foreach>
+      </trim>
+      <trim prefix="half_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when match_id = #{item.matchId,jdbcType=BIGINT} then #{item.halfTime,jdbcType=OTHER}
+        </foreach>
+      </trim>
+    </trim>
+    where match_id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.matchId,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into rcs_tournament_order_accept_config
+    (match_id, data_source, min_wait, max_wait, `mode`, half_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.matchId,jdbcType=BIGINT}, #{item.dataSource,jdbcType=SMALLINT}, #{item.minWait,jdbcType=SMALLINT}, 
+        #{item.maxWait,jdbcType=SMALLINT}, #{item.mode,jdbcType=OTHER}, #{item.halfTime,jdbcType=OTHER}
+        )
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="com.panda.sport.rcs.pojo.RcsTournamentOrderAcceptConfig">
+    <!--@mbg.generated-->
+    insert into rcs_tournament_order_accept_config
+    (match_id, data_source, min_wait, max_wait, `mode`, half_time)
+    values
+    (#{matchId,jdbcType=BIGINT}, #{dataSource,jdbcType=SMALLINT}, #{minWait,jdbcType=SMALLINT}, 
+      #{maxWait,jdbcType=SMALLINT}, #{mode,jdbcType=OTHER}, #{halfTime,jdbcType=OTHER}
+      )
+    on duplicate key update 
+    match_id = #{matchId,jdbcType=BIGINT}, 
+    data_source = #{dataSource,jdbcType=SMALLINT}, 
+    min_wait = #{minWait,jdbcType=SMALLINT}, 
+    max_wait = #{maxWait,jdbcType=SMALLINT}, 
+    `mode` = #{mode,jdbcType=OTHER}, 
+    half_time = #{halfTime,jdbcType=OTHER}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="com.panda.sport.rcs.pojo.RcsTournamentOrderAcceptConfig">
+    <!--@mbg.generated-->
+    insert into rcs_tournament_order_accept_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="matchId != null">
+        match_id,
+      </if>
+      <if test="dataSource != null">
+        data_source,
+      </if>
+      <if test="minWait != null">
+        min_wait,
+      </if>
+      <if test="maxWait != null">
+        max_wait,
+      </if>
+      <if test="mode != null">
+        `mode`,
+      </if>
+      <if test="halfTime != null">
+        half_time,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="matchId != null">
+        #{matchId,jdbcType=BIGINT},
+      </if>
+      <if test="dataSource != null">
+        #{dataSource,jdbcType=SMALLINT},
+      </if>
+      <if test="minWait != null">
+        #{minWait,jdbcType=SMALLINT},
+      </if>
+      <if test="maxWait != null">
+        #{maxWait,jdbcType=SMALLINT},
+      </if>
+      <if test="mode != null">
+        #{mode,jdbcType=OTHER},
+      </if>
+      <if test="halfTime != null">
+        #{halfTime,jdbcType=OTHER},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="matchId != null">
+        match_id = #{matchId,jdbcType=BIGINT},
+      </if>
+      <if test="dataSource != null">
+        data_source = #{dataSource,jdbcType=SMALLINT},
+      </if>
+      <if test="minWait != null">
+        min_wait = #{minWait,jdbcType=SMALLINT},
+      </if>
+      <if test="maxWait != null">
+        max_wait = #{maxWait,jdbcType=SMALLINT},
+      </if>
+      <if test="mode != null">
+        `mode` = #{mode,jdbcType=OTHER},
+      </if>
+      <if test="halfTime != null">
+        half_time = #{halfTime,jdbcType=OTHER},
+      </if>
+    </trim>
+  </insert>
+</mapper>

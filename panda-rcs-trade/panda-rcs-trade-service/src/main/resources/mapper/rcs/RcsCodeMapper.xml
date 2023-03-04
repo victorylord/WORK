@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsCodeMapper">
+    <select id="selectPlayIdsByList" resultType="String">
+        SELECT DISTINCT(child_key) FROM rcs_code WHERE father_key="play_phase" AND remark in
+        <foreach close=")" collection="stateIds" item="item" open="(" separator=", ">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+    </select>
+
+    <select id="selectMerchantList" resultType="java.lang.Long" >
+        SELECT merchants_id FROM rcs_operate_merchants_set WHERE `status`=1 AND valid_status=1
+    </select>
+</mapper>

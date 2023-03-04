@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.MerchantMapper">
+
+    <select id="getByUid" resultType="com.panda.sport.rcs.pojo.Merchant">
+		SELECT id, merchants_code merchantCode FROM  rcs_operate_merchants_set WHERE merchants_code =(
+			SELECT merchant_code FROM t_user WHERE uid= #{userId}
+		)  LIMIT 1
+    </select>
+    
+</mapper>

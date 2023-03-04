@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.TOrderDetailExtMapper">
+  <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.TOrderDetailExt">
+    <!--@mbg.generated-->
+    <!--@Table t_order_detail_ext-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="bet_no" jdbcType="BIGINT" property="betNo" />
+    <result column="order_no" jdbcType="BIGINT" property="orderNo" />
+    <result column="match_id" jdbcType="BIGINT" property="matchId" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="bet_time" jdbcType="BIGINT" property="betTime" />
+    <result column="max_accept_time" jdbcType="BIGINT" property="maxAcceptTime" />
+    <result column="max_wait" jdbcType="SMALLINT" property="maxWait" />
+    <result column="current_event" jdbcType="VARCHAR" property="currentEvent" />
+    <result column="crt_time" jdbcType="TIMESTAMP" property="crtTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="mode" jdbcType="TINYINT" property="mode" />
+    <result column="handle_status" jdbcType="TINYINT" property="handleStatus" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, bet_no, order_no, match_id, order_status, bet_time, max_accept_time, max_wait, 
+    current_event, crt_time, update_time, `mode`, handle_status
+  </sql>
+
+  <update id="orderTakingBatch">
+    update t_order_detail_ext e set order_status = #{orderStatus},update_time=now()
+    where e.bet_no in
+    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+      AND e.order_status IN (0,-1)
+      and e.handle_status = 0
+  </update>
+
+
+  <update id="updateOrderDetailExtList">
+    update t_order_detail_ext e set order_status = 5,update_time=now()
+    where  e.order_no  in
+    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+        #{item}
+    </foreach>
+    AND e.order_status = 0
+    and e.handle_status = 0
+  </update>
+
+  <update id="updateOrderDetailExtStatus">
+    update t_order_detail_ext e set order_status = #{orderStatus},update_time=now(),handle_status=1
+    where e.order_no =#{orderNo}
+  </update>
+
+
+  <update id="updateHandleStatusByList">
+    update t_order_detail_ext e set update_time=now(),handle_status=#{handleStatus}
+        where e.id in
+    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </update>
+
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update t_order_detail_ext
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="bet_no = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.betNo,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="order_no = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.orderNo,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="match_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.matchId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="order_status = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.orderStatus,jdbcType=OTHER}
+        </foreach>
+      </trim>
+      <trim prefix="bet_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.betTime,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="max_accept_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.maxAcceptTime,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="max_wait = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.maxWait,jdbcType=SMALLINT}
+        </foreach>
+      </trim>
+      <trim prefix="current_event = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.currentEvent,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="crt_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.crtTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="update_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.updateTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="`mode` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.mode,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="handle_status = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.handleStatus,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_order_detail_ext
+    (bet_no, order_no, match_id, order_status, bet_time, max_accept_time, max_wait, current_event, 
+      crt_time, update_time, `mode`, handle_status)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.betNo,jdbcType=BIGINT}, #{item.orderNo,jdbcType=BIGINT}, #{item.matchId,jdbcType=BIGINT}, 
+        #{item.orderStatus,jdbcType=OTHER}, #{item.betTime,jdbcType=BIGINT}, #{item.maxAcceptTime,jdbcType=BIGINT}, 
+        #{item.maxWait,jdbcType=SMALLINT}, #{item.currentEvent,jdbcType=VARCHAR}, #{item.crtTime,jdbcType=TIMESTAMP}, 
+        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.mode,jdbcType=TINYINT}, #{item.handleStatus,jdbcType=VARCHAR}
+        )
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.TOrderDetailExt" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_order_detail_ext
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      bet_no,
+      order_no,
+      match_id,
+      order_status,
+      bet_time,
+      max_accept_time,
+      max_wait,
+      current_event,
+      crt_time,
+      update_time,
+      `mode`,
+      handle_status,
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      #{betNo,jdbcType=BIGINT},
+      #{orderNo,jdbcType=BIGINT},
+      #{matchId,jdbcType=BIGINT},
+      #{orderStatus,jdbcType=OTHER},
+      #{betTime,jdbcType=BIGINT},
+      #{maxAcceptTime,jdbcType=BIGINT},
+      #{maxWait,jdbcType=SMALLINT},
+      #{currentEvent,jdbcType=VARCHAR},
+      #{crtTime,jdbcType=TIMESTAMP},
+      #{updateTime,jdbcType=TIMESTAMP},
+      #{mode,jdbcType=TINYINT},
+      #{handleStatus,jdbcType=VARCHAR},
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      bet_no = #{betNo,jdbcType=BIGINT},
+      order_no = #{orderNo,jdbcType=BIGINT},
+      match_id = #{matchId,jdbcType=BIGINT},
+      order_status = #{orderStatus,jdbcType=OTHER},
+      bet_time = #{betTime,jdbcType=BIGINT},
+      max_accept_time = #{maxAcceptTime,jdbcType=BIGINT},
+      max_wait = #{maxWait,jdbcType=SMALLINT},
+      current_event = #{currentEvent,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      `mode` = #{mode,jdbcType=TINYINT},
+      handle_status = #{handleStatus,jdbcType=VARCHAR},
+    </trim>
+  </insert>
+  <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.TOrderDetailExt" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_order_detail_ext
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="betNo != null">
+        bet_no,
+      </if>
+      <if test="orderNo != null">
+        order_no,
+      </if>
+      <if test="matchId != null">
+        match_id,
+      </if>
+      <if test="orderStatus != null">
+        order_status,
+      </if>
+      <if test="betTime != null">
+        bet_time,
+      </if>
+      <if test="maxAcceptTime != null">
+        max_accept_time,
+      </if>
+      <if test="maxWait != null">
+        max_wait,
+      </if>
+      <if test="currentEvent != null">
+        current_event,
+      </if>
+      <if test="crtTime != null">
+        crt_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="mode != null">
+        `mode`,
+      </if>
+      <if test="handleStatus != null">
+        handle_status,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="betNo != null">
+        #{betNo,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null">
+        #{orderNo,jdbcType=BIGINT},
+      </if>
+      <if test="matchId != null">
+        #{matchId,jdbcType=BIGINT},
+      </if>
+      <if test="orderStatus != null">
+        #{orderStatus,jdbcType=OTHER},
+      </if>
+      <if test="betTime != null">
+        #{betTime,jdbcType=BIGINT},
+      </if>
+      <if test="maxAcceptTime != null">
+        #{maxAcceptTime,jdbcType=BIGINT},
+      </if>
+      <if test="maxWait != null">
+        #{maxWait,jdbcType=SMALLINT},
+      </if>
+      <if test="currentEvent != null">
+        #{currentEvent,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null">
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="mode != null">
+        #{mode,jdbcType=TINYINT},
+      </if>
+      <if test="handleStatus != null">
+        #{handleStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="betNo != null">
+        bet_no = #{betNo,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null">
+        order_no = #{orderNo,jdbcType=BIGINT},
+      </if>
+      <if test="matchId != null">
+        match_id = #{matchId,jdbcType=BIGINT},
+      </if>
+      <if test="orderStatus != null">
+        order_status = #{orderStatus,jdbcType=OTHER},
+      </if>
+      <if test="betTime != null">
+        bet_time = #{betTime,jdbcType=BIGINT},
+      </if>
+      <if test="maxAcceptTime != null">
+        max_accept_time = #{maxAcceptTime,jdbcType=BIGINT},
+      </if>
+      <if test="maxWait != null">
+        max_wait = #{maxWait,jdbcType=SMALLINT},
+      </if>
+      <if test="currentEvent != null">
+        current_event = #{currentEvent,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null">
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="mode != null">
+        `mode` = #{mode,jdbcType=TINYINT},
+      </if>
+      <if test="handleStatus != null">
+        handle_status = #{handleStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="checkOrderStatus" resultType="java.lang.Integer">
+    SELECT
+        total - accept AS diff
+    FROM
+      ( SELECT count( 0 ) total FROM t_order_detail_ext WHERE order_no = #{orderNo} ) a
+      INNER JOIN ( SELECT count( 0 ) accept FROM t_order_detail_ext WHERE order_no = #{orderNo} and order_status = 1 ) b;
+</select>
+
+  <select id="selectWaitedOrderList" resultType="com.panda.sport.rcs.pojo.TOrderDetailExt">
+    select * from t_order_detail_ext where
+        (handle_status = 0 or handle_status is null) and (order_status is null or order_status = 0 or order_status = 2)
+        and id > #{maxId}
+        order by id asc limit 1000
+  </select>
+  <select id="selectHandleOrderList" resultType="com.panda.sport.rcs.pojo.TOrderDetailExt">
+    select * from t_order_detail_ext where handle_status=0 and order_status=1 order by id asc limit 1000
+  </select>
+
+
+  <select id="queryOrderNoByBetNo" resultType="String">
+    SELECT DISTINCT t.order_no FROM t_order_detail_ext t WHERE t.bet_no in
+    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+  <insert id="saveOrUpdateTOrderDetailExt" parameterType="java.util.List">
+
+    <foreach collection="list" index="index" item="item" separator=";">
+      INSERT INTO t_order_detail_ext(
+      bet_no,
+       order_no,
+       match_id,
+      order_status,
+      bet_time,
+      max_accept_time,
+      max_wait,
+      current_event,
+      crt_time,
+      update_time,
+      mode,
+      handle_status
+      )
+      VALUES (
+      #{item.betNo,jdbcType=VARCHAR},
+      #{item.orderNo,jdbcType=VARCHAR},
+      #{item.matchId,jdbcType=BIGINT},
+      #{item.orderStatus,jdbcType=INTEGER},
+      #{item.betTime,jdbcType=BIGINT},
+      #{item.maxAcceptTime,jdbcType=BIGINT},
+      #{item.maxWait,jdbcType=INTEGER},
+      #{item.currentEvent,jdbcType=VARCHAR},
+      #{item.crtTime,jdbcType=TIMESTAMP},
+      #{item.crtTime,jdbcType=TIMESTAMP},
+      #{item.mode,jdbcType=INTEGER},
+      #{item.handleStatus,jdbcType=INTEGER,jdbcType=INTEGER}
+      )
+      ON DUPLICATE KEY UPDATE
+      order_status = #{item.orderStatus,jdbcType=INTEGER},
+      handle_status = #{item.handleStatus,jdbcType=INTEGER,jdbcType=INTEGER}
+
+    </foreach>
+  </insert>
+  <select id="queryOrderNosByBetNo" resultType="String">
+    SELECT DISTINCT ext.order_no FROM t_order_detail_ext ext WHERE ext.bet_no in
+    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND ext.handle_status = 0
+  </select>
+
+  <update id="pauseOrderTakingBatch">
+    update t_order_detail_ext e set order_status = #{vo.state},update_time=now()
+    where e.order_status = -1
+    <if test="vo.ids != null and vo.ids.size()!=0">
+      and e.bet_no in
+      <foreach  collection="vo.ids" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    and e.match_id = #{vo.matchId}
+  </update>
+
+  <select id="queryOrderNo" resultType="String">
+    SELECT DISTINCT e.order_no FROM t_order_detail_ext e
+    WHERE e.order_status = -1
+    <if test="vo.ids != null and vo.ids.size()!=0">
+      and e.bet_no  in
+      <foreach  collection="vo.ids" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    and e.match_id = #{vo.matchId}
+  </select>
+
+
+  <select id="queryOrderNoPlaceNum" resultType="com.panda.sport.rcs.pojo.vo.OrderNoPlaceNum">
+        SELECT
+            tod.bet_no,
+            tod.order_no,
+            tde.match_id,
+            tod.play_id,
+            tod.place_num,
+            tde.order_status,
+            tde.handle_status,
+            tod.sport_id
+        FROM
+            t_order_detail_ext tde
+            LEFT JOIN t_order_detail tod ON tde.order_no = tod.order_no
+        WHERE
+            tde.order_status = -1
+            and tod.match_id = #{vo.matchId}
+            <if test="vo.ids != null and vo.ids.size()!=0">
+              and tde.bet_no  in
+              <foreach  collection="vo.ids" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+              </foreach>
+            </if>
+  </select>
+
+
+  <select id="queryExtByBetNo" resultType="com.panda.sport.rcs.pojo.TOrderDetailExt">
+    SELECT * FROM t_order_detail_ext e
+    WHERE e.order_status = -1
+    <if test="vo.ids != null and vo.ids.size()!=0">
+      and e.bet_no  in
+      <foreach  collection="vo.ids" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    and e.match_id = #{vo.matchId}
+  </select>
+
+</mapper>

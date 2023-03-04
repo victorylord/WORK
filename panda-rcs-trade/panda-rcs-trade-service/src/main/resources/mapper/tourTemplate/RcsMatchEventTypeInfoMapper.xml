@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMatchEventTypeInfoMapper">
+
+  <update id="updateMatchEventById">
+        UPDATE rcs_match_event_type_info i
+        SET
+          <if test="info.eventRemark != null">
+              i.event_remark = #{info.eventRemark,jdbcType=VARCHAR}
+          </if>
+          <if test="info.eventType != null">
+              i.event_type = #{info.eventType}
+          </if>
+        WHERE i.id = #{info.id,jdbcType=BIGINT}
+  </update>
+  <select id="selectEventPagesCount" resultType="integer">
+        SELECT count(1) FROM rcs_match_event_type_info t WHERE t.sport_id = #{info.sportId,jdbcType=INTEGER}
+  </select>
+  <select id="selectEventPages" resultType="com.panda.sport.rcs.pojo.RcsMatchEventTypeInfo">
+        SELECT * FROM rcs_match_event_type_info t
+        WHERE t.sport_id = #{info.sportId,jdbcType=INTEGER}
+        ORDER BY t.id
+        limit #{info.current,jdbcType=INTEGER},#{info.pageSize,jdbcType=INTEGER}
+  </select>
+</mapper>

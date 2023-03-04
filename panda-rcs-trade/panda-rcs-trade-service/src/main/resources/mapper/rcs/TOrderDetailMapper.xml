@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.TOrderDetailMapper">
+    <update id="insertAndUpdate" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.TOrderDetail" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_order_detail (bet_no, order_no, `uid`,
+        sport_id, sport_name, play_id,
+        play_name, match_id,
+        odd_finally,  bet_time,
+        market_type,match_type, market_id, market_value,
+        match_info, bet_amount, odds_value,
+        max_win_amount, score_benchmark,
+        play_options_id, play_options, play_options_range,
+        match_process_id,
+        create_time,
+        modify_time, tournament_id, rec_type,
+        rec_val, is_relation_score,validate_result
+        ,risk_channel,play_options_name,order_status,series_type,market_value_new)
+        values (#{betNo,jdbcType=VARCHAR}, #{orderNo,jdbcType=VARCHAR}, #{uid,jdbcType=BIGINT},
+        #{sportId,jdbcType=INTEGER}, #{sportName,jdbcType=VARCHAR}, #{playId,jdbcType=INTEGER},
+        #{playName,jdbcType=VARCHAR}, #{matchId,jdbcType=BIGINT},
+        #{oddFinally,jdbcType=VARCHAR},  #{betTime,jdbcType=BIGINT},
+        #{marketType,jdbcType=VARCHAR}, #{matchType,jdbcType=INTEGER},#{marketId,jdbcType=BIGINT},#{marketValue,jdbcType=VARCHAR},
+        #{matchInfo,jdbcType=VARCHAR}, #{betAmount,jdbcType=BIGINT}, #{oddsValue,jdbcType=DOUBLE},
+        #{maxWinAmount,jdbcType=DOUBLE},  #{scoreBenchmark,jdbcType=VARCHAR},
+        #{playOptionsId,jdbcType=BIGINT}, #{playOptions,jdbcType=VARCHAR}, #{playOptionsRange,jdbcType=VARCHAR},
+        #{matchProcessId,jdbcType=INTEGER},
+        #{createTime,jdbcType=BIGINT},
+        #{modifyTime,jdbcType=BIGINT}, #{tournamentId,jdbcType=BIGINT}, #{recType,jdbcType=TINYINT},
+        #{recVal,jdbcType=VARCHAR}, #{isRelationScore,jdbcType=TINYINT},#{validateResult,jdbcType=TINYINT},
+        #{riskChannel,jdbcType=INTEGER} ,#{playOptionsName,jdbcType=VARCHAR},#{orderStatus,jdbcType=INTEGER},
+        #{seriesType,jdbcType=INTEGER},#{marketValueNew,jdbcType=VARCHAR}
+        )
+    </update>
+
+    <update id="updateOrderDetailStatusBatch"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update t_order_detail
+            <set>
+                order_status = #{item.orderStatus}
+                <if test="item.recType != null">
+                    ,rec_type = #{item.recType,jdbcType=TINYINT}
+                </if>
+                <if test="item.recVal != null and item.recVal != ''">
+                    ,rec_val = #{item.recVal,jdbcType=VARCHAR}
+                </if>
+                <if test="item.isRelationScore != null">
+                    ,is_relation_score = #{item.isRelationScore,jdbcType=INTEGER}
+                </if>
+                <if test="item.validateResult != null">
+                    ,validate_result = #{item.validateResult,jdbcType=INTEGER}
+                </if>
+            </set>
+            where order_no = #{item.orderNo}
+        </foreach>
+    </update>
+
+    <select id ="getStatReportByPlayOptions" resultType="com.panda.sport.rcs.vo.OrderDetailStatReportVo">
+        SELECT
+        id AS playOptionsId,
+        betOrderNum,
+        betAmount,
+        ( market_bet_amount - pai_amount ) profitValue,
+        market_id
+        FROM
+        (
+        SELECT
+        s.id,
+        count( d.order_no ) betOrderNum,
+        IFNULL( sum( d.bet_amount ), 0 ) betAmount,
+        IFNULL(( SELECT sum( bet_amount ) FROM t_order_detail WHERE market_id = #{marketId} ), 0 ) market_bet_amount,
+        IFNULL( sum( d.bet_amount * d.odds_value ), 0 ) pai_amount,
+        s.market_id
+        FROM
+        ( SELECT id, market_id FROM standard_sport_market_odds WHERE market_id = #{marketId} ) s
+        LEFT JOIN t_order_detail d ON s.id = d.play_options_id
+        LEFT JOIN t_order o ON o.order_no = d.order_no
+        where o.series_type = 1
+        and d.match_type=#{matchType}
+        and d.validate_result=1
+        and d.is_settlement!=3
+        <if test="orderNo!=null">
+            and d.order_no!=#{orderNo}
+        </if>
+
+        GROUP BY
+        s.id,
+        market_id
+        ) a;
+    </select>
+
+    <select id ="getMarketStatByMatchIdAndPlayIdAndMatchStatus" resultType="com.panda.sport.rcs.vo.OrderDetailStatReportVo">
+        SELECT
+           c.match_market_id AS marketId,
+           sum(c.bet_amount)*100 bet_amount,
+           m.addition1 AS marketValue,
+        CASE
+
+                WHEN ( b.odds_type = 'Over' OR b.odds_type = 'Yes' OR b.odds_type = 'Odd' OR b.odds_type = '1' ) THEN
+                'home' ELSE 'away'
+            END AS oddsType
+        FROM
+            rcs_market_odds_config c
+            LEFT JOIN standard_sport_market_odds b ON c.market_odds_id = b.id
+            LEFT JOIN standard_sport_market m ON m.id = c.match_market_id
+            WHERE
+            c.match_type=#{matchStatus} and c.market_category_id=#{marketCategoryId} and c.match_id=#{matchId}
+        GROUP BY
+            c.match_market_id, b.id ORDER BY b.market_id asc
+    </select>
+
+    <select id="getSettleBetAmount" resultType="com.panda.sport.rcs.vo.statistics.SettleAmountVo">
+        SELECT
+            sum( d.bet_amount ) settleBetAmount,
+            sum( s.settle_amount ) settleAmount
+        FROM
+            t_settle s
+            LEFT JOIN t_order o ON s.order_no = o.order_no
+            LEFT JOIN t_order_detail d ON s.bet_no = d.bet_no
+        WHERE
+            o.series_type = 1
+            AND d.validate_result = 1
+            AND d.is_settlement != 3
+            AND d.match_id =(
+                SELECT
+                    match_id
+                FROM
+                    t_order_detail
+            WHERE
+                bet_no = s.bet_no
+                AND d.match_id = #{matchId} )
+    </select>
+
+
+    <select id="getMatchSumBetAmount" resultType="com.panda.sport.rcs.vo.statistics.SumMatchAmountVo">
+        SELECT
+            sum( d.bet_amount ) bet_amount,
+            count(*) betOrderNums,
+            sum( d.bet_amount * d.odds_value ) paiAmount,
+            sum( s.settle_amount ) settleAmount,
+            sum(case  when not s.out_come is null then d.bet_amount else 0 end) settleOrderBetAmount
+        FROM
+            t_order_detail d
+            LEFT JOIN t_order o ON o.order_no = d.order_no
+            LEFT JOIN t_settle s ON s.bet_no = d.bet_no
+        WHERE
+            o.series_type = 1
+            AND d.match_id = #{matchId}
+            AND d.validate_result =1
+            and d.is_settlement != 3
+            And o.order_no != #{orderNo}
+    </select>
+
+    <select id="queryOptionValue" resultType="String">
+        SELECT
+        	JSON_UNQUOTE(JSON_EXTRACT(l.text, '$.zs')) text
+        FROM standard_sport_market_odds mo
+	        LEFT JOIN standard_sport_odds_fields_templet ft ON mo.odds_fields_templet_id = ft.id
+	        LEFT JOIN rcs_language_internation l ON ft.name_code = l.name_code
+        WHERE mo.market_id = #{bean.marketId,jdbcType=BIGINT}
+	        AND  mo.id = #{bean.playOptionsId,jdbcType=BIGINT}
+    </select>
+
+    <select id="getMatrixValList" parameterType = "map" resultType="com.panda.sport.rcs.pojo.TOrderDetail">
+        select rec_val,bet_no,rec_type,volume_percentage from (
+        SELECT b.order_status,a.rec_type,a.rec_val,a.bet_no,a.volume_percentage FROM t_order_detail a
+        LEFT JOIN t_order b ON a.order_no = b.order_no
+        inner join rcs_operate_merchants_set m on  m.merchants_id = b.tenant_id
+        LEFT JOIN t_order_detail_ext c ON a.order_no = c.order_no
+        WHERE a.match_id = #{matchId,jdbcType=BIGINT}
+        AND m.valid_status = 1
+        AND m.status = 1
+        AND b.vip_level = 0
+        AND a.is_settlement in (1,2) and a.validate_result = 1 and a.rec_val is not null
+        <if test="playIds != null">
+            AND a.play_id in
+            <foreach collection="playIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="tenantIds != null">
+            AND b.tenant_id in
+            <foreach collection="tenantIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="isSettlement != null">
+            AND a.is_settlement = #{isSettlement,jdbcType=SMALLINT}
+        </if>
+        <if test="matchType != null">
+            AND a.match_type = #{matchType,jdbcType=SMALLINT}
+        </if>
+        <if test="beginTime != null">
+            AND a.bet_time > #{beginTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="endTime != null">
+            AND a.bet_time &lt; #{endTime,jdbcType=TIMESTAMP}
+        </if>
+        ) d where d.order_status = 1 or d.order_status is null
+    </select>
+
+    <select id="queryCalcProfitDetail" resultType="com.panda.sport.rcs.vo.operation.CalcProfitDetailVo">
+        SELECT
+        d.market_id,
+        d.play_options_id oddsId,
+        d.betAmount,
+        d.paiAmount,
+        s.addition1 marketValue,
+        o.odds_type
+        FROM
+        (
+        SELECT
+        market_id,
+        play_options_id,
+        sum( bet_amount )/100 betAmount,
+        sum( bet_amount * odds_value )/100 paiAmount
+        FROM
+        t_order_detail
+        WHERE
+        play_name = '#{playName}'
+        AND match_id = #{matchId}
+        and validate_result=1
+        GROUP BY
+        play_options_id,
+        market_id
+        ) d
+        LEFT JOIN standard_sport_market s ON d.market_id = s.id
+        left join standard_sport_market_odds o on o.id=d.play_options_id
+        order by marketValue asc
+    </select>
+    <update id="updateOrderDetailStatus" parameterType="Map">
+        update t_order_detail od
+        <set>
+            <if test="isSettlement!=null">
+                od.is_settlement = #{isSettlement},
+            </if>
+            <if test="validateResult!=null">
+                od.validate_result = #{validateResult},
+            </if>
+            od.modify_time = CURRENT_TIMESTAMP()
+        </set>
+        WHERE od.bet_no = #{betNo}
+    </update>
+
+
+    <select id="selectTOrderDetailByMarketId" resultType="com.panda.sport.rcs.vo.OrderDetailVo">
+        SELECT
+        d.uid,
+        d.odds_value,
+        d.bet_amount / 100 bet_amount,
+        d.bet_time,
+        t.currency_code,
+        d.market_value market_value
+        FROM
+        standard_match_info s
+        LEFT JOIN t_order_detail d ON d.match_id = s.id
+        LEFT JOIN t_order t ON t.order_no = d.order_no
+        LEFT JOIN standard_sport_market_odds o ON o.id = d.play_options_id
+        LEFT JOIN standard_sport_market m ON o.market_id=m.id
+        WHERE
+        t.order_status=1
+        AND order_odds =#{orderOdds}
+        AND t.series_type=1
+        and d.match_type=#{matchType}
+        AND validate_result=1
+        <if test="matchId!=null">
+            AND d.match_id = #{matchId}
+        </if>
+        <if test="playId!=null">
+            AND d.play_id = #{playId}
+        </if>
+        <if test="marketId!=null">
+            AND d.market_id = #{marketId}
+        </if>
+    </select>
+    <select id="selectTOrderDetailByMarketIdPage" resultType="com.panda.sport.rcs.vo.OrderDetailVo">
+        SELECT
+        d.uid,
+        d.odds_value,
+        (d.bet_amount / 100 ) * IFNULL(d.volume_percentage,0) as bet_amount,
+        d.bet_time,
+        t.currency_code,
+        d.market_value,
+        d.play_options,
+        d.play_id,
+        d.sport_id,
+        d.play_options_name playOptionsName,
+        o.odds_type,o.order_odds,
+        d.score_benchmark betScore,
+        l.level_id,
+        l.level_name,
+        l.bg_color,
+        l.color,
+        u.username userName,
+        lb.sport_list sportList,
+        lb.order_type_list orderTypeList,
+        lb.tournament_list tournamentList,
+        lb.order_stage_list orderStageList,
+        lb.play_list playList,
+        t.order_status orderStatus,
+        t.reason reason,
+        s.match_period_id as matchPeriodId,
+        concat(IFNULL(sid.t1,0), ':', IFNULL(sid.t2,0) ) score
+        FROM
+        standard_match_info s
+        LEFT JOIN t_order_detail d ON d.match_id = s.id
+        LEFT JOIN t_order t ON t.order_no = d.order_no
+        LEFT JOIN standard_sport_market_odds o ON o.id = d.play_options_id
+        LEFT JOIN standard_sport_market m ON o.market_id=m.id
+        LEFT JOIN t_user u ON u.uid=d.uid
+        LEFT JOIN t_user_level l ON u.user_level=l.level_id
+        LEFT JOIN t_user_label lb ON lb.uid = d.uid
+        LEFT JOIN match_statistics_info_detail sid on sid.standard_match_id = s.id
+        WHERE
+        odds_type=#{orderOdds}
+        AND t.order_status in (1,2)
+        and t.series_type=1
+        and (sid.code = "match_score" or sid.code is null)
+        and d.match_type=#{matchType}
+        and t.vip_level=0
+        AND d.volume_percentage > 0
+        <if test="matchId!=null">
+            AND d.match_id = #{matchId}
+        </if>
+        <if test="playId!=null">
+            AND d.play_id = #{playId}
+        </if>
+        AND d.place_num = #{placeNum}
+        order by d.bet_time desc
+    </select>
+    <select id="selectOrderDetailStatisticVoList" resultType="com.panda.sport.rcs.vo.OrderDetailStatisticVo">
+        SELECT
+        t.sport_id,
+        s.standard_tournament_id,
+        t.match_type,
+        t.play_id,
+        t.is_valid,
+        t.bet_no
+        FROM
+        t_order_detail t
+        LEFT JOIN standard_match_info s ON s.id = t.match_id
+        WHERE
+        validate_result=1
+        And t.bet_no IN
+        <foreach close=")" collection="betNoSet" item="item" open="(" separator=", ">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+    </select>
+
+    <update id="updateMtsOrder">
+        update t_order_detail od
+        SET od.validate_result = #{mtsOrderStatus},
+        od.modify_time = CURRENT_TIMESTAMP()
+        WHERE od.order_no = #{orderNo}
+        and od.risk_channel=2
+        and od.validate_result=0
+    </update>
+
+    <select id="getTopById" resultType="com.panda.sport.rcs.pojo.TOrderDetail">
+        SELECT d.* FROM t_order_detail d
+        where validate_result=1
+        <if test=" id >0">
+            and d.id > #{id,jdbcType=BIGINT}
+        </if>
+        <if test=" matchId >0">
+            and d.match_id = #{matchId,jdbcType=BIGINT}
+        </if>
+
+        order by d.id asc
+        limit #{limit}
+    </select>
+    <select id="queryOrderDetailList" resultType="com.panda.sport.data.rcs.dto.OrderItem">
+        SELECT
+            t.market_id AS marketId,
+            t.play_options AS playOptions,
+            t.play_options_id AS playOptionsId,
+            t.match_info AS matchInfo,
+            t.play_name AS playName,
+            t.market_value AS marketValue,
+            t.market_value_new AS marketValueNew,
+            t.play_options_name AS playOptionsName,
+            t.bet_no AS betNo,
+            t.order_no AS orderNo,
+            t.odds_value AS oddsValue,
+            t.match_id AS matchId
+        FROM
+            t_order_detail t
+        WHERE
+            t.order_no = #{orderNo,jdbcType=BIGINT}
+    </select>
+
+    <select id="queryBetList" resultType="com.panda.sport.rcs.vo.OrderDetailVo">
+        SELECT d.bet_time as betTime,
+                u.uid as uid,
+                u.username as userName,
+                u.user_level as userLevel,
+                d.odds_value as oddsValue,
+                d.bet_amount/100 as betAmount,
+                d.is_settlement as betStatus,
+                o.ip as ip,
+                o.ip_area as ipAddress,
+                d.match_type as matchType,
+                d.match_id as matchId,
+                d.market_id as marketId,
+                d.play_options as playOptions,
+                d.play_options_id as playOptionsId,
+                d.market_value as marketValue,
+                d.play_name as playName,
+                d.play_options_name as playOptionsName,
+                d.score_benchmark as betScore
+        FROM t_order o
+        JOIN t_order_detail d ON o.order_no = d.order_no
+        LEFT JOIN t_user u ON u.uid = o.uid
+        <where>
+            <if test="vo.playIds != null and vo.playIds.size() > 0">
+                d.play_id in
+                <foreach close=")" collection="vo.playIds" item="item" open="(" separator=", ">
+                    #{item,jdbcType=INTEGER}
+                </foreach>
+            </if>
+            <if test="vo.uid != null">
+                AND o.uid = #{vo.uid,jdbcType=VARCHAR}
+            </if>
+            <if test="vo.minBetTime != null">
+                AND d.bet_time &gt; #{vo.minBetTime,jdbcType=VARCHAR,jdbcType=INTEGER}
+            </if>
+            <if test="vo.maxBetTime != null">
+                AND d.bet_time &lt;= #{vo.maxBetTime,jdbcType=VARCHAR}
+            </if>
+            <if test="vo.matchType != null">
+                AND d.match_type = #{vo.matchType,jdbcType=INTEGER}
+            </if>
+            <if test="vo.userLevels != null and vo.userLevels.size() > 0">
+                AND u.user_level in
+                <foreach close=")" collection="vo.userLevels" item="item" open="(" separator=", ">
+                    #{item,jdbcType=INTEGER}
+                </foreach>
+            </if>
+            <if test="vo.betAmount != null">
+                AND d.bet_amount > #{vo.betAmount,jdbcType=DECIMAL}
+            </if>
+            <if test="vo.matchId != null">
+                AND d.match_id = #{vo.matchId,jdbcType=INTEGER}
+            </if>
+        </where>
+        ORDER BY d.bet_time DESC
+    </select>
+    <select id="queryBetListCount" resultType="long">
+        SELECT count(1)
+        FROM t_order o
+        JOIN t_order_detail d ON o.order_no = d.order_no
+        LEFT JOIN t_user u ON u.uid = o.uid
+        <where>
+            <if test="vo.playIds != null and vo.playIds.size() > 0">
+                d.play_id in
+                <foreach close=")" collection="vo.playIds" item="item" open="(" separator=", ">
+                    #{item,jdbcType=INTEGER}
+                </foreach>
+            </if>
+            <if test="vo.uid != null">
+                AND o.uid = #{vo.uid,jdbcType=VARCHAR}
+            </if>
+            <if test="vo.matchType != null">
+                AND d.match_type = #{vo.matchType,jdbcType=INTEGER}
+            </if>
+            <if test="vo.userLevels != null and vo.userLevels.size() > 0">
+                AND u.user_level in
+                <foreach close=")" collection="vo.userLevels" item="item" open="(" separator=", ">
+                    #{item,jdbcType=INTEGER}
+                </foreach>
+            </if>
+            <if test="vo.betAmount != null">
+                AND d.bet_amount > #{vo.betAmount,jdbcType=DECIMAL}
+            </if>
+            <if test="vo.matchId != null">
+                AND d.match_id = #{vo.matchId,jdbcType=INTEGER}
+            </if>
+            <if test="vo.minBetTime != null">
+                AND d.bet_time &gt; #{vo.minBetTime,jdbcType=VARCHAR,jdbcType=INTEGER}
+            </if>
+            <if test="vo.maxBetTime != null">
+                AND d.bet_time &lt;= #{vo.maxBetTime,jdbcType=VARCHAR}
+            </if>
+        </where>
+
+    </select>
+
+    <update id="updateOrderDetailOdds" parameterType="Map">
+    	update t_order_detail set odds_value = #{usedOdds},odd_finally = #{odd_finally}
+    	where bet_no = #{betNo}
+    </update>
+
+    <select id="getOrderOdds" resultType="java.lang.Integer">
+        SELECT
+            DISTINCT o.order_odds
+        FROM
+            standard_sport_market m
+            LEFT JOIN standard_sport_market_odds o ON m.id = o.market_id
+        WHERE
+            m.market_category_id = #{playId}
+            AND m.standard_match_info_id=#{matchId}
+            AND o.order_odds is NOT NULL
+        ORDER BY
+            o.order_odds
+    </select>
+
+    <select id="getPlayId" resultType="com.panda.sport.rcs.vo.PlayVo">
+        SELECT DISTINCT
+            m.market_category_id,
+            o.odds_type
+        FROM
+            standard_sport_market m
+            LEFT JOIN standard_sport_market_odds o ON m.id = o.market_id
+        WHERE
+            o.odds_type = "Over"
+            OR o.odds_type = "X"
+            or o.odds_type = "Even"
+        ORDER BY
+            m.market_category_id
+    </select>
+
+
+    <select id="queryMarketChart" resultType="com.panda.sport.rcs.vo.MarketChartResVo">
+          SELECT
+          #{matchId} AS match_id,
+          #{playId} AS playId,
+          #{matchType} AS match_type,
+          #{marketId} AS market_id  ,
+          play_options_id ,
+          play_options ,
+          user_level,
+          SUM(d.bet_amount/100)  totalBetAmount
+          FROM t_order_detail d INNER JOIN t_user u ON d.uid = u.uid
+          WHERE match_id = #{matchId}
+          AND play_id = #{playId}
+          AND match_type = #{matchType}
+          AND market_id = #{marketId}
+          AND d.series_type = 1
+        AND u.user_level in
+        <foreach item="item" index="index" collection="userLevel" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+          GROUP BY play_options_id , play_options  ,u.user_level
+          order by totalBetAmount desc
+    </select>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.tourTemplate.RcsTournamentTemplateAcceptConfigSettleMapper">
+
+
+    <update id="updateMatchDataSourceAndTimeConfigSettle">
+        UPDATE rcs_tournament_template_accept_config_settle c
+        SET c.data_source = #{config.dataSource,jdbcType=VARCHAR},
+            c.normal = #{config.normal,jdbcType=INTEGER},
+            c.min_wait = #{config.minWait,jdbcType=INTEGER},
+            c.max_wait = #{config.maxWait,jdbcType=INTEGER},
+            c.update_time = NOW()
+        WHERE c.id = #{config.id,jdbcType=INTEGER}
+  </update>
+
+    <update id="updateMatchDataSourceByTemplateId">
+        UPDATE rcs_tournament_template_accept_config_settle c
+        SET c.data_source = #{dataSourceCode},
+            c.update_time = NOW()
+        WHERE c.template_id = #{templateId}
+  </update>
+  
+</mapper>

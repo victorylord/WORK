@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.statistics.RcsMatchPlayConfigMapper">
+<!--    <select id="inserOrUpdate">-->
+<!--        INSERT INTO `panda_rcs`.`rcs_match_play_config` ( `match_id`, `play_id`, `status`, `data_source`)-->
+<!--        VALUES-->
+<!--        ( #{matchId}, #{playId}, #{status}, #{dataSource} )-->
+<!--        ON DUPLICATE KEY UPDATE-->
+<!--        match_id=#{matchId}-->
+<!--        <if test="status!=null">-->
+<!--            ,status=#{status}-->
+<!--        </if>-->
+<!--        <if test="dataSource!=null">-->
+<!--            ,data_source=#{dataSource}-->
+<!--        </if>-->
+<!--    </select>-->
+
+    <insert id="insertOrUpdateMarketHeadGap">
+        INSERT INTO `panda_rcs`.`rcs_match_play_config` (
+        `match_id`,
+        `play_id`,
+        <if test="config.marketHeadGap!=null">
+            `market_head_gap`,
+        </if>
+        <if test="config.relevanceType!=null">
+            `relevance_type`,
+        </if>
+        sub_play_id,
+        `data_source`)
+        VALUES   (
+        #{config.matchId,jdbcType=BIGINT},
+        #{config.playId,jdbcType=BIGINT},
+        <if test="config.marketHeadGap!=null">
+            #{config.marketHeadGap,jdbcType=DECIMAL},
+        </if>
+        <if test="config.relevanceType!=null">
+            #{config.relevanceType,jdbcType=BIGINT},
+        </if>
+        #{config.subPlayId,jdbcType=VARCHAR},
+        #{config.dataSource,jdbcType=BIGINT} )
+        ON DUPLICATE KEY UPDATE match_id=#{config.matchId,jdbcType=BIGINT}
+        <if test="config.marketHeadGap!=null">
+            ,market_head_gap=#{config.marketHeadGap,jdbcType=DECIMAL}
+        </if>
+        <if test="config.relevanceType!=null">
+            ,relevance_type=#{config.relevanceType,jdbcType=BIGINT}
+        </if>
+<!--        <if test="config.subPlayId!=null">-->
+<!--            ,sub_paly_id=#{config.subPlayId,jdbcType=VARCHAR}-->
+<!--        </if>-->
+        <if test="config.dataSource!=null">
+            ,data_source=#{config.dataSource,jdbcType=BIGINT}
+        </if>
+    </insert>
+    <update id="clearMarketHeadGapByMatch">
+        UPDATE rcs_match_play_config t SET t.market_head_gap = 0,t.away_auto_change_rate = 0 
+        WHERE t.match_id = #{match.standardMatchInfoId,jdbcType=BIGINT} AND   t.play_id = #{match.marketCategoryId,jdbcType=BIGINT}
+        <if test="match.childMarketCategoryId != null and match.childMarketCategoryId != -1">
+            AND t.sub_play_id = #{match.childMarketCategoryId,jdbcType=BIGINT}
+        </if>
+    </update>
+
+    <insert id="insertOrUpdateRelevanceType">
+        INSERT INTO `panda_rcs`.`rcs_match_play_config` ( `match_id`, `play_id`, `relevance_type` )
+        VALUES
+            ( #{matchId}, #{playId}, #{relevanceType} )
+            ON DUPLICATE KEY UPDATE `relevance_type` = #{relevanceType}
+    </insert>
+</mapper>

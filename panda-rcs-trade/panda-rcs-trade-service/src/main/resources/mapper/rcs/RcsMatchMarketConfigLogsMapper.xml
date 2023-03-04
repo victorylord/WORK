@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsMatchMarketConfigLogsMapper">
+    <insert id="insertRcsMatchMarketConfigLogs">
+        <foreach collection="ids" index="index" item="item" separator=";">
+            INSERT INTO rcs_match_market_config_logs(match_id,market_id,market_status,data_source,change_level)
+            VALUES(#{matchId},#{item},#{status},#{dataSource},#{changeLevel})
+        </foreach>
+    </insert>
+</mapper>

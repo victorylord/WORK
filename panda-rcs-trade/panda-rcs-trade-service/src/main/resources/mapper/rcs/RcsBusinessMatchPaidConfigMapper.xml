@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsBusinessMatchPaidConfigMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.RcsBusinessMatchPaidConfig">
+        <id column="id" property="id"/>
+        <result column="business_id" property="businessId"/>
+        <result column="sport_id" property="sportId"/>
+        <result column="tournament_level" property="tournamentLevel"/>
+        <result column="match_max_pay_rate" property="matchMaxPayRate"/>
+        <result column="match_max_pay_val" property="matchMaxPayVal"/>
+        <result column="match_max_con_pay_rate" property="matchMaxConPayRate"/>
+        <result column="match_max_con_pay_val" property="matchMaxConPayVal"/>
+        <result column="crt_time" property="crtTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <update id="updateRcsBusinessMatchPaids">
+        <foreach collection="rcsBusinessMatchPaids" item="matchPaid" separator=";">
+            update rcs_business_match_paid_config set match_max_pay_val =#{matchPaid.matchMaxPayVal} and match_max_pay_rate = #{matchPaid.matchMaxPayRate} where id =#{matchPaid.id}
+        </foreach>
+    </update>
+
+
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT id,business_id,sport_id,tournament_level_id,
+            CASE
+                tournament_level
+                WHEN 0 THEN 99
+                ELSE tournament_level
+            END AS tournament_level,
+            tournament_level_code,match_max_pay_rate,match_max_pay_val,match_max_con_pay_rate,match_max_con_pay_val,STATUS
+        FROM
+            rcs_business_match_paid_config
+        <where>
+            <if test="businessId != null">
+                AND business_id = #{businessId}
+            </if>
+            <if test="sportId != null">
+                AND sport_id = #{sportId}
+            </if>
+        </where>
+        ORDER BY tournament_level ASC
+    </select>
+
+    <resultMap id="voResult" type="com.panda.sport.rcs.vo.MatchPaidVo">
+        <id column="businessId" property="businessId"/>
+        <result column="businessName" property="businessName"/>
+        <result column="football" property="football"/>
+        <result column="basketball" property="basketball"/>
+        <result column="tennis" property="tennis"/>
+        <result column="esports" property="esports"/>
+        <result column="newplay" property="newplay"/>
+    </resultMap>
+
+    <select id="getMatchPaidListView" resultMap="voResult">
+        select business_id as businessId,
+        max(case sport_id when 1 then match_max_pay_val else 0 end ) as football,
+        max(case sport_id when 2 then match_max_pay_val else 0 end ) as basketball,
+        max(case sport_id when 3 then match_max_pay_val else 0 end ) as tennis,
+        max(case sport_id when 4 then match_max_pay_val else 0 end ) as esports,
+        max(case sport_id when 5 then match_max_pay_val else 0 end ) as newplay
+        from rcs_business_match_paid_config GROUP BY business_id
+    </select>
+
+    <select id="selectTournaments" resultType="com.panda.sport.rcs.vo.TournamentVo">
+        SELECT
+        i.id,
+        t.sport_id sportId,
+        t.`code` tournamentLevel ,
+        t.`value` tournamentInfo,
+        i.`code` code,
+        i.`value` value
+        FROM
+        `system_type_dict` t
+        LEFT JOIN system_item_dict i ON t.id = i.parent_type_id
+        <where>
+            <if test="tournamentVo.id != null">
+                AND t.id = #{tournamentVo.id}
+            </if>
+            <if test="tournamentVo.code != null">
+                AND i.`code`=#{tournamentVo.code}
+            </if>
+            <if test="tournamentVo.value != null">
+                AND i.`value`=#{tournamentVo.value}
+            </if>
+            <if test="tournamentVo.tournamentLevel != null">
+                AND t.`code`=#{tournamentVo.tournamentLevel}
+            </if>
+            <if test="tournamentVo.sportId != null">
+                AND t.sport_id=#{tournamentVo.sportId}
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.TOrderMapper">
+    <resultMap id="BaseResultMap" type="com.panda.sport.rcs.pojo.TOrder">
+        <!--@mbg.generated-->
+        <!--@Table t_order-->
+        <id column="order_no" jdbcType="VARCHAR" property="orderNo" />
+        <result column="uid" jdbcType="BIGINT" property="uid" />
+        <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
+        <result column="product_count" jdbcType="BIGINT" property="productCount" />
+        <result column="series_type" jdbcType="INTEGER" property="seriesType" />
+        <result column="product_amount_total" jdbcType="BIGINT" property="productAmountTotal" />
+        <result column="order_amount_total" jdbcType="BIGINT" property="orderAmountTotal" />
+        <result column="device_type" jdbcType="INTEGER" property="deviceType" />
+        <result column="ip" jdbcType="VARCHAR" property="ip" />
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="modify_time" jdbcType="BIGINT" property="modifyTime" />
+        <result column="currency_code" jdbcType="VARCHAR" property="currencyCode" />
+        <result column="ip_area" jdbcType="VARCHAR" property="ipArea" />
+        <result column="reason" jdbcType="VARCHAR" property="reason" />
+        <collection column="order_no" property="orderDetailExtList" ofType="com.panda.sport.rcs.pojo.TOrderDetailExt">
+            <!--@mbg.generated-->
+            <!--@Table t_order_detail_ext-->
+            <id column="e_id" jdbcType="BIGINT" property="id" />
+            <result column="e_bet_no" jdbcType="VARCHAR" property="betNo" />
+            <result column="e_order_no" jdbcType="VARCHAR" property="orderNo" />
+            <result column="e_match_id" jdbcType="BIGINT" property="matchId" />
+            <result column="e_order_status" jdbcType="INTEGER" property="orderStatus" />
+            <result column="e_bet_time" jdbcType="BIGINT" property="betTime" />
+            <result column="e_max_accept_time" jdbcType="BIGINT" property="maxAcceptTime" />
+            <result column="e_max_wait" jdbcType="SMALLINT" property="maxWait" />
+            <result column="e_current_event" jdbcType="VARCHAR" property="currentEvent" />
+            <result column="e_crt_time" jdbcType="TIMESTAMP" property="crtTime" />
+            <result column="e_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+            <result column="e_mode" jdbcType="TINYINT" property="mode" />
+            <result column="e_handle_status" jdbcType="TINYINT" property="handleStatus" />
+        </collection>
+        <collection  column="order_no" property="orderDetailList" ofType="com.panda.sport.rcs.pojo.TOrderDetail">
+            <!--@mbg.generated-->
+            <!--@Table t_order_detail-->
+            <id column="od_id" jdbcType="BIGINT" property="id" />
+            <result column="od_bet_no" jdbcType="VARCHAR" property="betNo" />
+            <result column="od_order_no" jdbcType="VARCHAR" property="orderNo" />
+            <result column="e_order_status" jdbcType="INTEGER" property="orderStatus" />
+            <result column="od_uid" jdbcType="BIGINT" property="uid" />
+            <result column="od_sport_id" jdbcType="INTEGER" property="sportId" />
+            <result column="od_sport_name" jdbcType="VARCHAR" property="sportName" />
+            <result column="od_play_id" jdbcType="INTEGER" property="playId" />
+            <result column="od_play_name" jdbcType="VARCHAR" property="playName" />
+            <result column="od_match_id" jdbcType="BIGINT" property="matchId" />
+            <result column="od_bet_time" jdbcType="BIGINT" property="betTime" />
+            <result column="od_match_type" jdbcType="INTEGER" property="matchType" />
+            <result column="od_market_type" jdbcType="VARCHAR" property="marketType" />
+            <result column="od_market_id" jdbcType="BIGINT" property="marketId" />
+            <result column="od_market_value" jdbcType="VARCHAR" property="marketValue" />
+            <result column="od_match_info" jdbcType="VARCHAR" property="matchInfo" />
+            <result column="od_bet_amount" jdbcType="DECIMAL" property="betAmount" />
+            <result column="od_odds_value" jdbcType="DECIMAL" property="oddsValue" />
+            <result column="od_odd_finally" jdbcType="VARCHAR" property="oddFinally" />
+            <result column="od_accept_bet_odds" jdbcType="INTEGER" property="acceptBetOdds" />
+            <result column="od_max_win_amount" jdbcType="DOUBLE" property="maxWinAmount" />
+            <result column="od_is_valid" jdbcType="INTEGER" property="isValid" />
+            <result column="od_score_benchmark" jdbcType="VARCHAR" property="scoreBenchmark" />
+            <result column="od_play_options_id" jdbcType="BIGINT" property="playOptionsId" />
+            <result column="od_play_options" jdbcType="VARCHAR" property="playOptions" />
+            <result column="od_play_options_range" jdbcType="VARCHAR" property="playOptionsRange" />
+            <result column="od_del_flag" jdbcType="INTEGER" property="delFlag" />
+            <result column="od_match_process_id" jdbcType="BIGINT" property="matchProcessId" />
+            <result column="od_remark" jdbcType="VARCHAR" property="remark" />
+            <result column="od_create_time" jdbcType="BIGINT" property="createTime" />
+            <result column="od_create_user" jdbcType="VARCHAR" property="createUser" />
+            <result column="od_modify_user" jdbcType="VARCHAR" property="modifyUser" />
+            <result column="od_modify_time" jdbcType="BIGINT" property="modifyTime" />
+            <result column="od_tournament_id" jdbcType="BIGINT" property="tournamentId" />
+            <result column="od_rec_type" jdbcType="TINYINT" property="recType" />
+            <result column="od_rec_val" jdbcType="VARCHAR" property="recVal" />
+            <result column="od_is_relation_score" jdbcType="TINYINT" property="isRelationScore" />
+            <result column="od_validate_result" jdbcType="TINYINT" property="validateResult" />
+            <result column="od_is_settlement" jdbcType="TINYINT" property="isSettlement" />
+            <result column="od_risk_channel" jdbcType="INTEGER" property="riskChannel" />
+            <result column="od_handle_status" jdbcType="TINYINT" property="handleStatus" />
+            <result column="od_market_value_new" jdbcType="TINYINT" property="marketValueNew" />
+            <result column="od_play_options_name" jdbcType="VARCHAR" property="playOptionsName" />
+        </collection>
+    </resultMap>
+
+
+    <update id="insertAndUpdate" keyColumn="id" keyProperty="id" parameterType="com.panda.sport.rcs.pojo.TOrder" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_order (order_no, `uid`, order_status,info_status,
+        product_count, series_type, product_amount_total,
+        order_amount_total, device_type, ip,
+        tenant_id, create_time,  modify_time , ip_area,currency_code )
+        values (#{orderNo,jdbcType=VARCHAR}, #{uid,jdbcType=BIGINT}, #{orderStatus,jdbcType=INTEGER},#{infoStatus,jdbcType=INTEGER},
+        #{productCount,jdbcType=BIGINT}, #{seriesType,jdbcType=INTEGER}, #{productAmountTotal,jdbcType=BIGINT},
+        #{orderAmountTotal,jdbcType=BIGINT}, #{deviceType,jdbcType=INTEGER}, #{ip,jdbcType=VARCHAR},
+        #{tenantId,jdbcType=BIGINT}, #{createTime,jdbcType=INTEGER},
+        #{modifyTime,jdbcType=BIGINT} , #{ipArea,jdbcType=VARCHAR},#{currencyCode,jdbcType=VARCHAR})
+    </update>
+
+    <update id="updateOrderStatusBatch" parameterType="com.panda.sport.rcs.pojo.TOrder">
+            update t_order
+            <set>
+                reason = #{reason},
+                order_status = #{orderStatus},
+                info_status = #{infoStatus}
+            </set>
+            where order_no = #{orderNo} and order_status != 2
+    </update>
+
+    <select id="getLiveWaitedOrders" resultMap="BaseResultMap">
+        SELECT
+        o.order_no
+        FROM
+        t_order AS o
+        inner JOIN t_order_detail_ext AS e ON e.order_no = o.order_no
+        AND o.order_status = 0
+        And o.order_no > #{orderNo}
+    </select>
+
+    <select id="queryByOrderDetailExt" resultMap="BaseResultMap">
+        SELECT
+            o.order_no,
+            o.uid,
+            o.order_status,
+            o.product_count,
+            o.series_type,
+            o.product_amount_total,
+            o.order_amount_total,
+            o.device_type,
+            o.ip,
+            o.tenant_id,
+            o.del_flag,
+            o.create_time,
+            o.create_user,
+            o.modify_user,
+            o.modify_time,
+            o.currency_code,
+            o.ip_area,
+            e.id e_id,
+            e.bet_no e_bet_no,
+            e.order_no e_order_no,
+            e.match_id e_match_id,
+            e.order_status e_order_status,
+            e.bet_time e_bet_time,
+            e.max_accept_time e_max_accept_time,
+            e.max_wait e_max_wait,
+            e.current_event e_current_event,
+            e.crt_time e_crt_time,
+            e.update_time e_update_time,
+            e.`mode` e_mode,
+            e.handle_status e_handle_status,
+            od.id od_id,
+            od.bet_no od_bet_no,
+            od.order_no od_order_no,
+            od.uid od_uid,
+            od.sport_id od_sport_id,
+            od.sport_name od_sport_name,
+            od.play_id od_play_id,
+            od.play_name od_play_name,
+            od.match_id od_match_id,
+            od.bet_time od_bet_time,
+            od.match_type od_match_type,
+            od.market_type od_market_type,
+            od.market_id od_market_id,
+            od.market_value od_market_value,
+            od.match_info od_match_info,
+            od.bet_amount od_bet_amount,
+            od.odds_value od_odds_value,
+            od.odd_finally od_odd_finally,
+            od.accept_bet_odds od_accept_bet_odds,
+            od.max_win_amount od_max_win_amount,
+            od.is_valid od_is_valid,
+            od.score_benchmark od_score_benchmark,
+            od.play_options_id od_play_options_id,
+            od.play_options od_play_options,
+            od.play_options_name od_play_options_name,
+            od.play_options_range od_play_options_range,
+            od.del_flag od_del_flag,
+            od.match_process_id od_match_process_id,
+            od.remark od_remark,
+            od.create_time od_create_time,
+            od.create_user od_create_user,
+            od.modify_user od_modify_user,
+            od.modify_time od_modify_time,
+            od.tournament_id od_tournament_id,
+            od.rec_type od_rec_type,
+            od.rec_val od_rec_val,
+            od.is_relation_score od_is_relation_score,
+            od.validate_result od_validate_result,
+            od.is_settlement od_is_settlement,
+            od.risk_channel od_risk_channel
+        FROM
+            t_order AS o
+            inner JOIN t_order_detail AS od ON o.order_no = od.order_no
+            inner JOIN t_order_detail_ext AS e ON e.order_no = o.order_no
+            AND e.`mode` = 2
+            AND e.order_status = 0
+            And e.bet_time > #{date}
+    </select>
+    <select id="queryByOrderDetailExtAndIds" resultMap="BaseResultMap">
+        SELECT
+            o.order_no,
+            o.uid,
+            o.order_status,
+            o.product_count,
+            o.series_type,
+            o.product_amount_total,
+            o.order_amount_total,
+            o.device_type,
+            o.ip,
+            o.tenant_id,
+            o.create_time,
+            o.modify_time,
+            o.currency_code,
+            o.ip_area,
+            e.id e_id,
+            e.bet_no e_bet_no,
+            e.order_no e_order_no,
+            e.match_id e_match_id,
+            e.order_status e_order_status,
+            e.bet_time e_bet_time,
+            e.max_accept_time e_max_accept_time,
+            e.max_wait e_max_wait,
+            e.current_event e_current_event,
+            e.crt_time e_crt_time,
+            e.update_time e_update_time,
+            e.`mode` e_mode,
+            e.handle_status e_handle_status,
+            e.handle_status od_handle_status,
+            od.id od_id,
+            od.bet_no od_bet_no,
+            od.order_no od_order_no,
+            od.uid od_uid,
+            od.sport_id od_sport_id,
+            od.sport_name od_sport_name,
+            od.play_id od_play_id,
+            od.play_name od_play_name,
+            od.match_id od_match_id,
+            od.bet_time od_bet_time,
+            od.match_type od_match_type,
+            od.market_type od_market_type,
+            od.market_id od_market_id,
+            od.market_value od_market_value,
+            od.match_info od_match_info,
+            od.bet_amount od_bet_amount,
+            od.odds_value od_odds_value,
+            od.odd_finally od_odd_finally,
+            od.max_win_amount od_max_win_amount,
+            od.score_benchmark od_score_benchmark,
+            od.play_options_id od_play_options_id,
+            od.play_options od_play_options,
+            od.play_options_name od_play_options_name,
+            od.play_options_range od_play_options_range,
+            od.match_process_id od_match_process_id,
+            od.create_time od_create_time,
+            od.modify_time od_modify_time,
+            od.tournament_id od_tournament_id,
+            od.rec_type od_rec_type,
+            od.rec_val od_rec_val,
+            od.is_relation_score od_is_relation_score,
+            od.validate_result od_validate_result,
+            od.is_settlement od_is_settlement,
+            od.risk_channel od_risk_channel,
+            od.market_value_new od_market_value_new
+        FROM
+            t_order AS o
+            LEFT JOIN t_order_detail AS od ON o.order_no = od.order_no
+            LEFT JOIN t_order_detail_ext AS e ON e.order_no = o.order_no
+            WHERE e.order_no in
+            <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+    </select>
+
+
+    <resultMap id="BaseResultOrderMap" type="com.panda.sport.rcs.pojo.TOrderForChampion">
+        <!--@mbg.generated-->
+        <!--@Table t_order-->
+        <id column="order_no" jdbcType="VARCHAR" property="orderNo" />
+        <result column="uid" jdbcType="BIGINT" property="uid" />
+        <result column="level_name" jdbcType="VARCHAR" property="userFlag" />
+        <result column="level_id" jdbcType="INTEGER" property="userFlagId" />
+        <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
+        <result column="product_count" jdbcType="BIGINT" property="productCount" />
+        <result column="series_type" jdbcType="INTEGER" property="seriesType" />
+        <result column="product_amount_total" jdbcType="BIGINT" property="productAmountTotal" />
+        <result column="order_amount_total" jdbcType="BIGINT" property="orderAmountTotal" />
+        <result column="device_type" jdbcType="INTEGER" property="deviceType" />
+        <result column="ip" jdbcType="VARCHAR" property="ip" />
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="modify_time" jdbcType="BIGINT" property="modifyTime" />
+        <result column="currency_code" jdbcType="VARCHAR" property="currencyCode" />
+        <result column="ip_area" jdbcType="VARCHAR" property="ipArea" />
+        <collection  column="order_no" property="orderDetailList" ofType="com.panda.sport.rcs.pojo.TOrderDetail">
+            <!--@mbg.generated-->
+            <!--@Table t_order_detail-->
+            <id column="od_id" jdbcType="BIGINT" property="id" />
+            <result column="od_bet_no" jdbcType="VARCHAR" property="betNo" />
+            <result column="od_order_no" jdbcType="VARCHAR" property="orderNo" />
+            <result column="od_uid" jdbcType="BIGINT" property="uid" />
+            <result column="od_sport_id" jdbcType="INTEGER" property="sportId" />
+            <result column="od_sport_name" jdbcType="VARCHAR" property="sportName" />
+            <result column="od_play_id" jdbcType="INTEGER" property="playId" />
+            <result column="od_play_name" jdbcType="VARCHAR" property="playName" />
+            <result column="od_match_id" jdbcType="BIGINT" property="matchId" />
+            <result column="od_bet_time" jdbcType="BIGINT" property="betTime" />
+            <result column="od_match_type" jdbcType="INTEGER" property="matchType" />
+            <result column="od_market_type" jdbcType="VARCHAR" property="marketType" />
+            <result column="od_market_id" jdbcType="BIGINT" property="marketId" />
+            <result column="od_market_value" jdbcType="VARCHAR" property="marketValue" />
+            <result column="od_match_info" jdbcType="VARCHAR" property="matchInfo" />
+            <result column="od_bet_amount" jdbcType="DECIMAL" property="betAmount" />
+            <result column="od_odds_value" jdbcType="DECIMAL" property="oddsValue" />
+            <result column="od_odd_finally" jdbcType="VARCHAR" property="oddFinally" />
+            <result column="od_accept_bet_odds" jdbcType="INTEGER" property="acceptBetOdds" />
+            <result column="od_max_win_amount" jdbcType="DOUBLE" property="maxWinAmount" />
+            <result column="od_is_valid" jdbcType="INTEGER" property="isValid" />
+            <result column="od_score_benchmark" jdbcType="VARCHAR" property="scoreBenchmark" />
+            <result column="od_play_options_id" jdbcType="BIGINT" property="playOptionsId" />
+            <result column="od_play_options" jdbcType="VARCHAR" property="playOptions" />
+            <result column="od_play_options_name" jdbcType="VARCHAR" property="playOptionsName" />
+            <result column="od_play_options_range" jdbcType="VARCHAR" property="playOptionsRange" />
+            <result column="od_del_flag" jdbcType="INTEGER" property="delFlag" />
+            <result column="od_match_process_id" jdbcType="BIGINT" property="matchProcessId" />
+            <result column="od_remark" jdbcType="VARCHAR" property="remark" />
+            <result column="od_create_time" jdbcType="BIGINT" property="createTime" />
+            <result column="od_create_user" jdbcType="VARCHAR" property="createUser" />
+            <result column="od_modify_user" jdbcType="VARCHAR" property="modifyUser" />
+            <result column="od_modify_time" jdbcType="BIGINT" property="modifyTime" />
+            <result column="od_tournament_id" jdbcType="BIGINT" property="tournamentId" />
+            <result column="od_rec_type" jdbcType="TINYINT" property="recType" />
+            <result column="od_rec_val" jdbcType="VARCHAR" property="recVal" />
+            <result column="od_is_relation_score" jdbcType="TINYINT" property="isRelationScore" />
+            <result column="od_validate_result" jdbcType="TINYINT" property="validateResult" />
+            <result column="od_is_settlement" jdbcType="TINYINT" property="isSettlement" />
+            <result column="od_market_value_new" jdbcType="TINYINT" property="marketValueNew" />
+        </collection>
+    </resultMap>
+
+    <select id="queryOrderDetailByPage" resultMap="BaseResultOrderMap">
+        SELECT
+            o.order_no,
+            o.uid,
+            ul.level_name,
+            ul.level_id,
+            o.order_status,
+            o.product_count,
+            o.series_type,
+            o.product_amount_total,
+            o.order_amount_total,
+            o.device_type,
+            o.ip,
+            o.tenant_id,
+            o.currency_code,
+            o.ip_area,
+            od.id od_id,
+            od.bet_no od_bet_no,
+            od.order_no od_order_no,
+            od.uid od_uid,
+            od.sport_id od_sport_id,
+            od.sport_name od_sport_name,
+            od.play_id od_play_id,
+            <if test="marketId == null">
+                od.play_name od_play_name,
+            </if>
+            od.match_id od_match_id,
+            od.bet_time od_bet_time,
+            od.match_type od_match_type,
+            od.market_type od_market_type,
+            od.market_id od_market_id,
+            od.market_value od_market_value,
+            od.match_info od_match_info,
+            od.bet_amount od_bet_amount,
+            od.odds_value od_odds_value,
+            od.odd_finally od_odd_finally,
+            od.max_win_amount od_max_win_amount,
+            od.play_options_id od_play_options_id,
+            od.play_options od_play_options,
+            od.play_options_name od_play_options_name,
+            od.tournament_id od_tournament_id,
+            <if test="marketId != null">
+                IFNULL(JSON_EXTRACT(cast(rli.text as json), #{lang}), od.play_name) as od_play_name,
+            </if>
+            od.market_value_new od_market_value_new
+        FROM  t_order AS o
+        INNER JOIN t_order_detail AS od ON o.order_no = od.order_no
+        LEFT JOIN t_user_level ul on o.first_tag = ul.level_id
+        <if test="matchType == 2">
+            INNER JOIN t_order_detail_ext e on e.order_no = o.order_no
+            and e.order_status in(1,3,4,6)
+        </if>
+        <if test="marketId != null">
+            LEFT JOIN standard_sport_market ssm on ssm.id = od.market_id
+            LEFT JOIN rcs_language_internation rli on rli.name_code = ssm.name_code
+        </if>
+        WHERE od.play_id = #{playIds}
+        AND o.series_type = 1
+        AND o.vip_level = 0
+        AND od.match_id = #{matchIds}
+
+        <if test="playOptions != null">
+            AND od.play_options = #{playOptions}
+        </if>
+        <if test="matchType != null">
+            and od.match_type = #{matchType}
+        </if>
+        <if test="marketId != null">
+            and od.market_id = #{marketId}
+        </if>
+        <if test="betAmount != null">
+           and od.bet_amount > (#{betAmount} * 100)
+        </if>
+        <if test="userId != null">
+           and od.uid = #{userId}
+        </if>
+        <if test="orderStatus != null">
+            and od.order_status = #{orderStatus}
+        </if>
+        ORDER BY od.bet_time desc
+        LIMIT #{start},#{pageSize}
+    </select>
+    <select id="queryOrderCountByPage" resultType="int">
+        SELECT
+            count(o.order_no)
+        FROM  t_order AS o
+        INNER JOIN t_order_detail AS od ON o.order_no = od.order_no
+        <if test="matchType == 2">
+            INNER JOIN t_order_detail_ext e on e.order_no = o.order_no
+            and e.order_status = 1
+        </if>
+        WHERE od.play_id = #{playIds}
+        AND o.series_type = 1
+        AND od.match_id = #{matchIds}
+
+        <if test="playOptions != null">
+            AND od.play_options = #{playOptions}
+        </if>
+        <if test="matchType != null">
+            and od.match_type = #{matchType}
+        </if>
+        <if test="marketId != null">
+            and od.market_id = #{marketId}
+        </if>
+        <if test="betAmount != null">
+            and od.bet_amount > (#{betAmount} * 100)
+        </if>
+        <if test="userId != null">
+            and od.uid = #{userId}
+        </if>
+        <if test="orderStatus != null">
+            and od.order_status = #{orderStatus}
+        </if>
+    </select>
+
+    <update id="denialOrderDetailByIds">
+        update t_order od
+        SET od.reason = #{denialReason}
+        WHERE od.order_status = 0
+        and od.order_no in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="getOrderByNotInOrderNoAndInIp" resultType="integer">
+        select count(*) from t_order where order_no != #{orderNo} and ip = #{ip}
+    </select>
+
+    <select id="selectTOrderByOrderNoList" resultType="com.panda.sport.rcs.vo.TOrderDetailVo">
+        SELECT
+        o.order_no,
+        o.order_status,
+        CASE WHEN t.order_status in (-1,10) THEN 14 ELSE o.info_status END info_status,
+        d.odds_value,
+        d.bet_no,
+        o.modify_time,
+        o.reason
+        FROM
+        t_order o
+        LEFT JOIN t_order_detail d ON o.order_no = d.order_no
+        LEFT JOIN t_order_detail_ext t ON t.order_no = o.order_no
+        WHERE o.order_no in
+        <foreach item="item" index="index" collection="orderNoList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectMatchIdByOrderNo" resultType="java.lang.Long">
+        SELECT d.match_id FROM t_order o
+        LEFT JOIN t_order_detail d ON o.order_no = d.order_no
+        WHERE o.order_no = #{orderNo}
+    </select>
+</mapper>

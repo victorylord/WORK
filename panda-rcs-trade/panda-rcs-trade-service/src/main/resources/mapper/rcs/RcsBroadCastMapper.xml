@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panda.sport.rcs.mapper.RcsBroadCastMapper">
+
+    <select id="queryMessageByTrader"  resultType="com.panda.sport.rcs.pojo.RcsBroadCast">
+		SELECT * FROM rcs_broad_cast c
+        LEFT JOIN standard_match_info s ON s.id = c.extends_field
+        WHERE c.msg_type in (1,3)
+        and  c.extends_field1=#{matchStatus}
+        AND s.match_status = #{matchStatus}
+        <if test="matchStatus==1">
+            and s.live_odd_business=1
+        </if>
+        <if test="matchStatus==0">
+            and s.pre_match_business=1
+        </if>
+        and  UNIX_TIMESTAMP(c.create_time) &gt;= #{createTime}
+        <if test="traderId != null and traderId != ''">
+		AND c.id not in (SELECT message_id  FROM rcs_trader_message  WHERE trader_id = #{traderId})
+        </if>
+        <if test="matchIds != null and matchIds.size() != 0">
+            AND c.extends_field in
+            <foreach collection="matchIds" item="mId" index="index"
+                     open="(" close=")" separator=",">
+                #{mId}
+            </foreach>
+        </if>
+	</select>
+
+    <select id="queryRcsBroadCastVo" resultType="com.panda.sport.rcs.pojo.vo.RcsBroadCastVo">
+         SELECT
+            c.id,
+            c.content,
+            m.is_read,
+            c.extends_field,
+            c.extends_field1,
+            c.extends_field2,
+            h.sport_id,
+            c.msg_type,
+            c.create_time,
+            c.msg_id
+        FROM
+            rcs_broad_cast c
+            LEFT JOIN ( SELECT * FROM rcs_trader_message WHERE trader_id = #{userId} ) m ON c.id = m.message_id
+            LEFT JOIN standard_match_info h ON h.id = c.extends_field
+        WHERE
+            c.msg_type in(101,102,103,104,105,106)
+            AND c.create_time > FROM_UNIXTIME( #{time} / 1000 )
+            <if test="isTrade==1">
+                AND (
+                c.extends_field IN (
+                SELECT
+                match_id
+                FROM
+                ( SELECT DISTINCT extends_field match_id FROM rcs_broad_cast ) a
+                INNER JOIN (
+                SELECT
+                c.match_id
+                FROM
+                rcs_match_collection c
+                LEFT JOIN standard_match_info i ON i.id = c.match_id
+                WHERE
+                c.user_id = #{userId}
+                AND type = 1
+                AND status=1 UNION ALL
+                SELECT
+                i.id
+                FROM
+                rcs_match_collection c
+                LEFT JOIN standard_match_info i ON i.standard_tournament_id = c.tournament_id
+                WHERE
+                c.type = 2
+                AND c.user_id = #{userId}
+                AND status=1
+                UNION ALL
+                SELECT
+                match_info_id
+                FROM
+                rcs_standard_sport_market_sell
+                WHERE
+                pre_trader_id = #{userId}
+                OR live_trader_id = #{userId}
+                ) b USING ( match_id )
+                )
+                <if test="sportIdList != null">
+                    or sport_id IN
+                    <foreach close=")" collection="sportIdList" item="item" open="(" separator=", ">
+                        #{item,jdbcType=BIGINT}
+                    </foreach>
+                </if>
+                )
+            </if>
+        ORDER BY
+        c.create_time DESC
+        LIMIT #{pageNum},#{pageSize}
+    </select>
+
+    <select id="queryRcsBroadCastVoIsNoRead" resultType="com.panda.sport.rcs.pojo.vo.OperateMessageVo">
+    SELECT
+            count(m.is_read) readTotal,
+            count(1)  total
+    FROM
+	    rcs_broad_cast c
+	LEFT JOIN ( SELECT * FROM rcs_trader_message WHERE trader_id = #{userId} ) m ON c.id = m.message_id
+	LEFT JOIN standard_match_info h ON h.id = c.extends_field
+    WHERE
+	c.msg_type in(101,102,103,104,105,106)
+	AND c.create_time > FROM_UNIXTIME( #{time} / 1000 )
+	<if test="isTrade==1">
+        AND (
+        c.extends_field IN (
+        SELECT
+        match_id
+        FROM
+        ( SELECT DISTINCT extends_field match_id FROM rcs_broad_cast ) a
+        INNER JOIN (
+        SELECT
+        c.match_id
+        FROM
+        rcs_match_collection c
+        LEFT JOIN standard_match_info i ON i.id = c.match_id
+        WHERE
+        c.user_id = #{userId}
+        AND type = 1
+        AND status=1
+        UNION ALL
+        SELECT
+        i.id
+        FROM
+        rcs_match_collection c
+        LEFT JOIN standard_match_info i ON i.standard_tournament_id = c.tournament_id
+        WHERE
+        c.type = 2
+        AND c.user_id = #{userId}
+        AND status=1
+        UNION ALL
+        SELECT
+        match_info_id
+        FROM
+        rcs_standard_sport_market_sell
+        WHERE
+        pre_trader_id = #{userId}
+        OR live_trader_id = #{userId}
+        ) b USING ( match_id )
+        )
+        <if test="sportIdList != null">
+            or sport_id IN
+            <foreach close=")" collection="sportIdList" item="item" open="(" separator=", ">
+                #{item,jdbcType=BIGINT}
+            </foreach>
+        </if>
+        )
+    </if>
+
+    </select>
+    <select id="selectUserIdByCollection" resultType="java.lang.Integer">
+        SELECT
+            user_id userID
+        FROM
+            rcs_match_collection
+        WHERE
+            match_id = #{matchId}
+            AND `status` = 1
+            AND type = 1 UNION ALL
+        SELECT
+            c.user_id userID
+        FROM
+            standard_match_info i
+            LEFT JOIN rcs_match_collection c ON c.tournament_id = i.standard_tournament_id
+        WHERE
+            i.id = #{matchId}
+            AND c.`status` = 1
+            AND c.type = 2 UNION ALL
+        SELECT
+            pre_trader_id userID
+        FROM
+            rcs_standard_sport_market_sell
+        WHERE
+            match_info_id = #{matchId} UNION ALL
+        SELECT
+            live_trader_id userID
+        FROM
+            rcs_standard_sport_market_sell
+        WHERE
+            match_info_id = #{matchId}
+    </select>
+
+    <select id="selectRcsBroadCast" resultType="com.panda.sport.rcs.pojo.RcsBroadCast">
+        SELECT * FROM rcs_broad_cast WHERE msg_id=#{s}
+    </select>
+
+    <select id="selectSportIdByMatchId" resultType="java.lang.Integer">
+        SELECT sport_id FROM standard_match_info WHERE id=#{matchId}
+    </select>
+
+    <select id="selectRcsBroadCastCountByWarningAndSealing" resultType="com.panda.sport.rcs.vo.RcsBroadCastONEVO">
+        SELECT
+            m.is_read,
+            COUNT( 1 ) COUNT
+        FROM
+            (
+            SELECT
+                t.id
+            FROM
+                rcs_broad_cast t
+            WHERE
+                t.msg_type =  #{msgType}
+                AND t.create_time > FROM_UNIXTIME( #{createTime} / 1000 )
+                AND (((
+                    EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        rcs_match_collection c1
+                        LEFT JOIN standard_match_info i ON i.standard_tournament_id = c1.tournament_id
+                    WHERE
+                        c1.type in(1,2)
+                        AND c1.user_id = #{traderId}
+                        AND c1.STATUS = 1
+                        AND UNIX_TIMESTAMP() * 1000 &lt; (i.begin_time + 3 * 24 * 60 * 60 * 1000 )
+                        AND i.id = t.extends_field
+                        AND c1.match_id = t.extends_field
+                    )
+                    OR EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        rcs_standard_sport_market_sell s
+                    WHERE
+                        s.match_info_id = t.extends_field
+                        AND ( s.pre_trader_id =#{traderId}  OR s.live_trader_id = #{traderId}  )
+                    )
+                )
+				and t.extends_field1 in ('0','1','2')
+				)
+				or t.extends_field1 = '3'
+				)
+            ) t2
+            LEFT JOIN  rcs_trader_message   m ON m.message_id = t2.id and m.trader_id = #{traderId}
+        GROUP BY
+            m.is_read
+    </select>
+
+    <select id="selectRcsBroadCastCountByMatchErrorEventEnd" resultType="com.panda.sport.rcs.vo.RcsBroadCastONEVO">
+        SELECT
+            m.is_read,
+            COUNT( 1 ) COUNT
+        FROM
+            (
+            SELECT
+                t.id
+            FROM
+                rcs_broad_cast t
+            WHERE
+                t.msg_type =  #{msgType}
+                AND t.create_time > FROM_UNIXTIME( #{createTime} / 1000 )
+                AND (((
+                    EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        rcs_match_collection c1
+                        LEFT JOIN standard_match_info i ON i.standard_tournament_id = c1.tournament_id
+                    WHERE
+                        c1.type in(1,2)
+                        AND c1.user_id = #{traderId}
+                        AND c1.STATUS = 1
+                        AND UNIX_TIMESTAMP() * 1000 &lt; (i.begin_time + 3 * 24 * 60 * 60 * 1000 )
+                        AND i.id = t.extends_field
+                        AND c1.match_id = t.extends_field
+                    )
+                    OR EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        rcs_standard_sport_market_sell s
+                    WHERE
+                        s.match_info_id = t.extends_field
+                        AND ( s.pre_trader_id =#{traderId}  OR s.live_trader_id = #{traderId}  )
+                    )
+                )))
+            ) t2
+            LEFT JOIN  rcs_trader_message   m ON m.message_id = t2.id and m.trader_id = #{traderId}
+        GROUP BY
+            m.is_read
+    </select>
+
+    <select id="selectRcsBroadCastByWarningAndSealing" resultType="com.panda.sport.rcs.pojo.vo.RcsBroadCastVo">
+    SELECT
+        t2.id,
+        t2.msg_type,
+        t2.content,
+        m.is_read,
+        t2.create_time,
+        t2.extends_field,
+        t2.extends_field1
+    FROM
+        (
+        SELECT
+            t.id,
+            t.msg_type,
+            t.content,
+            t.create_time,
+            t.extends_field,
+            t.extends_field1
+        FROM
+            rcs_broad_cast t
+        WHERE
+            t.msg_type = #{msgType}
+            AND t.create_time > FROM_UNIXTIME( #{createTime} / 1000 )
+            AND (((
+                EXISTS (
+                SELECT
+                    1
+                FROM
+                    rcs_match_collection c1
+                    LEFT JOIN standard_match_info i ON i.standard_tournament_id = c1.tournament_id
+                WHERE
+                    c1.type in(1,2)
+                    AND c1.user_id = #{traderId}
+                    AND c1.STATUS = 1
+                    AND UNIX_TIMESTAMP() * 1000 &lt; (i.begin_time + 3 * 24 * 60 * 60 * 1000 )
+                    AND i.id = t.extends_field
+                    AND c1.match_id = t.extends_field
+                )
+                OR EXISTS (
+                SELECT
+                    1
+                FROM
+                    rcs_standard_sport_market_sell s
+                WHERE
+                    s.match_info_id = t.extends_field
+                    AND ( s.pre_trader_id = #{traderId} OR s.live_trader_id = #{traderId} )
+                )
+            )
+            and t.extends_field1 in ('0','1','2')
+            )
+            or t.extends_field1 = '3'
+            )
+        ) t2
+        LEFT JOIN rcs_trader_message   m ON m.message_id = t2.id and  m.trader_id = #{traderId}
+        ORDER BY
+        t2.create_time DESC
+        LIMIT #{pageNum},#{pageSize}
+    </select>
+
+    <select id="selectRcsBroadCastByMatchErrorEventEnd" resultType="com.panda.sport.rcs.pojo.vo.RcsBroadCastVo">
+        SELECT
+            t2.id,
+            t2.msg_type,
+            t2.content,
+            m.is_read,
+            t2.create_time,
+            t2.extends_field,
+            t2.extends_field1,
+            t2.extends_field2,
+            (SELECT sport_id from standard_match_info WHERE id = t2.extends_field) as sportId
+        FROM
+            (
+            SELECT
+                t.id,
+                t.msg_type,
+                t.content,
+                t.create_time,
+                t.extends_field,
+                t.extends_field1,
+                t.extends_field2
+            FROM
+                rcs_broad_cast t
+            WHERE
+                t.msg_type = #{msgType}
+                AND t.create_time > FROM_UNIXTIME( #{createTime} / 1000 )
+                AND (((
+                    EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        rcs_match_collection c1
+                        LEFT JOIN standard_match_info i ON i.standard_tournament_id = c1.tournament_id
+                    WHERE
+                        c1.type in(1,2)
+                        AND c1.user_id = #{traderId}
+                        AND c1.STATUS = 1
+                        AND UNIX_TIMESTAMP() * 1000 &lt; (i.begin_time + 3 * 24 * 60 * 60 * 1000 )
+                        AND i.id = t.extends_field
+                        AND c1.match_id = t.extends_field
+                    )
+                    OR EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        rcs_standard_sport_market_sell s
+                    WHERE
+                        s.match_info_id = t.extends_field
+                        AND ( s.pre_trader_id = #{traderId} OR s.live_trader_id = #{traderId} )
+                    )
+                )))
+            ) t2
+            LEFT JOIN rcs_trader_message   m ON m.message_id = t2.id and  m.trader_id = #{traderId}
+            ORDER BY
+            t2.create_time DESC
+                LIMIT #{pageNum},#{pageSize}
+    </select>
+
+    <select id="selectNoReadRcsBroadCastIdByWarningAndSealing" resultType="java.lang.Integer">
+        SELECT
+            t.id
+        FROM
+            rcs_broad_cast t
+            LEFT JOIN rcs_trader_message m ON m.message_id = t.id
+            AND m.trader_id = #{traderId}
+        WHERE
+            t.msg_type = #{msgType}
+            AND t.create_time > FROM_UNIXTIME( #{createTime} / 1000 )
+            AND m.is_read IS NULL
+            AND (((
+                EXISTS (
+                SELECT
+                    1
+                FROM
+                    rcs_match_collection c1
+                    LEFT JOIN standard_match_info i ON i.standard_tournament_id = c1.tournament_id
+                WHERE
+                    c1.type in(1,2)
+                    AND c1.user_id = #{traderId}
+                    AND c1.STATUS = 1
+                    AND UNIX_TIMESTAMP() * 1000 &lt; (i.begin_time + 3 * 24 * 60 * 60 * 1000 )
+                    AND i.id = t.extends_field
+                    AND c1.match_id = t.extends_field
+                )
+                OR EXISTS (
+                SELECT
+                    1
+                FROM
+                    rcs_standard_sport_market_sell s
+                WHERE
+                    s.match_info_id = t.extends_field
+                    AND ( s.pre_trader_id = #{traderId} OR s.live_trader_id = #{traderId} )
+                )
+                )
+                )
+            )
+    </select>
+
+    <select id="selectNoticeByWarningAndSealing" resultType="com.panda.sport.rcs.pojo.vo.RcsBroadCastVo">
+        SELECT
+            t.id,
+            t.msg_type,
+            t.content,
+            m.is_read,
+            t.create_time
+        FROM
+            rcs_broad_cast t
+            LEFT JOIN rcs_trader_message m ON m.message_id = t.id AND m.trader_id = #{traderId}
+        WHERE
+            t.msg_type in(1,3,4)
+            AND extends_field1=#{matchStatus}
+            AND t.create_time > FROM_UNIXTIME( #{createTime} / 1000 )
+            AND m.is_read IS NULL
+            AND (
+                EXISTS (
+                SELECT
+                    1
+                FROM
+                    rcs_match_collection c1
+                    LEFT JOIN standard_match_info i ON i.standard_tournament_id = c1.tournament_id
+                WHERE
+                    c1.type in(1,2)
+                    AND c1.user_id = #{traderId}
+                    AND c1.STATUS = 1
+                    AND i.id = t.extends_field
+                    AND c1.match_id = t.extends_field
+                )
+                OR EXISTS (
+                SELECT
+                    1
+                FROM
+                    rcs_standard_sport_market_sell s
+                WHERE
+                    s.match_info_id = t.extends_field
+                    AND ( s.pre_trader_id = #{traderId} OR s.live_trader_id = #{traderId} )
+                )
+            )
+        ORDER BY
+        t.create_time DESC
+    </select>
+
+
+    <select id="selectNoReadRcsBroadCastIdBySettlement" resultType="java.lang.Integer">
+        SELECT
+        c.id
+        FROM
+        rcs_broad_cast c
+        LEFT JOIN ( SELECT * FROM rcs_trader_message WHERE trader_id = #{userId} ) m ON c.id = m.message_id
+        LEFT JOIN standard_match_info h ON h.id = c.extends_field
+        WHERE
+        c.msg_type in(101,102,103,104,105,106)
+        AND c.create_time > FROM_UNIXTIME( #{time} / 1000 )
+        AND m.is_read IS NULL
+        <if test="isTrade==1">
+            AND (
+            c.extends_field IN (
+            SELECT
+            match_id
+            FROM
+            ( SELECT DISTINCT extends_field match_id FROM rcs_broad_cast ) a
+            INNER JOIN (
+            SELECT
+            c.match_id
+            FROM
+            rcs_match_collection c
+            LEFT JOIN standard_match_info i ON i.id = c.match_id
+            WHERE
+            c.user_id = #{userId}
+            AND type = 1
+            AND status=1 UNION ALL
+            SELECT
+            i.id
+            FROM
+            rcs_match_collection c
+            LEFT JOIN standard_match_info i ON i.standard_tournament_id = c.tournament_id
+            WHERE
+            c.type = 2
+            AND c.user_id = #{userId}
+            AND status=1
+            UNION ALL
+            SELECT
+            match_info_id
+            FROM
+            rcs_standard_sport_market_sell
+            WHERE
+            pre_trader_id = #{userId}
+            OR live_trader_id = #{userId}
+            ) b USING ( match_id )
+            )
+            <if test="sportIdList != null">
+                or sport_id IN
+                <foreach close=")" collection="sportIdList" item="item" open="(" separator=", ">
+                    #{item,jdbcType=BIGINT}
+                </foreach>
+            </if>
+            )
+        </if>
+    </select>
+</mapper>
