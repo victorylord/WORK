@@ -1,0 +1,136 @@
+
+# Scanning the entire keyspace to find hot keys as well as
+# average sizes per key type.  You can use -i 0.1 to sleep 0.1 sec
+# per 100 SCAN commands (not usually needed).
+
+[00.00%] Hot key 'RCS:RISK:2023-01-13:2:1:502074246117910219:2267757:4:141370071421874414:1:3_{2_2267757}' found so far with counter 5
+[00.00%] Hot key 'RCS:RISK:2023-01-13:2:1:502078431363337082:2267757:4:141370071421874414:1:3_{2_2267757}' found so far with counter 5
+[00.00%] Hot key 'RCS:RISK:2023-01-13:2:1:502078450878039321:2267757:1_{2_2267757}' found so far with counter 3
+[00.00%] Hot key 'risk:trade:rcs_limit_tag:502074373848623603' found so far with counter 5
+[00.00%] Hot key 'rcs:order:lua:result:5020794071520005' found so far with counter 2
+[00.00%] Hot key 'rcs_risk_order_instant_ws:5020793981211822' found so far with counter 2
+[00.00%] Hot key 'risk:trade:rcs_limit_tag:502074371138123286' found so far with counter 5
+[00.01%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074337935919614' found so far with counter 6
+[00.01%] Hot key 'RCS:RISK:2023-01-13:2:1:502078327670725322:2267757:1_{2_2267757}' found so far with counter 5
+[00.01%] Hot key 'rcs:match:event:detail:ext:info:list:5020794555024761' found so far with counter 6
+[00.01%] Hot key 'RCS:RISK:2023-01-13:2:1:502074374967323731:2267757:1_{2_2267757}' found so far with counter 6
+[00.01%] Hot key 'rcs:amount:limit:betno:502079431830342' found so far with counter 3
+[00.01%] Hot key 'rcs:order:lua:result:5020793846436516' found so far with counter 1
+[00.01%] Hot key 'RCS:RISK:2023-01-13:2:1:502074309449716868:2267757:1_{2_2267757}' found so far with counter 7
+[00.01%] Hot key 'rcs:match:event:detail:ext:info:list:5020794496410946' found so far with counter 5
+[00.01%] Hot key 'rcs:order:volumePercentage:5020794141444487' found so far with counter 3
+[00.01%] Hot key 'rcs:limit:dayCompensation:2023-01-13:2:502078427699736646' found so far with counter 5
+[00.01%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078484603743133' found so far with counter 6
+[00.01%] Hot key 'RCS:RISK:2023-01-13:2:1:502074284631614056:2267757:1_{2_2267757}' found so far with counter 5
+[00.01%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074218657407434' found so far with counter 6
+[00.02%] Hot key 'rcs_risk_order_instant_ws:5020794568362396' found so far with counter 6
+[00.02%] Hot key 'risk:trade:rcs_limit_tag:502078581256252305' found so far with counter 5
+[00.02%] Hot key 'RCS:RISK:2023-01-13:2:1:502074333677419159:2267757:4:141370071421874414:1:3_{2_2267757}' found so far with counter 6
+[00.02%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078469981741506' found so far with counter 7
+[00.03%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078386180031754' found so far with counter 7
+[00.03%] Hot key 'rcs:limit:dayCompensation:2023-01-13:2:502074298680315678' found so far with counter 6
+[00.03%] Hot key 'RCS:RISK:2023-01-13:2:1:502078641256858461:2267757:1_{2_2267757}' found so far with counter 6
+[00.04%] Hot key 'RCS:RISK:2023-01-13:2:1:502078643561458732:2267757:4:141370071421874414:1:3_{2_2267757}' found so far with counter 6
+[00.04%] Hot key 'rcs:task:redisUtilsCache:1258000529288597506' found so far with counter 6
+[00.04%] Hot key 'rcs:order:volumePercentage:5020794284559007' found so far with counter 6
+[00.04%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078396712132993' found so far with counter 8
+[00.05%] Hot key 'rcs:order:volumePercentage:5020794548901450' found so far with counter 7
+[00.06%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074302772616176' found so far with counter 9
+[00.06%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074196626304921' found so far with counter 8
+[00.07%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078330182625554' found so far with counter 7
+[00.08%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074356118921765' found so far with counter 8
+[00.08%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078565503250729' found so far with counter 8
+[00.09%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074214473307011' found so far with counter 7
+[00.09%] Hot key 'RCS:RISK:2023-01-13:2:1:502074299013015717:2267757:1_{2_2267757}' found so far with counter 8
+[00.10%] Hot key 'RCS:RISK:2023-01-13:2:1:502074308847916814:2267757:1_{2_2267757}' found so far with counter 7
+[00.11%] Hot key 'RCS:RISK:2023-01-13:2:1:502078339108526361:2267757:1_{2_2267757}' found so far with counter 7
+[00.11%] Hot key 'RCS:RISK:2023-01-13:2:1:502074356250921779:2267757:1_{2_2267757}' found so far with counter 8
+[00.11%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078624810256575' found so far with counter 7
+[00.16%] Hot key 'rcs:data:keyCache:scoreFlag2:2268036' found so far with counter 12
+[00.17%] Hot key 'RCS:RISK:2023-01-13:2:1:502078647939059157:2267757:4:141370071421874414:1:3_{2_2267757}' found so far with counter 8
+[00.20%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078537707348088' found so far with counter 8
+[00.21%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074333304219126' found so far with counter 8
+[00.23%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078682971862487' found so far with counter 8
+[00.26%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074363803122547' found so far with counter 8
+[00.34%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078315559124228' found so far with counter 8
+[00.35%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074246351010243' found so far with counter 8
+[00.41%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078411916734764' found so far with counter 9
+[00.51%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078389760232179' found so far with counter 9
+[00.84%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078338339626294' found so far with counter 9
+[01.06%] Hot key 'rcs:data:keyCache:matchTempInfo:2267892' found so far with counter 12
+[01.17%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074357052821864' found so far with counter 9
+[01.19%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078438430437887' found so far with counter 9
+[02.01%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078596231053713' found so far with counter 9
+[02.09%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074370241723183' found so far with counter 9
+[02.21%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078550673049324' found so far with counter 10
+[02.76%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078563647450548' found so far with counter 9
+[02.88%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078612503955239' found so far with counter 9
+[02.91%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074264542711913' found so far with counter 9
+[03.04%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078517730046258' found so far with counter 9
+[03.21%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078469865341495' found so far with counter 9
+[03.76%] Hot key 'rcs:data:keyCache:matchTempInfo:2267773' found so far with counter 10
+[04.17%] Hot key 'rcs:redis:standard:match:2267909' found so far with counter 10
+[04.46%] Hot key 'RCS:RISK:2023-01-13:2:1:502078508216145348:2267757:4:141370071421874414:1:3_{2_2267757}' found so far with counter 10
+[04.71%] Hot key 'rcs:data:keyCache:matchTempInfo:2267805' found so far with counter 10
+[05.02%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502074293706015070' found so far with counter 11
+[05.58%] Hot key 'rcs:data:keyCache:matchTempInfo:2267776' found so far with counter 10
+[05.66%] Hot key 'rcs:data:keyCache:matchTempInfo:2267816' found so far with counter 10
+[06.37%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078366587629524' found so far with counter 10
+[06.68%] Hot key 'rcs:match:market:config:1:4:2267757:439' found so far with counter 66
+[08.02%] Hot key 'rcs:data:keyCache:matchTempInfo:2267849' found so far with counter 12
+[08.04%] Hot key 'risk:trade:rcs_user_special_bet_limit_config:502078515856246069' found so far with counter 10
+[09.45%] Hot key 'rcs:data:keyCache:matchTempInfo:2267863' found so far with counter 12
+[10.06%] Hot key 'rcs:data:keyCache:matchTempInfo:2267759' found so far with counter 12
+[10.20%] Hot key 'rcs:data:keyCache:matchTempInfo:2267906' found so far with counter 14
+[15.62%] Hot key 'rcs:cache:category:1:4' found so far with counter 246
+[15.68%] Hot key 'rcs:data:source:2267757:4' found so far with counter 66
+[16.75%] Hot key 'rcs:trade:STANDARD_MARKET_ODDS:matchType:2268037' found so far with counter 28
+[17.30%] Hot key 'rcs:risk:order:limit:scope:match:2267762:matchType:1:playId:76:status' found so far with counter 131
+[20.99%] Hot key 'rcs:data:keyCache:matchTempInfo:2267889' found so far with counter 13
+[21.07%] Hot key 'rcs:data:keyCache:matchTempInfo:2268037' found so far with counter 45
+[22.67%] Hot key 'rcs:risk:order:limit:scope:match:2267761:matchType:0:playId:18:type:1:between:1.61-1.85' found so far with counter 140
+[22.93%] Hot key 'rcs:task:matchLive:2268039' found so far with counter 15
+[24.06%] Sampled 1000000 keys so far
+[27.04%] Hot key 'rcs:redis:standard:match:2267912' found so far with counter 13
+[30.08%] Hot key 'rcs:data:keyCache:thirdScoreFlag:2268036' found so far with counter 14
+[32.70%] Hot key 'rcs:risk:order:limit:scope:match:2267761:matchType:0:playId:18:type:0:between:1.61-1.85' found so far with counter 128
+[36.01%] Hot key 'rcs:task:matchLive:2268041' found so far with counter 15
+[37.72%] Hot key 'rcs:data:keyCache:matchTempInfo:2267920' found so far with counter 13
+[38.04%] Hot key 'rcs:data:keyCache:matchTempInfo:2267881' found so far with counter 13
+[40.24%] Hot key 'rcs:risk:bet:volume:switch:2' found so far with counter 219
+[42.01%] Hot key 'rcs:redis:mts:contact:config:matchId:2267758:matchType:0' found so far with counter 255
+[42.02%] Hot key 'rcs:redis:mts:contact:config:matchId:2267758:matchType:1' found so far with counter 255
+[47.35%] Hot key 'rcs:data:keyCache:matchTempInfo:2267921' found so far with counter 15
+[48.12%] Sampled 2000000 keys so far
+[48.63%] Hot key 'rcs:risk:order:limit:scope:match:2267762:matchType:1:playId:86:status' found so far with counter 140
+[49.79%] Hot key 'rcs:redis:mts:contact:config:matchId:2267759:matchType:0' found so far with counter 255
+[52.64%] Hot key 'rcs:task:redisUtilsCache:0' found so far with counter 255
+[56.93%] Hot key 'rcs:risk:order:limit:scope:match:2267762:matchType:0:playId:26:status' found so far with counter 130
+[69.23%] Hot key 'rcs:trade:bet:volume:config' found so far with counter 255
+[72.18%] Sampled 3000000 keys so far
+[74.67%] Hot key 'rcs:redis:mts:contact:config:matchId:2267762:matchType:1' found so far with counter 255
+[75.44%] Hot key 'rcs:redis:mts:contact:config:matchId:2267757:matchType:0' found so far with counter 255
+[82.72%] Hot key 'RCS:RISK:2023-01-13:2:1:2267757:V2_{2_2267757}' found so far with counter 255
+[85.54%] Hot key 'risk:trade:businessBetPercent' found so far with counter 233
+[92.26%] Hot key 'rcs:redis:mts:contact:config:matchId:2267760:matchType:0' found so far with counter 254
+[92.50%] Hot key 'rcs:risk:order:limit:scope:match:2267762:matchType:1:playId:109:status' found so far with counter 134
+
+-------- summary -------
+
+Sampled 3991353 keys in the keyspace!
+hot key found with counter: 255	keyname: rcs:redis:mts:contact:config:matchId:2267758:matchType:0
+hot key found with counter: 255	keyname: rcs:redis:mts:contact:config:matchId:2267758:matchType:1
+hot key found with counter: 255	keyname: rcs:redis:mts:contact:config:matchId:2267759:matchType:0
+hot key found with counter: 255	keyname: rcs:task:redisUtilsCache:0
+hot key found with counter: 255	keyname: rcs:trade:bet:volume:config
+hot key found with counter: 255	keyname: rcs:redis:mts:contact:config:matchId:2267762:matchType:1
+hot key found with counter: 255	keyname: rcs:redis:mts:contact:config:matchId:2267757:matchType:0
+hot key found with counter: 255	keyname: RCS:RISK:2023-01-13:2:1:2267757:V2_{2_2267757}
+hot key found with counter: 254	keyname: rcs:redis:mts:contact:config:matchId:2267760:matchType:0
+hot key found with counter: 246	keyname: rcs:cache:category:1:4
+hot key found with counter: 233	keyname: risk:trade:businessBetPercent
+hot key found with counter: 219	keyname: rcs:risk:bet:volume:switch:2
+hot key found with counter: 140	keyname: rcs:risk:order:limit:scope:match:2267761:matchType:0:playId:18:type:1:between:1.61-1.85
+hot key found with counter: 140	keyname: rcs:risk:order:limit:scope:match:2267762:matchType:1:playId:86:status
+hot key found with counter: 134	keyname: rcs:risk:order:limit:scope:match:2267762:matchType:1:playId:109:status
+hot key found with counter: 131	keyname: rcs:risk:order:limit:scope:match:2267762:matchType:1:playId:76:status

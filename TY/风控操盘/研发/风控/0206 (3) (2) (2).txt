@@ -1,0 +1,138 @@
+
+# Scanning the entire keyspace to find biggest keys as well as
+# average sizes per key type.  You can use -i 0.1 to sleep 0.1 sec
+# per 100 SCAN commands (not usually needed).
+
+[00.00%] Biggest string found so far 'rcs:risk:order:limit:scope:match:2255039:matchType:1:playId:33:status' with 1 bytes
+[00.00%] Biggest string found so far 'risk:trade:rcs_limit_tag:502318553460608940' with 3 bytes
+[00.00%] Biggest string found so far 'rcs:amount:limit:betno:502569555432085' with 15 bytes
+[00.00%] Biggest hash   found so far 'rcs:special:user:order:delay:sencond:config:502078678952762109' with 55 fields
+[00.00%] Biggest string found so far 'rcs:order:lua:result:5026540125033189' with 676 bytes
+[00.00%] Biggest string found so far 'rcs:limit:redisUpdateRecord:series:5016110230857409' with 2163 bytes
+[00.00%] Biggest string found so far 'rcs:limit:redisUpdateRecord:series:5024680441002110' with 2518 bytes
+[00.01%] Biggest string found so far 'rcs:limit:redisUpdateRecord:series:5024686064811414' with 2520 bytes
+[00.02%] Biggest string found so far 'rcs:limit:redisUpdateRecord:series:5024685977703027' with 2525 bytes
+[00.09%] Biggest hash   found so far 'rcs:trade:config:chuZhangSwitch:0:2332894' with 157 fields
+[00.21%] Biggest string found so far 'rcs:limit:redisUpdateRecord:series:5024686140405630' with 2530 bytes
+[00.31%] Biggest string found so far 'rcs:task:match:info:2310767' with 2588 bytes
+[00.33%] Biggest hash   found so far 'rcs:trade:config:chuZhangSwitch:1:2332848' with 192 fields
+[00.57%] Biggest string found so far 'rcs:redis:playId:4:match:2333769:odds:new' with 13522 bytes
+[11.80%] Biggest string found so far 'rcs:redis:playId:7:match:2333771:odds:new' with 20350 bytes
+[18.56%] Sampled 1000000 keys so far
+[27.32%] Biggest hash   found so far 'rcs:category:template:1' with 214 fields
+[29.18%] Biggest string found so far 'rcs:redis:playId:360:match:2333684:odds:new' with 24787 bytes
+[31.35%] Biggest hash   found so far 'RCS_STANDARD_SPORT_CATEGORY_ALL' with 632 fields
+[37.12%] Sampled 2000000 keys so far
+[54.45%] Biggest string found so far 'rcs:redis:playId:360:match:2333664:odds:new' with 24791 bytes
+[55.69%] Sampled 3000000 keys so far
+[59.01%] Biggest string found so far 'rcs:redis:playId:360:match:2333589:odds:new' with 24806 bytes
+[74.25%] Sampled 4000000 keys so far
+[77.13%] Biggest string found so far 'rcs:redis:playId:148:match:2333767:odds:new' with 60562 bytes
+[78.81%] Biggest hash   found so far 'rcs:risk:merchants_single_percentage:all' with 1030 fields
+[92.81%] Sampled 5000000 keys so far
+[96.26%] Biggest hash   found so far 'BC:BC_MATCH_INFO' with 33855 fields
+
+-------- summary -------
+
+Sampled 5375495 keys in the keyspace!
+Total key length in bytes is 277739075 (avg len 51.67)
+
+Biggest   hash found 'BC:BC_MATCH_INFO' has 33855 fields
+Biggest string found 'rcs:redis:playId:148:match:2333767:odds:new' has 60562 bytes
+
+0 lists with 0 items (00.00% of keys, avg size 0.00)
+627340 hashs with 9743096 fields (11.67% of keys, avg size 15.53)
+4748155 strings with 423125407 bytes (88.33% of keys, avg size 89.11)
+0 streams with 0 entries (00.00% of keys, avg size 0.00)
+0 sets with 0 members (00.00% of keys, avg size 0.00)
+0 zsets with 0 members (00.00% of keys, avg size 0.00)
+
+# Scanning the entire keyspace to find biggest keys as well as
+# average sizes per key type.  You can use -i 0.1 to sleep 0.1 sec
+# per 100 SCAN commands (not usually needed).
+
+[00.00%] Biggest string found so far 'rcs:amount:limit:betno:502466706681675' with 15 bytes
+[00.00%] Biggest hash   found so far 'RCS:RISK:2023-01-29:2:1:502488902588404363:2331407:0_{2_2331407}' with 4 fields
+[00.00%] Biggest hash   found so far 'rcs:marketStatusConfig:2270015:96' with 10 fields
+[00.00%] Biggest string found so far 'rcs:order:lua:result:5026541177079184' with 676 bytes
+[00.00%] Biggest hash   found so far 'rcs:special:user:order:delay:sencond:config:502293398383826458' with 55 fields
+[00.00%] Biggest string found so far 'rcs:order:lua:result:5026983133806502' with 679 bytes
+[00.00%] Biggest string found so far 'rcs:limit:redisUpdateRecord:series:5026743149811761' with 680 bytes
+[00.00%] Biggest string found so far 'rcs:limit:redisUpdateRecord:series:5024684963406717' with 2525 bytes
+[00.07%] Biggest string found so far 'rcs:limit:redisUpdateRecord:series:5012861631858456' with 2824 bytes
+[00.18%] Biggest string found so far 'rcs:redis:playId:105:match:2333782:odds:new' with 4600 bytes
+[00.27%] Biggest hash   found so far 'rcs:trade:config:chuZhangSwitch:1:2270604' with 75 fields
+[00.33%] Biggest hash   found so far 'rcs:trade:config:chuZhangSwitch:0:2265316' with 192 fields
+[01.05%] Biggest string found so far 'rcs:redis:playId:4:match:2333771:odds:new' with 12641 bytes
+[01.35%] Biggest string found so far 'rcs:redis:playId:7:match:2333580:odds:new' with 13878 bytes
+[02.40%] Biggest string found so far 'rcs:redis:playId:360:match:2333588:odds:new' with 24816 bytes
+[08.32%] Biggest string found so far 'rcs:redis:playId:35:match:2333687:odds:new' with 25370 bytes
+[17.23%] Biggest string found so far 'rcs:redis:playId:148:match:2333771:odds:new' with 75467 bytes
+[17.54%] Sampled 1000000 keys so far
+[28.52%] Biggest hash   found so far 'REDIS_MATCH_PERIODLIST' with 859 fields
+[35.07%] Sampled 2000000 keys so far
+[36.42%] Biggest hash   found so far 'rcs:code' with 2001 fields
+[52.32%] Biggest hash   found so far 'CACHELASTTIME' with 14861 fields
+[52.61%] Sampled 3000000 keys so far
+[70.14%] Sampled 4000000 keys so far
+[87.68%] Sampled 5000000 keys so far
+
+-------- summary -------
+
+Sampled 5593537 keys in the keyspace!
+Total key length in bytes is 294762865 (avg len 52.70)
+
+Biggest   hash found 'CACHELASTTIME' has 14861 fields
+Biggest string found 'rcs:redis:playId:148:match:2333771:odds:new' has 75467 bytes
+
+0 lists with 0 items (00.00% of keys, avg size 0.00)
+847055 hashs with 10649273 fields (15.14% of keys, avg size 12.57)
+4746482 strings with 424141001 bytes (84.86% of keys, avg size 89.36)
+0 streams with 0 entries (00.00% of keys, avg size 0.00)
+0 sets with 0 members (00.00% of keys, avg size 0.00)
+0 zsets with 0 members (00.00% of keys, avg size 0.00)
+
+# Scanning the entire keyspace to find biggest keys as well as
+# average sizes per key type.  You can use -i 0.1 to sleep 0.1 sec
+# per 100 SCAN commands (not usually needed).
+
+[00.00%] Biggest hash   found so far 'rcs:limit:dayCompensation:2022-12-03:1386292191839784960:501023924006407526' with 2 fields
+[00.00%] Biggest string found so far 'rcs:amount:limit:betno:502466697725169' with 15 bytes
+[00.00%] Biggest hash   found so far 'rcs:special:user:order:delay:sencond:config:501970358862041235' with 55 fields
+[00.00%] Biggest string found so far 'rcs:order:lua:result:5026540002309801' with 602 bytes
+[00.00%] Biggest string found so far 'rcs:order:lua:result:5025695620566271' with 679 bytes
+[00.00%] Biggest string found so far 'rcs:redis:playId:78:match:2333781:odds:new' with 1844 bytes
+[00.00%] Biggest string found so far 'rcs:limit:redisUpdateRecord:series:5024685640707592' with 2525 bytes
+[00.07%] Biggest hash   found so far 'rcs:trade:config:chuZhangSwitch:0:2268751' with 192 fields
+[00.16%] Biggest string found so far 'rcs:limit:redisUpdateRecord:series:5024686079973660' with 2530 bytes
+[00.19%] Biggest string found so far 'rcs:limit:redisUpdateRecord:series:5012861671731893' with 2824 bytes
+[00.61%] Biggest string found so far 'rcs:redis:playId:345:match:2333589:odds:new' with 3645 bytes
+[01.05%] Biggest string found so far 'rcs:redis:playId:4:match:2251436:odds:new' with 5688 bytes
+[01.81%] Biggest string found so far 'rcs:redis:playId:104:match:2333585:odds:new' with 5717 bytes
+[01.98%] Biggest string found so far 'rcs:redis:playId:342:match:2333586:odds:new' with 7895 bytes
+[05.73%] Biggest hash   found so far 'rcs:merchant_high_risk' with 1617 fields
+[08.20%] Biggest string found so far 'rcs:redis:playId:7:match:2333588:odds:new' with 11821 bytes
+[08.64%] Biggest string found so far 'rcs:redis:playId:360:match:2333585:odds:new' with 31460 bytes
+[18.00%] Sampled 1000000 keys so far
+[36.00%] Sampled 2000000 keys so far
+[48.72%] Biggest string found so far 'rcs:redis:playId:35:match:2295316:odds:new' with 35358 bytes
+[54.00%] Sampled 3000000 keys so far
+[59.65%] Biggest string found so far 'rcs:categoryOddsTemplate:' with 99447 bytes
+[72.00%] Sampled 4000000 keys so far
+[76.75%] Biggest string found so far 'rcs:data:RcsOperateMerchantsSet:all' with 476170 bytes
+[90.00%] Sampled 5000000 keys so far
+
+-------- summary -------
+
+Sampled 5447475 keys in the keyspace!
+Total key length in bytes is 285124312 (avg len 52.34)
+
+Biggest   hash found 'rcs:merchant_high_risk' has 1617 fields
+Biggest string found 'rcs:data:RcsOperateMerchantsSet:all' has 476170 bytes
+
+0 lists with 0 items (00.00% of keys, avg size 0.00)
+703642 hashs with 10094114 fields (12.92% of keys, avg size 14.35)
+4743833 strings with 423885564 bytes (87.08% of keys, avg size 89.36)
+0 streams with 0 entries (00.00% of keys, avg size 0.00)
+0 sets with 0 members (00.00% of keys, avg size 0.00)
+0 zsets with 0 members (00.00% of keys, avg size 0.00)
