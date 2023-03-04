@@ -2,5 +2,14 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/panda-bss-new" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/panda-rcs-common" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/panda-rcs-data" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/panda-rcs-data/netty-study" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/panda-rcs-framework" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/panda-rcs-order" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/panda-rcs-task" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/panda-rcs-trade" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/panda_data_service" vcs="Git" />
   </component>
 </project>

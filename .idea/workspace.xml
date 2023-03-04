@@ -1,7 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5fd02d05-56ad-4e1d-bee9-56dde4fac7b6" name="Default Changelist" comment="" />
+    <list default="true" id="5fd02d05-56ad-4e1d-bee9-56dde4fac7b6" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/panda-rcs-data/panda-rcs-push/src/main/java/com/panda/rcs/push/mq/slow(2)" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-bss-new" beforeDir="false" afterPath="$PROJECT_DIR$/panda-bss-new" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-bss-new/panda-bss-schedule/src/main/java/com/panda/bss/schedule/ScheduleServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-bss-new/panda-bss-schedule/src/main/java/com/panda/bss/schedule/ScheduleServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-bss-new/panda-bss-support/panda-bss-common/src/main/java/com/panda/bss/common/util/RedisUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-bss-new/panda-bss-support/panda-bss-common/src/main/java/com/panda/bss/common/util/RedisUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-bss-new/panda-bss-task/src/main/java/com/panda/bss/task/TaskServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-bss-new/panda-bss-task/src/main/java/com/panda/bss/task/TaskServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-common" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-common" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-common/panda-rcs-api/src/main/java/com/panda/sport/data/rcs/api/BalanceValueService.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-common/panda-rcs-api/src/main/java/com/panda/sport/data/rcs/api/BalanceValueService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-data" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-data" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-data/netty-study/src/main/java/com/lyncc/netty/heartbeats/HeartBeatServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-data/netty-study/src/main/java/com/lyncc/netty/heartbeats/HeartBeatServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-data/netty-study/src/main/java/com/lyncc/netty/heartbeats/HeartBeatServerHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-data/netty-study/src/main/java/com/lyncc/netty/heartbeats/HeartBeatServerHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-data/netty-study/src/main/java/com/lyncc/netty/heartbeats/HeartBeatsClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-data/netty-study/src/main/java/com/lyncc/netty/heartbeats/HeartBeatsClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-data/panda-rcs-data-server/src/main/java/com/panda/sport/rcs/data/sync/MutilOddsWeightUpdateConsumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-data/panda-rcs-data-server/src/main/java/com/panda/sport/rcs/data/sync/MutilOddsWeightUpdateConsumer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-order" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-order" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-order/panda-rcs-credit/src/main/java/com/panda/sport/rcs/credit/service/champion/impl/ChampionLimitServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-order/panda-rcs-credit/src/main/java/com/panda/sport/rcs/credit/service/champion/impl/ChampionLimitServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-order/panda-rcs-predict/src/main/java/com/panda/sport/rcs/predict/service/impl/PredictServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-order/panda-rcs-predict/src/main/java/com/panda/sport/rcs/predict/service/impl/PredictServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-order/panda-rcs-sdk-client/src/main/java/com/panda/sport/sdk/service/impl/SeriesLimitService.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-order/panda-rcs-sdk-client/src/main/java/com/panda/sport/sdk/service/impl/SeriesLimitService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-order/panda-rcs-sdk-client/src/main/resources/lua/orderSave_new_v3.lua" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-order/panda-rcs-sdk-client/src/main/resources/lua/orderSave_new_v3.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-task" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-task" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-task/panda-rcs-task-pojo/src/main/java/com/panda/sport/rcs/pojo/RcsMarketCategorySet.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-task/panda-rcs-task-pojo/src/main/java/com/panda/sport/rcs/pojo/RcsMarketCategorySet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-task/panda-rcs-task/src/test/java/com/panda/sport/rcs/test/RedisTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-task/panda-rcs-task/src/test/java/com/panda/sport/rcs/test/RedisTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda-rcs-trade/panda-rcs-mgr-trade/src/main/java/com/panda/sport/rcs/trade/service/TradeOddsCommonService.java" beforeDir="false" afterPath="$PROJECT_DIR$/panda-rcs-trade/panda-rcs-mgr-trade/src/main/java/com/panda/sport/rcs/trade/service/TradeOddsCommonService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda_data_service" beforeDir="false" afterPath="$PROJECT_DIR$/panda_data_service" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/panda_data_service/data-manager-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/panda_data_service/data-manager-service/pom.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,7 +44,7 @@
     </leaf>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/panda-rcs-trade" />
   </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
@@ -29,21 +55,12 @@
       </MavenGeneralSettings>
     </option>
   </component>
-  <component name="ProjectConfigurationFiles">
-    <option name="files">
-      <list>
-        <option value="$PROJECT_DIR$/.idea/WORK.iml" />
-        <option value="$PROJECT_DIR$/.idea/misc.xml" />
-        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
-        <option value="$PROJECT_DIR$/.idea/modules.xml" />
-      </list>
-    </option>
-  </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-7" />
     <option name="width" value="1036" />
     <option name="height" value="735" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -57,24 +74,6 @@
               <item name="WORK" type="b2602c69:ProjectViewProjectNode" />
               <item name="WORK" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="WORK" type="b2602c69:ProjectViewProjectNode" />
-              <item name="WORK" type="462c0819:PsiDirectoryNode" />
-              <item name="panda-rcs-trade" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="WORK" type="b2602c69:ProjectViewProjectNode" />
-              <item name="WORK" type="462c0819:PsiDirectoryNode" />
-              <item name="panda-rcs-trade" type="462c0819:PsiDirectoryNode" />
-              <item name="doc" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="WORK" type="b2602c69:ProjectViewProjectNode" />
-              <item name="WORK" type="462c0819:PsiDirectoryNode" />
-              <item name="panda-rcs-trade" type="462c0819:PsiDirectoryNode" />
-              <item name="doc" type="462c0819:PsiDirectoryNode" />
-              <item name="v1.6.7" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -83,12 +82,25 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="MavenSettings" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\admin\Desktop\GitHub\WORK" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -112,12 +124,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1677927381221</updated>
-      <workItem from="1677927382452" duration="238000" />
+      <workItem from="1677927382452" duration="1046000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="238000" />
+    <option name="totallyTimeSpent" value="1046000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
