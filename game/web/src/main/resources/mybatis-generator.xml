@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2021 Baidu, Inc. All Rights Reserved.
+  -->
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<!-- 使用方法 从命令行进到相应子工程下并使用命令： mvn mybatis-generator:generate-->
+<generatorConfiguration>
+
+    <!-- 先使用 MyBatis3类型生成example对象，然后使用MyBatis3Simple再重新生成model和mapper-->
+<!--    <context id="Mysql" targetRuntime="MyBatis3" defaultModelType="flat">-->
+    <context id="Mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="javaFileEncoding" value="UTF-8"/>
+
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="com.soft.game.generate.BaseMapper"/>
+            <property name="caseSensitive" value="true"/>
+            <property name="forceAnnotation" value="true"/>
+            <property name="lombok" value="Getter,Setter"/>
+        </plugin>
+
+        <commentGenerator>
+            <!--<property name="suppressDate" value="false" />-->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!-- 数据库连接信息 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/test?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;autoReconnect=true&amp;nullCatalogMeansCurrent=true"
+                        userId="root"
+                        password="123456"/>
+
+
+        <!-- model生成路径 -->
+        <javaModelGenerator targetPackage="com.soft.game.generate.model"
+                            targetProject="src/main/java">
+        </javaModelGenerator>
+
+        <!-- 映射xml文件生成路径 -->
+        <sqlMapGenerator targetPackage="com.soft.game.generate.mapper"
+                         targetProject="src/main/java">
+        </sqlMapGenerator>
+        <!-- 和xml文件关联的dao mapper生成路径（生成文件名默认是***Mapper.java，习惯将其改名成 ***Dao.java） -->
+        <javaClientGenerator targetPackage="com.soft.game.generate.mapper"
+                             targetProject="src/main/java" type="XMLMAPPER">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+        <table tableName="account"></table>
+        <table tableName="agent"></table>
+        <table tableName="bet_journal"></table>
+        <table tableName="bet_result"></table>
+        <table tableName="game_user"></table>
+
+
+    </context>
+</generatorConfiguration>

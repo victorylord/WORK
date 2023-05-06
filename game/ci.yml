@@ -1,0 +1,26 @@
+Global:
+  version: 2.0
+
+Default:
+  profile : [dev]
+
+Profiles:
+  - profile:
+    name : online
+    mode: AGENT
+    environment:
+      cluster: DECK_CENTOS6U3_K3
+    build:
+      command: sh tools/agileBuild-online.sh
+    artifacts:
+      release: true
+
+  - profile:
+    name : dev
+    mode: AGENT
+    environment:
+      cluster: DECK_CENTOS6U3_K3
+    build :
+      command : sh tools/agileBuild-dev.sh
+    artifacts:
+      release: true

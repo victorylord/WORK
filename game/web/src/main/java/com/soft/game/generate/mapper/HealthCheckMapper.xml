@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright (C) 2023 Baidu, Inc. All Rights Reserved.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.soft.game.generate.mapper.HealthCheckMapper">
+
+    <select id="selectForHealth" resultType="java.lang.Integer">
+        select 1 from dual
+    </select>
+</mapper>
